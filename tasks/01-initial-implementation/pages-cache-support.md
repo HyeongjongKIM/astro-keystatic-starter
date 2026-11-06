@@ -51,3 +51,15 @@ The query variant is diagnostic evidence only. The plain URL must be validated i
 - [Contacting Support](https://developers.cloudflare.com/support/contacting-cloudflare-support/): available technical support channels depend on the plan; Free plans generally use Community/Discord.
 
 The current CLI credential cannot access the shared pages.dev zone and lacks owned-zone DNS/cache permissions. Pages build-cache purging was not substituted for CDN response-cache purging. A separate approved custom-subdomain validation is pending DNS setup.
+
+## Approved custom-domain follow-up
+
+Attached `astro-starter.hyeongjongkim.dev` with active DNS/certificate validation. Production origin updated and rebuilt. Existing personal apex/www Pages connection remains intact.
+
+A fresh hidden `/projects/domain-validation/` Page passed initial publication, edit, rollback and restore on its unchanged custom-domain URL. Removing it in 597be97a49cd4b9aba7a9cbed1830d60ba11422a produced successful deployment b7bef704-5712-42f4-b4c8-c7aab9879c56, selected as current canonical. Nevertheless, plain custom URL returned HTTP 200 with deleted revision-two HTML, CF-Cache-Status DYNAMIC and `public, s-maxage=604800`; a diagnostic query returned 404/no-store. Chrome reload reproduced the deleted title.
+
+Applied exact-URL purge, then the official Pages guidance's zone Purge Everything via authenticated dashboard. Dashboard purge response explicitly returned HTTP 200/success true/errors empty. Subsequent plain custom URL still returned HTTP 200, Age 204, CF-Ray a5672540b958472e-SIN. What additional supported procedure invalidates Pages' stale deleted-path response after an accepted zone purge?
+
+Production pages.dev now uses the official Bulk Redirect procedure to the custom hostname; the old proof path redirects and ends at custom 404. Preview hosts remain independent. This is not presented as a cache fix for the newly failing custom-domain URL.
+
+Authenticated Free-plan support portal → Submit a case → Other says technical support cases are unavailable, directing to Community/AI/docs. This document remains a draft pending explicit authorization to publish externally.

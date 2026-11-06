@@ -2,7 +2,7 @@
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
-**Status:** Tasks 00–04 complete; Site and Admin are deployed. Task 05 is blocked on stale deleted-page HTML in the pages.dev CDN cache; see its verification evidence before customer handoff.
+**Status:** Tasks 00–04 complete; Site and Admin are deployed. Task 05 is blocked on stale deleted-page HTML after deployment and cache purge on the approved production domain; see its verification evidence before customer handoff.
 
 ## Target architecture
 
