@@ -2,9 +2,9 @@
 
 Organize tasks by phase. Start with the earliest phase that is not DONE, then select the earliest task whose dependencies are completed from that phase's README. Do not advance past a blocked dependency or phase.
 
-| Phase                                                              | Goal                                                   | Dependency | Status  |
-| ------------------------------------------------------------------ | ------------------------------------------------------ | ---------- | ------- |
-| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None       | BLOCKED |
+| Phase                                                              | Goal                                                   | Dependency | Status      |
+| ------------------------------------------------------------------ | ------------------------------------------------------ | ---------- | ----------- |
+| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None       | IN_PROGRESS |
 
 ## Organization rules
 
@@ -12,7 +12,7 @@ Organize tasks by phase. Start with the earliest phase that is not DONE, then se
 - Each phase README records its goal, status, task order, and dependencies.
 - Each task document records its scope, acceptance criteria, status, and verification evidence.
 - Task numbering restarts within each phase; use the phase path when referring to a task across phases.
-- Use `TODO`, `IN_PROGRESS`, `BLOCKED`, or `DONE` for phase and task statuses. Mark a phase DONE only after all its tasks are DONE.
+- Use `TODO`, `IN_PROGRESS`, `IN_PROGRESS`, or `DONE` for phase and task statuses. Mark a phase DONE only after all its tasks are DONE.
 - Update task evidence and the phase index after observed results; update this queue when the phase status changes.
 - Preserve completed phase directories. Add a new numbered directory and queue entry when the next phase is defined.
 

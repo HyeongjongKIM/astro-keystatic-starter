@@ -9,14 +9,14 @@ Keystatic uses server-side Node APIs and the Workers runtime is different from N
 
 ## Configuration contract
 
-| Name                               | Scope | Classification                           |
-| ---------------------------------- | ----- | ---------------------------------------- |
-| `PUBLIC_SITE_URL`                  | Site  | Public build-time URL; starter-defined   |
-| `KEYSTATIC_GITHUB_REPO`            | Admin | Non-secret `owner/repo`; starter-defined |
-| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Admin | Public Keystatic Astro setting           |
-| `KEYSTATIC_GITHUB_CLIENT_ID`       | Admin | GitHub App identifier                    |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET`   | Admin | Secret                                   |
-| `KEYSTATIC_SECRET`                 | Admin | Secret                                   |
+| Name                               | Scope | Classification                                  |
+| ---------------------------------- | ----- | ----------------------------------------------- |
+| `PUBLIC_SITE_URL`                  | Site  | Public build-time URL; starter-defined          |
+| `KEYSTATIC_GITHUB_REPO`            | Admin | Public build-time `owner/repo`; starter-defined |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Admin | Public Keystatic Astro setting                  |
+| `KEYSTATIC_GITHUB_CLIENT_ID`       | Admin | GitHub App identifier                           |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET`   | Admin | Secret                                          |
+| `KEYSTATIC_SECRET`                 | Admin | Secret                                          |
 
 Starter-defined variables must actually be consumed in application code. Never put secrets in `PUBLIC_` values, tracked config, or Wrangler `vars`.
 
@@ -51,3 +51,5 @@ Create customer repository → create Pages/Worker → configure domain and GitH
 - https://developers.cloudflare.com/pages/configuration/monorepos/
 - https://developers.cloudflare.com/workers/configuration/secrets/
 - https://developers.cloudflare.com/pages/configuration/redirects/
+
+Admin repository identity uses Astro `env.schema` as a public client variable, consumed from `astro:env/client`, because Keystatic config runs in both client and server bundles. Keep the same environment schema in default and Node provisioning configs. Set `KEYSTATIC_GITHUB_REPO` before building; runtime Worker secrets do not change the already-built editor repository selection. Never classify authentication credentials as public client variables.
