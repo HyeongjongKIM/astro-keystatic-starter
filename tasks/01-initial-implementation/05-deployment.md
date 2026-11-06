@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** IN_PROGRESS
+**Status:** BLOCKED
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -110,6 +110,18 @@ Final cleanup check: after removing the obsolete validation deployments, the pla
 
 Investigating both deployment history and caches at maintainer request. Current deployment-specific hostname returns 404 for the deleted path; queried custom-host 404 has the same body hash. Both deleted historical deployment hosts also return 404. Canonical production selection is correct. No Cache Rules/Cache Response Rules/Page Rules exist; zone Workers routes are empty; Always Online is off. Detailed evidence is in [support investigation](pages-cache-support.md).
 
-Official Debugging Pages recommends DNS Only comparison. Temporarily switched only starter CNAME from proxied to DNS Only and observed authoritative CNAME TTL 300. After local resolver addresses updated, ordinary URL plus curl IPv4/IPv6 all returned 404. Restored proxy for controlled comparison: the formerly selected proxied IPv6/SIN route still returned 200/DYNAMIC/Age2894; proxied IPv4/HKG returned404. Current Pages target IPs for both families return404/ICN. This demonstrates route/edge-dependent behavior, not proof of an IPv6 product defect or a complete internal root cause.
+Official Debugging Pages recommends DNS Only comparison. Temporarily switched only starter CNAME from proxied to DNS Only and observed authoritative CNAME TTL 300. After local resolver addresses updated, ordinary URL plus curl IPv4/IPv6 all returned 404. Restored proxy for controlled comparison: the formerly selected proxied IPv6/SIN route still returned 200/DYNAMIC/Age2894; proxied IPv4/HKG returned 404. Current Pages target IPs for both families return404/ICN. This demonstrates route/edge-dependent behavior, not proof of an IPv6 product defect or a complete internal root cause.
 
 Reapplied the officially documented DNS Only setting to the starter subdomain for a new end-to-end static publication/update/rollback/deletion validation. Existing personal apex/www remain proxied and unchanged. Do not mark this DNS configuration as a verified fix until the unchanged new URL passes deletion after deployment.
+
+### 2026-11-07 KST — DNS Only regression and final investigation outcome
+
+- Old deleted path eventually returned 404 after DNS-only resolver convergence, but controlled proxy restoration reproduced200 on the proxied IPv6/SIN route. Therefore a fresh path test was required; no cache fix was claimed from the initial404.
+- New hidden Page `/projects/dns-validation/` created under DNS Only: commit 6a1137df, deployment 37085ae3-120a-4f27-b98f-ed994c7236d7; update 10b49c5f, deployment fb3508ae-fac6-4828-9bac-5c22090df905. Same ordinary URL passed create/update. Rollback initially had not propagated; after 10 seconds revision one was verified, and restoration after another 10 seconds showed revision two.
+- Deleted Page in 36673506; successful production deployment da8ba288-ce8c-42c5-a2f4-ede41df128d4 completed 2026-11-06 22:10:30 UTC and matched canonical selection. Same previously visited URL still returned 200/HIT/Age51/deleted HTML using current Pages IPv6 address and ICN edge. DNS Only therefore is not a general deletion-freshness fix. Detailed request/response evidence is in the linked investigation document.
+- Restored original Proxied CNAME status in authenticated DNS dashboard, confirmed success and three proxied records. Existing apex/www remained unchanged. Removed temporary Page source and deleted only obsolete Page-containing deployments 37085ae3 and fb3508ae; canonical/latest protected. No additional cache rules or architectural changes retained.
+- `pnpm check` on cleaned source exited 0: format, lint, type checks, 28 tests, independent Site/Admin builds and static output verification. Existing Admin size warning remains. Prior checkpoint 1e686d1 GitHub Actions runs 42296288669 (preview) and 42296287779 (main) both succeeded.
+
+Investigation narrows this to host/path/edge-dependent response retention or propagation in the Pages delivery path; exact internal cause remains unverified. Current deployment-specific URL returns404 and both removed historical deployment hosts return404. Asset retention can last one week according to official documentation, but that is not a verified public deletion-propagation SLA. Task 05 stays BLOCKED on the acceptance observation, not on a confirmed Cloudflare defect. Further time-based observation or a supported provider explanation is needed. No community question has been posted.
+
+Final cross-route observation at 2026-11-06 22:12:12 UTC (about 102 seconds after the deletion deployment completed): restored-proxy ordinary `/projects/dns-validation/` returned 404/DYNAMIC/SIN, and current deployment-specific URL returned 404/ICN. However, connections to the previously visited current Pages IPv4 and IPv6 addresses preserving the same HTTPS host/path returned 200/DYNAMIC/Age157/ICN. Thus ordinary recovery coincided with a routing change and does not establish global invalidation. The symptom is demonstrably data-center/route-dependent, rather than universally broken or specific to IPv6. DNS was restored to the original Proxied setting; no experimental infrastructure setting remains.
