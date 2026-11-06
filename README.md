@@ -2,7 +2,7 @@
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
-**Status:** runtime compatibility verified; workspace and shared content model, automatic navigation and public Site MVP implemented; deployment handoff is next.
+**Status:** Tasks 00–04 complete; Site and Admin are deployed. Task 05 is blocked on stale deleted-page HTML in the pages.dev CDN cache; see its verification evidence before customer handoff.
 
 ## Target architecture
 

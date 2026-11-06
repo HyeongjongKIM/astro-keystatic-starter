@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** IN_PROGRESS
+**Status:** BLOCKED
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -44,3 +44,21 @@ Environment: macOS arm64, Node 22.23.4/pnpm 12.18.0, Wrangler 4.158.0, official 
 - `pnpm check`: final configuration check exited 0 (format, lint, types, unit tests, independent builds, static output verification). `pnpm --filter @starter/admin build:production` also exited 0. Existing Admin chunk warning remains. No production Node runtime, extra data service or private framework patch introduced.
 
 Remaining verification at this checkpoint: push deployment/redirect configuration, build the separate preview branch, confirm preview canonical/headers and live redirects, finish deployed secret/public-artifact checks, and record final CI and cleanup outcomes. Task 05 is not yet DONE.
+
+### 2026-11-07 KST — final checks and exact CDN-cache blocker
+
+- Configuration checkpoint rebased onto editor-generated commits and pushed as `7422be27cc98ee0700a2188d0b51b195b8ee4cd1` to `main` and new `preview` branch. Git hooks passed; pre-push reported 28 tests passed. GitHub Actions runs `42235590149` and `42235590093` both completed successfully for that SHA, covering the configured frozen install and root checks.
+- Git-connected production deployment `adfc2c39-5191-41e9-b383-0f3ac0fe84f2` and preview deployment `dcb2a676-b49a-478b-a984-42ec5ac364e7` both succeeded. Production canonical deployment confirmed adfc2c39; preview has its separate canonical origin `https://preview.astro-keystatic-starter-site.pages.dev/` and `X-Robots-Tag: noindex`. Production Home has its production canonical and normal `public, max-age=0, must-revalidate` cache header.
+- Production Home, nested photography, published Post, RSS, sitemap index and robots returned 200; draft Post and a never-existing route returned 404. Both `/journal` and `/journal/` returned 301 to `/posts/` (the slash variant was checked separately after the combined check stopped on the stale-deletion assertion).
+- Verified production App settings exact deployed callback and installation `179284653`: metadata/pull requests read, code read/write, Only select repositories checked and exactly this repository selected. Preview installation restored as `179286338`; original Home description was read after restoration. Temporary unauthorized-save marker never reached Git.
+- Both Worker deployment snapshots were identical across subsequent content edits/deletion, confirming content-triggered Pages builds did not redeploy Admin.
+- Private value scans of all 136 tracked files, local public Site output and production Admin client output found none of either environment's actual client secrets/signing secrets. Ignored credential files remain local; no values recorded. No test proof files remain in the repository tree.
+
+**Unresolved blocker:** ordinary URL `https://astro-keystatic-starter-site.pages.dev/projects/publication-proof/` still returns deleted HTML with HTTP 200, `CF-Cache-Status: HIT`, `Cache-Control: public, s-maxage=604800`, and an increasing Age (observed above 6,000 seconds). A unique query URL for the same path returns the current HTTP 404 with no-store. Regular Chrome, compressed curl, Cache-Control: no-cache and Range requests also observed the stale 200. This is not treated as successful deletion propagation. The latest production deployment and repository have no such Page. The source/build contains no s-maxage rule. The reason the old response has that header and a supported invalidation path for this pages.dev cache remain unverified.
+
+- Deleted only obsolete proof-containing deployment `cad8e738-e69c-44d4-8c57-d069d6d87daf` through the documented deployment DELETE API after confirming it was neither current canonical nor latest deployment. This was test-artifact cleanup, not a claimed cache fix; plain URL still returned 200 afterward. Initial clean rollback target and current production/preview deployments remain.
+- [Official Serving Pages documentation](https://developers.cloudflare.com/pages/configuration/serving-pages/) describes stale cached assets and zone Caching → Purge Everything. The official cache purge API is zone-scoped; `GET /zones?name=pages.dev` returned no accessible zone for this account. The Pages API documents build-cache purge, which is not evidence of CDN-cache invalidation; it was not substituted. No undocumented API, proxy, forced rewrite/tombstone, alternative hosting architecture or unrelated-zone purge was used.
+
+Maintainer direction required before continuing: arrange supported Cloudflare pages.dev cache invalidation/support and revalidate the unchanged URL, or provide an approved customer-owned production domain/zone so the documented cache controls can be configured and tested. An architecture change has not been made. Task 05 and this phase remain BLOCKED; Tasks 00–04 remain DONE. Successful compile/deploy/query-distinct checks do not close this public freshness gate.
+
+Final cleanup: stopped the local Site preview and closed the dedicated Playwright browser; removed its ignored snapshots/logs, including OAuth callback/App settings captures. General CLI logins and the ignored mode-specific local development credential files were retained; credential files restricted to owner read/write. `git diff --check` passed before the final documentation commit.
