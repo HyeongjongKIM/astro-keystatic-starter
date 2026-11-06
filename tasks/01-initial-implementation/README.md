@@ -1,6 +1,6 @@
 # Initial Implementation Task Queue
 
-**Status:** BLOCKED
+**Status:** IN_PROGRESS
 
 Deliver the initial Astro + Keystatic MVP, from runtime compatibility validation through customer deployment and handoff.
 
@@ -8,7 +8,7 @@ Follow tasks in order. Each task has explicit dependencies and acceptance criter
 
 | ID | Task | Dependency | Status |
 | --- | --- | --- | --- |
-| 00 | [Runtime compatibility](00-compatibility.md) | None | BLOCKED |
+| 00 | [Runtime compatibility](00-compatibility.md) | None | DONE |
 | 01 | [Workspace foundation](01-foundation.md) | 00 | TODO |
 | 02 | [Content model](02-content.md) | 01 | TODO |
 | 03 | [Automatic navigation](03-navigation.md) | 02 | TODO |

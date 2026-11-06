@@ -1,9 +1,11 @@
 # Task 00 — Runtime Compatibility Gate
 
-**Status:** BLOCKED
+**Status:** DONE
 
 **Depends on:** none  
 **Read:** [Deployment](../../docs/deployment.md), [Architecture](../../docs/architecture.md)
+
+**Current outcome:** deployed Workers OAuth and authenticated content/image CRUD verified on 2026-11-06. Local Workers dev remains affected by the recorded runner error; use the approved separate Node setup configuration for App provisioning. Historical BLOCKED entries below describe earlier checkpoints.
 
 ## Goal
 
@@ -14,10 +16,10 @@ Establish whether the current officially supported Astro + Keystatic integration
 - [x] Record supported Node, pnpm, Astro, `@astrojs/cloudflare`, `@keystatic/astro`, and `@keystatic/core` versions.
 - [x] Create a disposable minimal Astro + Keystatic project using official integration steps.
 - [x] Test the Cloudflare runtime locally with official tools.
-- [ ] Deploy an isolated Worker preview; configure exact GitHub App callback and least-privilege test repository access.
-- [ ] Verify editor rendering, OAuth login, content read, create, update, delete, image upload, and Git commit.
+- [x] Deploy an isolated Worker preview; configure exact GitHub App callback and least-privilege test repository access.
+- [x] Verify editor rendering, OAuth login, content read, create, update, delete, image upload, and Git commit.
 - [x] Identify incompatibilities using official docs/issues; do not patch private internals.
-- [ ] Record whether local and production results differ.
+- [x] Record whether local and production results differ.
 
 ## Acceptance criteria
 
@@ -123,3 +125,51 @@ Maintainer direction requested: provide the test deployment/repository setup to 
 - Added a separate `astro.setup.config.mjs` with the official React, Markdoc and Keystatic integrations and no Cloudflare adapter. This configuration is only for the local provisioning server, never production deployment.
 - Stopped the Workers dev server and ran pinned-tool `pnpm exec astro dev --config astro.setup.config.mjs --host 127.0.0.1 --port 4321` in the temporary probe. Node dev server started successfully. App creation/installation is still pending.
 - Maintainer explicitly requested an intermediate commit of the current findings and plan before resuming provisioning. Task and phase status remain BLOCKED until deployed E2E validation passes.
+
+
+### 2026-11-06 — App provisioning and credentialed deployment
+
+- Node setup was verified with Playwright/system Chrome: Create GitHub App form visible and no browser pageerrors. User completed App creation and repository installation. Confirmed that the official setup generated all four expected environment keys in the ignored temporary `.env`; values were not printed or copied into tracked source.
+- Pinned-tool `pnpm build` with the default Workers configuration and actual test repository/App slug: exit 0, existing chunk-size warning only.
+- First `wrangler secret bulk` attempt failed because no Worker name was resolved after using the separate setup configuration. Retried with explicit `--name keystatic-workers-compatibility`; exit 0, three secrets registered. Secrets were passed via subprocess stdin, never shell arguments or tracked files.
+- Pinned-tool `pnpm exec wrangler deploy`: exit 0; credentialed test deployment version `d3323fba-c7c8-445d-87d6-8802362134cb`, same isolated workers.dev URL, only ASSETS binding reported.
+- Secret scan of all five files in `dist/client`: neither actual `KEYSTATIC_GITHUB_CLIENT_SECRET` nor `KEYSTATIC_SECRET` appeared.
+- Node fetch smoke checks: deployed `/keystatic` HTTP 200; `/api/keystatic/github/login` HTTP 307 to GitHub's OAuth authorization endpoint. OAuth completion remains pending; redirects alone do not prove authentication.
+- GitHub CLI installation-list request returned HTTP 403 because its OAuth token is not a GitHub App user token; public App metadata lookup was unavailable. No privilege bypass attempted. Installation scope must be confirmed through the App's authenticated flow/settings.
+- Opened a separate Chrome test profile for user-controlled GitHub login. Browser test session data stays outside the repository; no credentials or cookies are included in evidence. Authenticated content E2E remains pending.
+
+
+### 2026-11-06 — OAuth user confirmation
+
+- User reported completing login in the regular Chrome profile. After closing only the earlier automated test-profile browser, AppleScript confirmed the regular Chrome active tab was at deployed `/keystatic/branch/main` (OAuth callback parameters were not printed). This is evidence of return to the editor route, not yet proof of authenticated reads/writes.
+- Chrome refused AppleScript JavaScript execution because “Allow JavaScript from Apple Events” is disabled. The setting was not changed. Requested user-driven browser create/image/update checks and will independently inspect the resulting repository files and commits.
+- No authenticated create/update/delete/image verification is claimed at this point. Task 00 remains BLOCKED until the remaining evidence is collected.
+
+
+### 2026-11-06 — deployed authenticated E2E completed
+
+**Result: DONE for the runtime gate.** The selected stack completed the required authenticated operations on the isolated deployed Worker; this does not claim that local Workers dev is fixed.
+
+Environment: deployed version `d3323fba-c7c8-445d-87d6-8802362134cb`; Playwright from the existing local tooling cache with installed Chrome; user completed real GitHub OAuth in a dedicated test profile. Browser state was held privately outside the repository. After OAuth, fresh automated browser contexts reused that state for UI actions (no direct GitHub API writes substituted for editor operations).
+
+| Operation | Observed evidence |
+| --- | --- |
+| Editor rendering / authenticated read | Dashboard displayed authenticated account, `main` branch and Posts collection with 0 entries; fresh entry visits loaded saved body and image |
+| OAuth completion | Real GitHub login returned to deployed editor and established the Keystatic auth cookies; subsequent fresh contexts accessed authenticated content |
+| Create / image upload | Browser Add → title `Compatibility Test`, body `Worker write test`, generated 8×8 PNG via Choose file → Create; UI reported Entry created |
+| Git commit for creation | [5859c13e5654](https://github.com/HyeongjongKIM/astro-keystatic-compatibility-test/commit/5859c13e5654a2546834b40508745c7c80807e2b) added `src/content/posts/compatibility-test.mdoc` and `public/images/compatibility-test/image.png` |
+| Read image | Fresh browser context loaded saved editor image with `complete=true` and nonzero natural width; independent `gh api .../contents/...` read confirmed PNG signature |
+| Update | Fresh entry visit read original body; changed it to `Worker update test` and clicked Save. Independent repository content read confirmed updated text; commit prefix `4addba116191` |
+| Read updated content | Another fresh browser context loaded `Worker update test` before deletion |
+| Delete | Browser Delete entry → Yes, delete returned to Empty collection; commit prefix `93643cb32711` |
+| Delete cleanup | `gh api repos/HyeongjongKIM/astro-keystatic-compatibility-test/git/trees/main?recursive=1` returned only `README.md`; both entry and uploaded image removed |
+| App permissions / isolation | Authenticated GitHub installation settings (`/settings/installations/179199323`) displayed metadata/pull requests read, code read/write, checked `install_target=selected`, and exactly one selected repository: `HyeongjongKIM/astro-keystatic-compatibility-test` |
+| Exact callback | Authenticated App settings confirmed `https://keystatic-workers-compatibility.jonkim0309.workers.dev/api/keystatic/github/oauth/callback`; official setup also registered loopback callbacks with and without port 4321 |
+
+Commands: temporary Node/Playwright drivers `create-entry.cjs`, `update-entry.cjs`, `delete-entry.cjs`, and installation/settings inspection; `gh api` read-only commit/content/tree checks. Driver locator corrections were needed (`Add` is a button, and deletion confirmation is `Yes, delete`); initial locator timeouts did not perform writes and were not product failures. Successful create/update/delete runs exited 0. Driver files and authenticated state are not retained in tracked source; reproduce using the browser sequence above and the pinned probe configuration.
+
+Local/production comparison: local Workers dev API threw `exports is not defined`; an attempted documented dependency-optimization setting did not resolve it and was reverted. Node dev was used solely for approved App provisioning. Production Workers completed real OAuth and CRUD without that configuration or framework patches. The initial production probe without credentials returned a missing-configuration error; configured deployment passed.
+
+Remaining limitations: local Workers dev is unresolved; no public Site/workspace functionality has been implemented, no production customer deployment is claimed, and the selected version matrix applies only to this isolated test. The private test repository and isolated Worker/App remain available for follow-up validation. No root quality scripts are configured yet; Task 01 owns those checks.
+
+Final repository verification: `git diff --check` passed on 2026-11-06. Next task is Task 01 (workspace foundation); no dependent task was implemented in this run.

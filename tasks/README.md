@@ -4,7 +4,7 @@ Organize tasks by phase. Start with the earliest phase that is not DONE, then se
 
 | Phase | Goal | Dependency | Status |
 | --- | --- | --- | --- |
-| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None | BLOCKED |
+| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None | IN_PROGRESS |
 
 ## Organization rules
 
