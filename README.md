@@ -54,9 +54,9 @@ pnpm --filter @starter/admin build
 pnpm check
 ```
 
-`pnpm check` runs format, lint, types, deterministic unit tests and both builds. Git hooks run lint-staged, Conventional Commit validation, and pre-push types/tests. There are no unit test cases until behavior is implemented; Vitest currently permits an empty suite.
+`pnpm check` runs format, lint, types, deterministic unit tests and both builds. Git hooks run lint-staged, Conventional Commit validation, and pre-push types/tests. Content contract tests cover nested Pages, linked MDX/image paths, draft filtering and invalid metadata.
 
-Admin secrets belong in ignored `apps/admin/.dev.vars` (copy `.dev.vars.example`). The public App slug belongs in ignored `apps/admin/.env` (copy `.env.example`). Never put secrets in a `PUBLIC_` variable. The customer repository is still a placeholder until deployment configuration is completed.
+Admin secrets belong in ignored `apps/admin/.dev.vars` (copy `.dev.vars.example`). The public App slug belongs in ignored `apps/admin/.env` (copy `.env.example`). Never put secrets in a `PUBLIC_` variable. Set `KEYSTATIC_GITHUB_REPO=owner/repository` in Admin `.env` before provisioning/building; the tracked config defaults to a placeholder.
 
 The selected Workers runtime passed deployed OAuth/CRUD validation in Task 00. Its local development API runner has a recorded unresolved `exports is not defined` error; a successful dev startup or editor shell response does not establish working local authentication. The separate `apps/admin/astro.setup.config.mjs` is for approved Node-only GitHub App provisioning, via `pnpm --filter @starter/admin exec astro dev --config astro.setup.config.mjs`; it is not a production hosting option. Use the default Workers config for builds and deployment. See Task 00 for evidence and limitations.
 

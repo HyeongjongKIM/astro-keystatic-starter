@@ -1,0 +1,26 @@
+---
+import type { ContentBlock } from '@starter/content';
+import type { MDXInstance } from 'astro';
+interface Props {
+  collection: 'pages' | 'posts';
+  slug: string;
+  blocks: readonly ContentBlock[];
+}
+const { collection, slug, blocks } = Astro.props;
+const modules = import.meta.glob<MDXInstance<Record<string, unknown>>>(
+  '../../../../content/**/*.mdx',
+  { eager: true },
+);
+const bodies = blocks.map((block, index) => {
+  if (block.discriminant !== 'richText')
+    throw new Error('Unsupported content block');
+  const path = `../../../../content/${collection}/${slug}/content/${index}/value/body.mdx`;
+  const module = modules[path];
+  if (!module) throw new Error(`Missing MDX body: ${path}`);
+  return module.Content;
+});
+---
+
+{bodies.map((Body) => (
+  <Body />
+))}

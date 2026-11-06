@@ -1,0 +1,7 @@
+title: Photography
+description: Photography page
+order: 0
+showInNavigation: true
+content:
+  - discriminant: richText
+    value: {}

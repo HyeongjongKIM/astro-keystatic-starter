@@ -1,2 +1,3 @@
 import { defineConfig } from 'astro/config';
-export default defineConfig({ output: 'static' });
+import mdx from '@astrojs/mdx';
+export default defineConfig({ output: 'static', integrations: [mdx()] });

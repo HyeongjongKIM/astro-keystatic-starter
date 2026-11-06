@@ -45,3 +45,16 @@ Future block additions must include matching schema, Astro renderer, fixture, an
 - https://keystatic.com/docs/fields/mdx
 - https://keystatic.com/docs/path-wildcard
 - https://docs.astro.build/en/guides/routing/
+
+## MVP storage layout
+
+All Keystatic paths are relative to the repository root. `storage.pathPrefix` is intentionally omitted: setting it to `apps/admin` would incorrectly nest content and Site images under that directory. Admin uses the shared `createContentConfig` and a non-secret build-time `KEYSTATIC_GITHUB_REPO`. Site uses the official local Reader API against the repository root at build time, without a GitHub token.
+
+- Pages: `content/pages/**/index.yaml` (supports `projects/photography`).
+- Posts: `content/posts/*/index.yaml`.
+- Site Settings: `content/settings/site.yaml`.
+- Each `richText` block has `value.body` as `fields.mdx()`. The fixture linked file is `content/{pages|posts}/{slug}/content/{index}/value/body.mdx`, compiled using the official Astro MDX integration and imported through Vite's glob API.
+- Rich text images: `apps/site/public/images/{pages|posts}/`; public URLs start `/images/{pages|posts}/`. Settings images use `apps/site/public/images/settings/`. Keep these repository and URL paths paired when customizing.
+- YAML records contain title text; the slug is derived from the entry path through Keystatic's slug field. Posts default to draft; `isPublished` filters only explicit `published` status.
+
+The samples are starter content. The `home` sample currently renders at `/`; Task 03 owns the complete Home/reserved-route policy and hierarchy validation. No separate Navigation model is introduced. MDX files are tracked editable content, not generated outputs; never put secrets in them.

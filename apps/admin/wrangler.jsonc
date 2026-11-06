@@ -1,5 +1,5 @@
 {
-  "name": "astro-keystatic-admin",
+  "name": "astro-keystatic-starter-admin-preview",
   "compatibility_date": "2026-11-06",
   "compatibility_flags": ["nodejs_compat"],
 }

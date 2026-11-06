@@ -1,7 +1,6 @@
-import { config } from '@keystatic/core';
+import { createContentConfig } from '@starter/content';
 
-// Task 02 supplies the shared schemas. Configure the customer repo before deployment.
-export default config({
-  storage: { kind: 'github', repo: 'customer/replace-me' },
-  collections: {},
-});
+const repo = import.meta.env.KEYSTATIC_GITHUB_REPO || 'customer/replace-me';
+if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo))
+  throw new Error('KEYSTATIC_GITHUB_REPO must be owner/repo');
+export default createContentConfig(repo as `${string}/${string}`);
