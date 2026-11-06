@@ -170,6 +170,30 @@ Commands: temporary Node/Playwright drivers `create-entry.cjs`, `update-entry.cj
 
 Local/production comparison: local Workers dev API threw `exports is not defined`; an attempted documented dependency-optimization setting did not resolve it and was reverted. Node dev was used solely for approved App provisioning. Production Workers completed real OAuth and CRUD without that configuration or framework patches. The initial production probe without credentials returned a missing-configuration error; configured deployment passed.
 
-Remaining limitations: local Workers dev is unresolved; no public Site/workspace functionality has been implemented, no production customer deployment is claimed, and the selected version matrix applies only to this isolated test. The private test repository and isolated Worker/App remain available for follow-up validation. No root quality scripts are configured yet; Task 01 owns those checks.
+Remaining limitations: local Workers dev is unresolved; no public Site/workspace functionality has been implemented, no production customer deployment is claimed, and the selected version matrix applies only to this isolated test. The private test repository and isolated Worker/App were subsequently deleted during the cleanup recorded below. No root quality scripts are configured yet; Task 01 owns those checks.
 
 Final repository verification: `git diff --check` passed on 2026-11-06. Next task is Task 01 (workspace foundation); no dependent task was implemented in this run.
+
+### 2026-11-06 — test resource cleanup requested; authentication pending
+
+- Maintainer requested cleanup before Task 01. Runtime compatibility remains DONE; cleanup is not yet complete.
+- `gh repo view HyeongjongKIM/astro-keystatic-compatibility-test --json name,url` confirmed the test repository still exists. `gh repo delete HyeongjongKIM/astro-keystatic-compatibility-test --yes` failed with HTTP 403 and an explicit requirement for the `delete_repo` scope. No repository deletion occurred.
+- `npx --yes wrangler whoami` (Wrangler 4.158.0, macOS, Node 22.21.1) failed: the stored OAuth token expired and could not be refreshed. No Worker deletion occurred. Started interactive `wrangler login` and `gh auth refresh -h github.com -s delete_repo`; account-owner authentication is pending.
+- No matching Keystatic/compatibility temporary directories were found directly under `/tmp` or `/private/tmp`; no test Astro server or dedicated Chrome test process was running. Recorded temporary credentials/browser state were not available at those paths. This does not establish that all other local locations are clean. Existing unrelated browser profiles and CLI account credentials were preserved.
+- Remaining: delete and verify absence of the isolated Worker (including its secrets), test GitHub App/installation `179199323`, and test repository; inspect any remaining identifiable local test state. Retain tracked probe source and historical evidence. GitHub App deletion has not been verified or performed.
+
+### 2026-11-06 — Worker and repository cleanup completed; App pending
+
+- Both interactive authentication commands completed successfully after maintainer authorization.
+- Using the renewed Wrangler OAuth credential privately in memory, Cloudflare's official REST API listed the exact `keystatic-workers-compatibility` script, accepted its DELETE with `success: true`, and a subsequent script list confirmed its absence. The Worker and its attached configuration/secrets were removed; no unrelated Workers were targeted.
+- `gh repo delete HyeongjongKIM/astro-keystatic-compatibility-test --yes` completed successfully. A subsequent authenticated `gh api repos/HyeongjongKIM/astro-keystatic-compatibility-test` returned HTTP 404; `gh api user --jq .login` confirmed `HyeongjongKIM`.
+- GitHub App/installation cleanup remains pending: the separate Playwright Chrome session navigated to installation `179199323` and was redirected to GitHub login. CLI OAuth authorization does not authenticate that browser, and `gh api user/installations` returned HTTP 403 requiring a GitHub App user access token. No authentication bypass attempted. Requested maintainer browser login to inspect/delete the test App and installation.
+- Historical test URLs/commit links above now refer to deleted resources and are retained as original verification evidence. Runtime compatibility remains DONE; Task 01 has not started.
+
+### 2026-11-06 — test App cleanup completed
+
+- After maintainer browser login, inspected the registered `HyeongjongKIM Keystatic Test` App (`hyeongjongkim-keystatic-test`). Its homepage and deployed OAuth callback matched the exact isolated compatibility Worker URL, establishing the deletion target; unrelated Apps were preserved.
+- Through GitHub's Advanced settings, clicked Delete GitHub App, entered its exact name and submitted the deletion confirmation. The browser returned to the App list, which no longer contained this App. Revisiting its settings URL returned HTTP 404 while authenticated.
+- The authenticated Installed GitHub Apps list contained neither the test App nor installation `179199323`. The old installation URL had already returned HTTP 404 after login. App registration and test installation are no longer available.
+- Closed the dedicated nonpersistent Playwright browser. `playwright-cli delete-data` reported no saved user data for the session. Removed the cleanup session's generated `.playwright-cli` snapshots/logs, including the App settings snapshot, from the workspace. Earlier recorded `/tmp` test directories were absent as noted above; unrelated profiles and general CLI logins were preserved.
+- Cleanup outcome: the identified test Worker, repository and GitHub App/installation are removed. Tracked probe source and verification evidence remain. No application implementation or deployment was performed. `git diff --check` passed; root application checks remain unconfigured and were not run. Next task: Task 01, workspace foundation.
