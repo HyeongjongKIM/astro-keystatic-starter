@@ -2,16 +2,16 @@
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
-**Status:** Tasks 00–04 complete; Site and Admin are deployed. Task 05 is blocked on stale deleted-page HTML after deployment and cache purge on the approved production domain; see its verification evidence before customer handoff.
+**Status:** Initial implementation (Tasks 00–05) is complete. Site and Admin are deployed and the customer handoff guide is available. Deleted-page cache freshness remains unresolved and is deferred by maintainer decision as [CACHE-01](docs/known-issues.md).
 
 ## Target architecture
 
-| Component          | Technology                    | Deployment                                        |
-| ------------------ | ----------------------------- | ------------------------------------------------- |
-| Public Site        | Astro SSG                     | Cloudflare Pages                                  |
-| Admin              | Astro + Keystatic GitHub Mode | Cloudflare Workers (requires compatibility proof) |
-| Shared schemas     | pnpm workspace package        | Build-time                                        |
-| Content and images | GitHub files                  | Committed source of truth                         |
+| Component          | Technology                    | Deployment                |
+| ------------------ | ----------------------------- | ------------------------- |
+| Public Site        | Astro SSG                     | Cloudflare Pages          |
+| Admin              | Astro + Keystatic GitHub Mode | Cloudflare Workers        |
+| Shared schemas     | pnpm workspace package        | Build-time                |
+| Content and images | GitHub files                  | Committed source of truth |
 
 Each customer receives an independently deployed copy of this repository. No database or R2 in the MVP.
 

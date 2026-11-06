@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** BLOCKED
+**Status:** DONE
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -16,7 +16,8 @@ Publish Site and Admin independently through documented Cloudflare tooling and p
 - [x] Apply GitHub App OAuth callback, repository permissions, and runtime Secrets.
 - [x] Configure watch paths so content commits rebuild Site without needless Admin deployment.
 - [x] Separate preview and production variables/domains.
-- [ ] Validate write-to-publish flow, 404/redirects, rollback, permission removal, secret hygiene.
+- [x] Validate deployed write-to-publish flow, unknown-path 404/redirects, rollback, permission removal and secret hygiene (evidence below).
+- [x] Record maintainer-approved deferral of global deleted-page freshness as [CACHE-01](../../docs/known-issues.md).
 - [x] Write customer setup, operations, and troubleshooting instructions.
 
 ## Acceptance criteria
@@ -27,6 +28,8 @@ Publish Site and Admin independently through documented Cloudflare tooling and p
 - Tested rollback and permission removal procedures are documented.
 
 ## Verification evidence
+
+Historical checkpoints retain the status and findings observed at that time. The maintainer decision at the end of this log supersedes the earlier cache-related completion blocker without claiming that the cache issue is fixed.
 
 ### 2026-11-06 — deployment configuration and E2E checkpoint
 
@@ -125,3 +128,15 @@ Reapplied the officially documented DNS Only setting to the starter subdomain fo
 Investigation narrows this to host/path/edge-dependent response retention or propagation in the Pages delivery path; exact internal cause remains unverified. Current deployment-specific URL returns404 and both removed historical deployment hosts return404. Asset retention can last one week according to official documentation, but that is not a verified public deletion-propagation SLA. Task 05 stays BLOCKED on the acceptance observation, not on a confirmed Cloudflare defect. Further time-based observation or a supported provider explanation is needed. No community question has been posted.
 
 Final cross-route observation at 2026-11-06 22:12:12 UTC (about 102 seconds after the deletion deployment completed): restored-proxy ordinary `/projects/dns-validation/` returned 404/DYNAMIC/SIN, and current deployment-specific URL returned 404/ICN. However, connections to the previously visited current Pages IPv4 and IPv6 addresses preserving the same HTTPS host/path returned 200/DYNAMIC/Age157/ICN. Thus ordinary recovery coincided with a routing change and does not establish global invalidation. The symptom is demonstrably data-center/route-dependent, rather than universally broken or specific to IPv6. DNS was restored to the original Proxied setting; no experimental infrastructure setting remains.
+
+### 2026-11-07 KST — maintainer-approved cache deferral and phase closeout
+
+Maintainer explicitly requested that the deletion-cache issue be put on hold and that work continue to the next step. Accepted as [CACHE-01](../../docs/known-issues.md), unresolved and non-blocking for this phase. This changes the completion gate, not any observed test result. Immediate global deleted-page freshness is deferred; deployed OAuth/write, static publication, unknown-path 404, redirects, rollback, permission removal and secret isolation remain required and have recorded evidence above. Public support posting and further cache/DNS experiments are on hold.
+
+Final live read-only checks on macOS arm64: curl GET confirmed production Home, nested Page, published Post, RSS, sitemap index and robots HTTP 200; draft Post and a new unknown path HTTP 404; both journal variants HTTP 301 to posts. Production Home contains the approved custom canonical origin. Preview Home remains independent with its preview origin/noindex. Both deployed Admin editor routes returned HTTP 200; this is availability evidence only, not a replacement for the earlier authenticated OAuth/write tests. Main/preview CI runs 42302980157 and 42302980398 for b0744bd both completed successfully.
+
+Completion checks for this closeout are recorded after execution below. No application code, live credentials, DNS setting, hosting architecture or customer content is changed by this documentation closeout. The roadmap's stale TODO entries will be synchronized with the completed task records. No next phase is currently defined in the task queue; future feature scope must be defined separately.
+
+Final closeout verification (2026-11-07 KST): macOS arm64, pinned Node 22.23.4/pnpm 12.18.0 through npm exec. `pnpm check` exited 0: format, lint, workspace types, 28 tests, static Site build, preview Admin build and `pnpm verify:site`. `pnpm --filter @starter/admin build:production` exited 0. Private scans of 157 source/public-client files against the four actual preview/production secret values passed before and after production build; no values printed. Only the previously documented Admin bundle-size warning remains. Temporary validation Page sources are absent. Credential files remain ignored with owner-only permissions.
+
+Task 05 is DONE under the maintainer-approved CACHE-01 deferral. Tasks 00–04 remain DONE; initial implementation is complete with the recorded accepted limitation. This does not claim that deleted-page global freshness passed or that a Cloudflare defect was proven. There is no next executable task or phase defined in the queue.

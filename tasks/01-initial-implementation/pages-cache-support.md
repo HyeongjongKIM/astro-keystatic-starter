@@ -2,6 +2,8 @@
 
 Prepared 2026-11-07 KST. This is a support-request draft, not a submitted case or confirmed Cloudflare defect. No credentials are included.
 
+**Current disposition:** maintainer deferred [CACHE-01](../../docs/known-issues.md) as non-blocking for initial implementation. Keep this evidence for future follow-up; no public post or additional investigation is pending as part of phase closeout. Historical references to blocked status and requested posting approval below describe earlier checkpoints.
+
 ## Summary
 
 Git-connected Pages production serves cached HTTP 200 HTML for a deleted path, while a diagnostic query for the same path returns the expected 404. Need the supported invalidation procedure for the shared pages.dev hostname and guidance on reliable deletion propagation.

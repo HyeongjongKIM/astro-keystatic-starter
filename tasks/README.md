@@ -2,9 +2,11 @@
 
 Organize tasks by phase. Start with the earliest phase that is not DONE, then select the earliest task whose dependencies are completed from that phase's README. Do not advance past a blocked dependency or phase.
 
-| Phase                                                              | Goal                                                   | Dependency | Status  |
-| ------------------------------------------------------------------ | ------------------------------------------------------ | ---------- | ------- |
-| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None       | BLOCKED |
+| Phase                                                              | Goal                                                   | Dependency | Status |
+| ------------------------------------------------------------------ | ------------------------------------------------------ | ---------- | ------ |
+| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None       | DONE   |
+
+Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. No next phase has been defined.
 
 ## Organization rules
 
