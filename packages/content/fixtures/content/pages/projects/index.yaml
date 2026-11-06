@@ -1,0 +1,7 @@
+title: Projects
+description: Projects page
+order: 0
+showInNavigation: true
+content:
+  - discriminant: richText
+    value: {}

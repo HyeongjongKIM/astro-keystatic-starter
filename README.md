@@ -2,7 +2,7 @@
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
-**Status:** runtime compatibility verified; workspace and shared content model complete; automatic navigation complete; public Site MVP is next.
+**Status:** runtime compatibility verified; workspace and shared content model, automatic navigation and public Site MVP implemented; deployment handoff is next.
 
 ## Target architecture
 
@@ -54,10 +54,14 @@ pnpm --filter @starter/admin build
 pnpm check
 ```
 
-`pnpm check` runs format, lint, types, deterministic unit tests and both builds. Git hooks run lint-staged, Conventional Commit validation, and pre-push types/tests. Content contract tests cover nested Pages, linked MDX/image paths, draft filtering and invalid metadata.
+`pnpm check` runs format, lint, types, deterministic unit tests and both builds. Git hooks run lint-staged, Conventional Commit validation, and pre-push types/tests. Content contract tests cover nested Pages, linked MDX/image paths, draft filtering and invalid metadata; `pnpm verify:site` validates built output against current content.
 
 Admin secrets belong in ignored `apps/admin/.dev.vars` (copy `.dev.vars.example`). The public App slug belongs in ignored `apps/admin/.env` (copy `.env.example`). Never put secrets in a `PUBLIC_` variable. Set `KEYSTATIC_GITHUB_REPO=owner/repository` in Admin `.env` before provisioning/building; the tracked config defaults to a placeholder.
 
 The selected Workers runtime passed deployed OAuth/CRUD validation in Task 00. Its local development API runner has a recorded unresolved `exports is not defined` error; a successful dev startup or editor shell response does not establish working local authentication. The separate `apps/admin/astro.setup.config.mjs` is for approved Node-only GitHub App provisioning, via `pnpm --filter @starter/admin exec astro dev --config astro.setup.config.mjs`; it is not a production hosting option. Use the default Workers config for builds and deployment. See Task 00 for evidence and limitations.
 
 The retained `tasks/01-initial-implementation/compatibility-probe` is excluded from the workspace and root format/lint checks to preserve historical reproduction files. Root lockfile and generated outputs are excluded from formatting.
+
+Site identity is editable in Keystatic Site Settings. Branding CSS variables live in `apps/site/src/styles/global.css`. Copy `apps/site/.env.example` to `.env` and set `PUBLIC_SITE_URL` to the deployment origin before building; it controls canonical, Open Graph, RSS and sitemap URLs. The development fallback is `https://example.com`, not a customer production domain.
+
+Editor images are stored in `apps/site/src/assets/images` and referenced with the `@assets` alias, then optimized at build time through Astro Image. Public Site output has no authentication routes or browser-time GitHub requests.

@@ -1,0 +1,31 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { siteContext } from '../lib/site';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ContentBody from '../components/ContentBody.astro';
+import type { Post } from '@starter/content';
+interface Props {
+  slug: string;
+  post: Post;
+}
+const { slug, post } = Astro.props;
+const { tree } = await siteContext();
+const trail = [
+  { title: tree.bySlug.get('home')!.entry.title, href: '/' },
+  { title: 'Posts', href: '/posts/' },
+  { title: post.title, href: `/posts/${slug}/` },
+];
+---
+
+<BaseLayout title={post.title} description={post.excerpt} type="article">
+  <Breadcrumbs items={trail} />
+  <article class="prose">
+    <h1>{post.title}</h1>
+    <p class="muted">
+      <time datetime={post.publishedDate || undefined}>
+        {post.publishedDate}
+      </time>
+    </p>
+    <ContentBody collection="posts" slug={slug} blocks={post.content} />
+  </article>
+</BaseLayout>

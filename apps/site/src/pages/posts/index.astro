@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { publishedPosts } from '../../lib/site';
+const posts = await publishedPosts();
+---
+
+<BaseLayout title="Posts" description="Latest published stories and updates.">
+  <div class="page-heading">
+    <p class="eyebrow">Journal</p>
+    <h1>Posts</h1>
+    <p>Stories and updates.</p>
+  </div>
+  <ul class="post-list">
+    {posts.map(({ slug, entry }) => (
+      <li>
+        <article>
+          <p class="muted">
+            <time datetime={entry.publishedDate || undefined}>
+              {entry.publishedDate}
+            </time>
+          </p>
+          <h2>
+            <a href={`/posts/${slug}/`}>{entry.title}</a>
+          </h2>
+          <p>{entry.excerpt}</p>
+        </article>
+      </li>
+    ))}
+  </ul>
+  {posts.length === 0 && <p>No published posts yet.</p>}
+</BaseLayout>

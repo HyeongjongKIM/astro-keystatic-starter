@@ -1,0 +1,28 @@
+---
+import NavigationItems from './NavigationItems.astro';
+import ContentImage from './ContentImage.astro';
+import type { SiteSettings } from '@starter/content';
+import type { NavigationItem } from '@starter/content/navigation';
+interface Props {
+  settings: SiteSettings;
+  navigation: NavigationItem[];
+}
+const { settings, navigation } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header shell">
+  <a class="brand" href="/">
+    {settings.logo && <ContentImage src={settings.logo} alt="" />}
+    <span>{settings.siteName}</span>
+  </a>
+  <nav aria-label="Main" class="desktop-navigation">
+    <NavigationItems items={navigation} currentPath={currentPath} />
+  </nav>
+  <details class="mobile-navigation">
+    <summary>Menu</summary>
+    <nav aria-label="Mobile">
+      <NavigationItems items={navigation} currentPath={currentPath} />
+    </nav>
+  </details>
+</header>

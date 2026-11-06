@@ -10,8 +10,8 @@ export const bodyField = (kind: 'pages' | 'posts') =>
             label: 'Body',
             options: {
               image: {
-                directory: `apps/site/public/images/${kind}`,
-                publicPath: `/images/${kind}/`,
+                directory: `apps/site/src/assets/images/${kind}`,
+                publicPath: `@assets/images/${kind}/`,
               },
             },
           }),

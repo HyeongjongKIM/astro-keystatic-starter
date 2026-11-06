@@ -16,8 +16,9 @@
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run --passWithNoTests",
     "build": "pnpm --filter @starter/site build && pnpm --filter @starter/admin build",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
-    "prepare": "husky"
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm verify:site",
+    "prepare": "husky",
+    "verify:site": "node scripts/verify-site.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -33,6 +34,8 @@
     "@commitlint/config-conventional": "21.2.4",
     "vitest": "5.1.0",
     "typescript": "6.0.3",
-    "@types/node": "26.6.6"
+    "@types/node": "26.6.6",
+    "axe-core": "4.14.0",
+    "yaml": "2.9.1"
   }
 }

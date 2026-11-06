@@ -54,7 +54,7 @@ All Keystatic paths are relative to the repository root. `storage.pathPrefix` is
 - Posts: `content/posts/*/index.yaml`.
 - Site Settings: `content/settings/site.yaml`.
 - Each `richText` block has `value.body` as `fields.mdx()`. The deployed editor and Reader-validated linked file is `content/{pages|posts}/{slug}/content/{index}/value/body.mdx`, compiled using the official Astro MDX integration and imported through Vite's glob API.
-- Rich text images: `apps/site/public/images/{pages|posts}/`; public URLs start `/images/{pages|posts}/`. Settings images use `apps/site/public/images/settings/`. Keep these repository and URL paths paired when customizing.
+- Rich text images: `apps/site/src/assets/images/{pages|posts}/`; serialized references start `@assets/images/{pages|posts}/`. Settings images use `apps/site/src/assets/images/settings/`. Keep these repository and URL paths paired when customizing.
 - YAML records contain title text; the slug is derived from the entry path through Keystatic's slug field. Posts default to draft; `isPublished` filters only explicit `published` status.
 
 The samples are starter content. The `home` sample currently renders at `/`; Task 03 owns the complete Home/reserved-route policy and hierarchy validation. No separate Navigation model is introduced. MDX files are tracked editable content, not generated outputs; never put secrets in them.
@@ -66,3 +66,7 @@ The reserved Page slug `home` maps to `/` and must occur exactly once. `home/chi
 Root namespaces reserved for generated/system routes: `posts`, `api`, `keystatic`, `_astro`, `images`, `404`, `rss.xml`, `robots.txt`, sitemap files and favicons. Dot/underscore names also fail the slug grammar. Every nested Page requires a Page for every parent prefix. Duplicate routes, missing Home, orphan nodes and non-integer orders fail the build with the offending slug.
 
 Hidden-parent policy: `showInNavigation: false` removes that Page and its descendants from menus. It does not suppress static routes or breadcrumb ancestors. Siblings sort by numeric order and then lexical slug; input enumeration and machine locale do not affect ties. Deleting a parent requires moving/deleting descendants first; otherwise the next build fails.
+
+Task 04 migrates the initial public-image fixtures to imported source assets for optimization, following the [official Keystatic Astro image recipe](https://keystatic.com/docs/recipes/astro-images). Site tsconfig maps `@assets/*` to `src/assets/*`; the MDX renderer maps standard image elements to an Astro Image component via a documented dynamic glob. Imported images emit dimensions and optimized WebP files; the logo uses the same resolver. Empty alt text is supported for decorative images; editors should provide descriptive alt text for meaningful images. Unknown image references fail the build. Historical Task 02 evidence refers to the earlier validated public layout.
+
+Unit tests use independent fixtures under `packages/content/fixtures`, so ordinary customer edits do not invalidate sample-specific assertions. `pnpm verify:site` checks built output against the current committed Posts, including draft exclusion. Posts are generated under `/posts/` and discovered through editorial links such as the Home journal link; primary menus remain derived only from Pages.

@@ -1,4 +1,5 @@
 ---
+import ContentImage from './ContentImage.astro';
 import type { ContentBlock } from '@starter/content';
 import type { MDXInstance } from 'astro';
 interface Props {
@@ -22,5 +23,5 @@ const bodies = blocks.map((block, index) => {
 ---
 
 {bodies.map((Body) => (
-  <Body />
+  <Body components={{ img: ContentImage }} />
 ))}

@@ -1,0 +1,23 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ContentBody from '../components/ContentBody.astro';
+import type { PageNode, Breadcrumb } from '@starter/content/navigation';
+interface Props {
+  page: PageNode;
+  trail: Breadcrumb[];
+}
+const { page, trail } = Astro.props;
+---
+
+<BaseLayout title={page.entry.title} description={page.entry.description}>
+  <Breadcrumbs items={trail} />
+  <article class="prose">
+    <h1>{page.entry.title}</h1>
+    <ContentBody
+      collection="pages"
+      slug={page.slug}
+      blocks={page.entry.content}
+    />
+  </article>
+</BaseLayout>

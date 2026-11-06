@@ -11,8 +11,8 @@ export const siteSettings = singleton({
     description: fields.text({ label: 'Description', multiline: true }),
     logo: fields.image({
       label: 'Logo',
-      directory: 'apps/site/public/images/settings',
-      publicPath: '/images/settings/',
+      directory: 'apps/site/src/assets/images/settings',
+      publicPath: '@assets/images/settings/',
     }),
     defaultSEO: fields.object(
       {

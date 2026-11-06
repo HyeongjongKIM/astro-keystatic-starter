@@ -45,3 +45,7 @@ Avoid formatting generated artifacts and lockfiles. Validate compatibility befor
 - https://typicode.github.io/husky/get-started.html
 - https://github.com/lint-staged/lint-staged
 - https://commitlint.js.org/
+
+## Public output verification
+
+`pnpm check` also runs `pnpm verify:site` after both builds. It checks current published/draft Posts against built routes, index, RSS and sitemap, plus image dimensions/optimized URLs, metadata, 404 noindex and absence of server/Admin artifacts. Schema tests use isolated fixtures instead of depending on editable starter content. `axe-core` is pinned for browser accessibility smoke audits; root CI does not claim full browser or assistive-technology coverage.

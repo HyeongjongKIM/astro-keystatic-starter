@@ -1,54 +1,25 @@
 ---
 import { reader } from '../lib/content';
-import ContentBody from '../components/ContentBody.astro';
-import NavigationItems from '../components/NavigationItems.astro';
-import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageLayout from '../layouts/PageLayout.astro';
 import {
   buildPageTree,
-  navigationItems,
   breadcrumbs,
   HOME_SLUG,
   type PageNode,
-  type NavigationItem,
   type Breadcrumb,
 } from '@starter/content/navigation';
-
 export async function getStaticPaths() {
   const tree = buildPageTree(await reader.collections.pages.all());
-  const navigation = navigationItems(tree.roots);
   return [...tree.bySlug.values()].map((page) => ({
     params: { slug: page.slug === HOME_SLUG ? undefined : page.slug },
-    props: { page, navigation, trail: breadcrumbs(tree, page.slug) },
+    props: { page, trail: breadcrumbs(tree, page.slug) },
   }));
 }
 interface Props {
   page: PageNode;
-  navigation: NavigationItem[];
   trail: Breadcrumb[];
 }
-const { page, navigation, trail } = Astro.props;
-const settings = await reader.singletons.siteSettings.readOrThrow();
+const { page, trail } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{page.entry.title} | {settings.siteName}</title>
-  </head>
-  <body>
-    <nav aria-label="Main">
-      <NavigationItems items={navigation} currentPath={page.href} />
-    </nav>
-    <Breadcrumbs items={trail} />
-    <main>
-      <h1>{page.entry.title}</h1>
-      <ContentBody
-        collection="pages"
-        slug={page.slug}
-        blocks={page.entry.content}
-      />
-    </main>
-  </body>
-</html>
+<PageLayout page={page} trail={trail} />

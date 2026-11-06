@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { readContent } from './reader';
 import { contentConfig, isPublished } from './index';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
+const root = fileURLToPath(new URL('./fixtures/', import.meta.url));
 
 describe('shared Keystatic content contract', () => {
   it('reads nested Pages, MDX block files and site image URLs from root storage', async () => {
@@ -20,12 +20,14 @@ describe('shared Keystatic content contract', () => {
     expect(page.content[0].discriminant).toBe('richText');
     expect(await page.content[0].value.body()).toContain('**Keystatic**');
     expect(await page.content[0].value.body()).toContain(
-      '/images/pages/home/sample.png',
+      '@assets/images/pages/home/sample.png',
     );
     const settings = await reader.singletons.siteSettings.readOrThrow();
-    expect(settings.logo).toBe('/images/settings/logo.png');
+    expect(settings.logo).toBe('@assets/images/settings/logo.png');
     for (const path of ['pages/home/sample.png', 'settings/logo.png']) {
-      const bytes = await readFile(join(root, 'apps/site/public/images', path));
+      const bytes = await readFile(
+        join(root, 'apps/site/src/assets/images', path),
+      );
       expect([...bytes.subarray(0, 8)]).toEqual([
         137, 80, 78, 71, 13, 10, 26, 10,
       ]);
