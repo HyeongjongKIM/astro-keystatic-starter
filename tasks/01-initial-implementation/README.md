@@ -11,7 +11,7 @@ Follow tasks in order. Each task has explicit dependencies and acceptance criter
 | 00  | [Runtime compatibility](00-compatibility.md) | None       | DONE   |
 | 01  | [Workspace foundation](01-foundation.md)     | 00         | DONE   |
 | 02  | [Content model](02-content.md)               | 01         | DONE   |
-| 03  | [Automatic navigation](03-navigation.md)     | 02         | TODO   |
+| 03  | [Automatic navigation](03-navigation.md)     | 02         | DONE   |
 | 04  | [Public website](04-site.md)                 | 03         | TODO   |
 | 05  | [Cloudflare deployment](05-deployment.md)    | 04         | TODO   |
 

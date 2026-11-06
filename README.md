@@ -2,7 +2,7 @@
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
-**Status:** runtime compatibility verified; workspace and shared content model complete; automatic navigation is next.
+**Status:** runtime compatibility verified; workspace and shared content model complete; automatic navigation complete; public Site MVP is next.
 
 ## Target architecture
 

@@ -4,7 +4,8 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
-    "./reader": "./reader.ts"
+    "./reader": "./reader.ts",
+    "./navigation": "./navigation.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

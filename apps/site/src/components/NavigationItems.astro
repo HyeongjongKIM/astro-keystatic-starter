@@ -1,0 +1,24 @@
+---
+import type { NavigationItem } from '@starter/content/navigation';
+interface Props {
+  items: readonly NavigationItem[];
+  currentPath: string;
+}
+const { items, currentPath } = Astro.props;
+---
+
+<ul>
+  {items.map((item) => (
+    <li>
+      <a
+        href={item.href}
+        aria-current={item.href === currentPath ? 'page' : undefined}
+      >
+        {item.title}
+      </a>
+      {item.children.length > 0 && (
+        <Astro.self items={item.children} currentPath={currentPath} />
+      )}
+    </li>
+  ))}
+</ul>
