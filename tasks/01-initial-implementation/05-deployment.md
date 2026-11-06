@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** BLOCKED
+**Status:** IN_PROGRESS
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -105,3 +105,11 @@ Environment: macOS arm64, pinned Node 22.23.4/pnpm 12.18.0, authenticated Cloudf
 Current blocker: a previously visited, deleted Page still serves old HTML on its unchanged approved production URL after successful Git deployment and an accepted documented owned-zone purge. Do not mark Task 05 or initial implementation DONE. No unsupported proxy, cache-key query workaround, framework patch or architecture replacement was introduced.
 
 Final cleanup check: after removing the obsolete validation deployments, the plain custom test URL still returned 200 (Age 304); both the custom Home and existing personal apex returned 200. Final `pnpm check` on the cleaned source exited 0 with 28 tests; `git diff --check` passed.
+
+### 2026-11-07 KST — deployment history and DNS routing isolation
+
+Investigating both deployment history and caches at maintainer request. Current deployment-specific hostname returns 404 for the deleted path; queried custom-host 404 has the same body hash. Both deleted historical deployment hosts also return 404. Canonical production selection is correct. No Cache Rules/Cache Response Rules/Page Rules exist; zone Workers routes are empty; Always Online is off. Detailed evidence is in [support investigation](pages-cache-support.md).
+
+Official Debugging Pages recommends DNS Only comparison. Temporarily switched only starter CNAME from proxied to DNS Only and observed authoritative CNAME TTL 300. After local resolver addresses updated, ordinary URL plus curl IPv4/IPv6 all returned 404. Restored proxy for controlled comparison: the formerly selected proxied IPv6/SIN route still returned 200/DYNAMIC/Age2894; proxied IPv4/HKG returned404. Current Pages target IPs for both families return404/ICN. This demonstrates route/edge-dependent behavior, not proof of an IPv6 product defect or a complete internal root cause.
+
+Reapplied the officially documented DNS Only setting to the starter subdomain for a new end-to-end static publication/update/rollback/deletion validation. Existing personal apex/www remain proxied and unchanged. Do not mark this DNS configuration as a verified fix until the unchanged new URL passes deletion after deployment.

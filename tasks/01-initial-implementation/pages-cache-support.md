@@ -63,3 +63,29 @@ Applied exact-URL purge, then the official Pages guidance's zone Purge Everythin
 Production pages.dev now uses the official Bulk Redirect procedure to the custom hostname; the old proof path redirects and ends at custom 404. Preview hosts remain independent. This is not presented as a cache fix for the newly failing custom-domain URL.
 
 Authenticated Free-plan support portal → Submit a case → Other says technical support cases are unavailable, directing to Community/AI/docs. This document remains a draft pending explicit authorization to publish externally.
+
+## Deployment history, routing and cache comparison
+
+2026-11-07 KST follow-up requested by maintainer. Read-only Pages API confirmed canonical production deployment b7bef704-5712-42f4-b4c8-c7aab9879c56, commit 597be97a49cd4b9aba7a9cbed1830d60ba11422a (temporary Page removed), successful deployment completed 2026-11-06 21:18:40 UTC. Its custom alias is correctly attached. Both obsolete Page-containing deployment GET requests returned 404. The build root, command and output match the agreed static Site. Latest deployment is a separate preview deployment from 1e686d1; it is not incorrectly selected as production.
+
+| Request path / host                                              | Observed result                                           |
+| ---------------------------------------------------------------- | --------------------------------------------------------- |
+| Current deployment-specific host, `/projects/domain-validation/` | 404, deleted title absent                                 |
+| Production custom host, same unchanged path                      | 200, deleted revision two, Age 2424, DYNAMIC, SIN         |
+| Production custom host, diagnostic query variant                 | 404; body SHA-256 matches current deployment-specific 404 |
+| Preview host, same deleted path                                  | 404                                                       |
+| Production pages.dev alias                                       | 301 to matching custom path                               |
+| Custom host, `/projects/domain-validation` (no slash)            | 404                                                       |
+| Custom host, `/projects/domain-validation/index.html`            | 404                                                       |
+
+Interpretation: the current production build does not itself contain this Page. Preserved deployment history alone does not explain the wrong custom-host response. A path/host/edge-specific response persists. Do not treat query/path variation as an acceptance fix.
+
+Authenticated dashboard inspection found no Cache Rules, no Cache Response Rules and no Page Rules; official zone Workers routes API returned an empty list. DNS target is this Pages project's hostname. Always Online is off; development mode is off; cache level is the dashboard's Standard setting (API value aggressive), browser cache TTL 14400. No additional cache rule was created.
+
+Consulted [Debugging Pages](https://developers.cloudflare.com/pages/configuration/debugging-pages/), which recommends DNS Only comparison when custom-domain behavior differs. Temporarily switched only the starter CNAME to DNS Only at 2026-11-06 22:00:25 UTC, with the intention to restore it after comparison. Dashboard PATCH returned 200; authoritative nameserver then returned CNAME to this Pages project with TTL 300. Pages domain/certificate remained active. Initial ordinary requests still used the old proxied IPv6 address and returned cached 200/HIT/SIN. Explicit connections preserving the same HTTPS hostname/path to both current Pages IPv4 and IPv6 addresses returned 404/ICN. A curl -4 request also returned 404/HKG while curl -6 still used the old address and returned 200/HIT/SIN. These controlled address-selection requests are diagnostics, not proof that every normal client has recovered; DNS propagation and data-center differences are confounded.
+
+Official [Serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/) documents per-data-center asset retention up to one week. This makes retained edge assets a plausible explanation, not a confirmed cause. Official [cache response guidance](https://developers.cloudflare.com/cache/concepts/cache-responses/) explains that Age measures cached-object age and can reflect an upper tier; it is not elapsed time since deletion. Continued observation is necessary before asserting a permanent failure or a DNS-only fix.
+
+The two deleted deployment-specific hosts (8451ec17 and 51d7801a) also returned HTTP 404, with and without diagnostic query strings, and neither response contained the deleted title. This differs from an orphaned deployment host still serving content. Root cause is not established by deployment-history retention.
+
+During the DNS-only interval, authoritative DNS advertised the expected CNAME, TTL 300, while an ordinary curl connection still used the formerly proxied IPv6 address 2606:4700:3037::6815:16d5 (SIN) and received stale 200/HIT. Address-controlled requests to current Pages IPv4 addresses 172.66.47.120/172.66.44.136 and IPv6 addresses 2606:4700:310c::ac42:2c88/2606:4700:310c::ac42:2f78 all returned 404/ICN while preserving URL hostname, TLS verification and path. The CLI environment had no proxy variables. These results identify a route/data-center difference but do not independently prove an IPv6-specific product defect.
