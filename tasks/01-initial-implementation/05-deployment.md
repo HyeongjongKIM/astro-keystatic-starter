@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** BLOCKED
+**Status:** IN_PROGRESS
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -82,3 +82,9 @@ Local experiment verification: `pnpm check` exited 0, including 28 tests and bot
 Current outcome: Task 05/phase remain BLOCKED on public deletion freshness. The supported header experiment did not resolve the blocker; further work needs the domain choice or supported CDN invalidation.
 
 Final experiment cleanup verification: the official deployment GET API returned HTTP 404 for both obsolete temporary-page deployments d9685334 and ba06a4f4 after deletion. The final reverted source passed `pnpm check` (exit 0) on macOS with Node 22.23.4/pnpm 12.18.0: formatting, lint, type checks, 28 tests, Site/Admin builds and static Site verification. The existing Admin bundle-size warning remains.
+
+### 2026-11-07 KST — approved custom-domain validation
+
+Maintainer authorized both custom-domain validation and investigation of the pages.dev support path, including disconnection of an existing Pages domain if necessary. Actual zone is `hyeongjongkim.dev`; apex and www target existing `hyeongjongkim-dev.pages.dev`. Dashboard DNS inspection found only those two records, so no disconnection was necessary. Registered `astro-starter.hyeongjongkim.dev` with this Pages project and added its proxied CNAME to `astro-keystatic-starter-site.pages.dev` through authenticated dashboard. DNS verification became active; certificate validation was pending at this checkpoint. Production PUBLIC_SITE_URL updated to the approved custom origin; preview remains separate. A hidden Git-authored temporary Page will validate unchanged-URL updates, rollback and deletion after activation.
+
+Authenticated support portal explicitly reports Free plans can open cases only for billing/account/registrar and routes Other topics to Community/AI/docs. Prepared [support reproduction draft](pages-cache-support.md); no ticket or community post submitted.
