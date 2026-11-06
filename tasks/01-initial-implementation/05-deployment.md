@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** BLOCKED
+**Status:** IN_PROGRESS
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -62,3 +62,9 @@ Remaining verification at this checkpoint: push deployment/redirect configuratio
 Maintainer direction required before continuing: arrange supported Cloudflare pages.dev cache invalidation/support and revalidate the unchanged URL, or provide an approved customer-owned production domain/zone so the documented cache controls can be configured and tested. An architecture change has not been made. Task 05 and this phase remain BLOCKED; Tasks 00–04 remain DONE. Successful compile/deploy/query-distinct checks do not close this public freshness gate.
 
 Final cleanup: stopped the local Site preview and closed the dedicated Playwright browser; removed its ignored snapshots/logs, including OAuth callback/App settings captures. General CLI logins and the ignored mode-specific local development credential files were retained; credential files restricted to owner read/write. `git diff --check` passed before the final documentation commit.
+
+### 2026-11-07 KST — resumed supported cache-header experiment
+
+Maintainer requested continuation. Testing only documented Pages `_headers` and CDN-Cache-Control behavior: explicit browser revalidation and CDN no-store for static responses. This is an experiment, not a verified fix or cache purge. The original ordinary deleted URL must return 404 after deployment before closing the blocker; no custom domain or hosting architecture change has been made.
+
+Local experiment verification: `pnpm check` exited 0, including 28 tests and both builds; built Site `_headers` matches its source. Remote behavior is still pending.
