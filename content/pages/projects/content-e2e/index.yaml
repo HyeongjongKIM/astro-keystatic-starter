@@ -1,7 +1,0 @@
-title: Content E2E
-description: Deployed update verified
-order: 0
-showInNavigation: true
-content:
-  - discriminant: richText
-    value: {}
