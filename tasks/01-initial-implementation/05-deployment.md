@@ -1,6 +1,6 @@
 # Task 05 — Cloudflare Deployment and Customer Handoff
 
-**Status:** IN_PROGRESS
+**Status:** BLOCKED
 
 **Depends on:** Task 04 DONE  
 **Read:** [Deployment](../../docs/deployment.md), [Tooling](../../docs/tooling.md)
@@ -68,3 +68,17 @@ Final cleanup: stopped the local Site preview and closed the dedicated Playwrigh
 Maintainer requested continuation. Testing only documented Pages `_headers` and CDN-Cache-Control behavior: explicit browser revalidation and CDN no-store for static responses. This is an experiment, not a verified fix or cache purge. The original ordinary deleted URL must return 404 after deployment before closing the blocker; no custom domain or hosting architecture change has been made.
 
 Local experiment verification: `pnpm check` exited 0, including 28 tests and both builds; built Site `_headers` matches its source. Remote behavior is still pending.
+
+### 2026-11-07 KST — documented header experiment rejected
+
+- Maintainer requested continuation. Consulted official Pages custom-header and CDN-Cache-Control documentation, and tested `Cache-Control: public, max-age=0, must-revalidate` plus `CDN-Cache-Control: no-store`. Header policy checkpoint 07a9369 deployed successfully; current Home showed the policy. The originally cached deleted URL still returned old HTTP 200 despite its displayed headers being updated, so header appearance was not considered a fix.
+- Added a hidden temporary Page through Git commit `d3d531d399e6627129af93e59c1b1ae6e527db9f` to isolate CDN behavior from authentication. Deployment `d9685334-d7c5-4102-aa16-119b93a87589` succeeded; unchanged ordinary URL `/projects/cache-policy-check/` returned revision one with no-store. This was a Git-authored cache test, not an additional claimed Admin UI write test.
+- Updated via commit `c011292843be8f6bb5f81f313c0434056598be0b`; deployment `ba06a4f4-7126-477b-b536-cf594d4fd04d` succeeded and the same query-free URL showed revision two. Rolled back to revision one's deployment then restored revision two; the same ordinary URL showed the correct revision both times.
+- Removed temporary Page via commit `c12eb88e6a091c6d7082d1a119b07bbf14673dd5` and detached CDN no-store from hashed assets as a documented path exception. Production deployment `fc252f32-a277-43a0-81e4-4935279111b0` succeeded, but the previously visited ordinary Page URL still returned HTTP 200, CF-Cache-Status HIT and Age (121 observed), despite no-store headers; the temporary Page no longer exists in the source. Thus deletion staleness also reproduces for a Page first created under the tested policy. The earlier possibility that only pre-policy test cache remained is rejected.
+- The final source reverses the ineffective header experiment rather than claiming support or keeping an unproven cache policy. No new framework dependencies or runtime architecture changes were made. Both temporary Page source additions were removed.
+- Local `pnpm check` passed after the path exception and test-page removal: format, lint, both typecheck families, 28 tests, independent builds and static output checks. Git hooks passed for each test checkpoint.
+- Read-only zone discovery found `hyeongjongkim.dev` in this Cloudflare account. Proposed optional validation hostname is `astro-starter.hyeongjongkim.dev`; no custom hostname or DNS record has been changed. Requested maintainer choice between connecting that hostname and using supported Cloudflare pages.dev cache invalidation/support. The earlier optional acceptance of only historical cache is no longer applicable, and the user-facing question was corrected.
+
+Current outcome: Task 05/phase remain BLOCKED on public deletion freshness. The supported header experiment did not resolve the blocker; further work needs the domain choice or supported CDN invalidation.
+
+Final experiment cleanup verification: the official deployment GET API returned HTTP 404 for both obsolete temporary-page deployments d9685334 and ba06a4f4 after deletion. The final reverted source passed `pnpm check` (exit 0) on macOS with Node 22.23.4/pnpm 12.18.0: formatting, lint, type checks, 28 tests, Site/Admin builds and static Site verification. The existing Admin bundle-size warning remains.
