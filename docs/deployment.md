@@ -9,14 +9,14 @@ Keystatic uses server-side Node APIs and the Workers runtime is different from N
 
 ## Configuration contract
 
-| Name | Scope | Classification |
-| --- | --- | --- |
-| `PUBLIC_SITE_URL` | Site | Public build-time URL; starter-defined |
-| `KEYSTATIC_GITHUB_REPO` | Admin | Non-secret `owner/repo`; starter-defined |
-| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Admin | Public Keystatic Astro setting |
-| `KEYSTATIC_GITHUB_CLIENT_ID` | Admin | GitHub App identifier |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | Admin | Secret |
-| `KEYSTATIC_SECRET` | Admin | Secret |
+| Name                               | Scope | Classification                           |
+| ---------------------------------- | ----- | ---------------------------------------- |
+| `PUBLIC_SITE_URL`                  | Site  | Public build-time URL; starter-defined   |
+| `KEYSTATIC_GITHUB_REPO`            | Admin | Non-secret `owner/repo`; starter-defined |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Admin | Public Keystatic Astro setting           |
+| `KEYSTATIC_GITHUB_CLIENT_ID`       | Admin | GitHub App identifier                    |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET`   | Admin | Secret                                   |
+| `KEYSTATIC_SECRET`                 | Admin | Secret                                   |
 
 Starter-defined variables must actually be consumed in application code. Never put secrets in `PUBLIC_` values, tracked config, or Wrangler `vars`.
 

@@ -1,0 +1,4 @@
+# Local Workers secrets; use wrangler secret bulk for deployed secrets.
+KEYSTATIC_GITHUB_CLIENT_ID=
+KEYSTATIC_GITHUB_CLIENT_SECRET=
+KEYSTATIC_SECRET=

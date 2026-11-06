@@ -1,0 +1,12 @@
+{
+  "name": "@starter/config",
+  "private": true,
+  "type": "module",
+  "exports": "./index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}

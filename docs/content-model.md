@@ -2,22 +2,22 @@
 
 ## Entities
 
-| Key | Keystatic type | Initial fields |
-| --- | --- | --- |
-| `pages` | Collection | title/slug, description, order, showInNavigation, content |
-| `posts` | Collection | title/slug, excerpt, publishedDate, status, content |
-| `siteSettings` | Singleton | siteName, description, logo, defaultSEO |
+| Key            | Keystatic type | Initial fields                                            |
+| -------------- | -------------- | --------------------------------------------------------- |
+| `pages`        | Collection     | title/slug, description, order, showInNavigation, content |
+| `posts`        | Collection     | title/slug, excerpt, publishedDate, status, content       |
+| `siteSettings` | Singleton      | siteName, description, logo, defaultSEO                   |
 
 Do **not** create a separate Navigation entity or Directory type.
 
 ## Hierarchical Pages
 
-| Page | Slug | URL |
-| --- | --- | --- |
-| Home | explicit reserved special value | `/` |
-| About | `about` | `/about` |
-| Projects | `projects` | `/projects` |
-| Photography | `projects/photography` | `/projects/photography` |
+| Page        | Slug                            | URL                     |
+| ----------- | ------------------------------- | ----------------------- |
+| Home        | explicit reserved special value | `/`                     |
+| About       | `about`                         | `/about`                |
+| Projects    | `projects`                      | `/projects`             |
+| Photography | `projects/photography`          | `/projects/photography` |
 
 - Evaluate Keystatic's documented nested `**` collection path and Astro's `[...slug].astro` + `getStaticPaths()`.
 - Derive navigation and breadcrumbs from the same Page collection used for static routes.

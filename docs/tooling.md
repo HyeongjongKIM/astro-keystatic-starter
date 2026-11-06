@@ -2,16 +2,16 @@
 
 ## Tools
 
-| Tool | Standard |
-| --- | --- |
-| ESLint | Flat Config, `@eslint/js`, `typescript-eslint`, `eslint-plugin-astro` |
-| Prettier | Root config and `prettier-plugin-astro`; add Tailwind plugin only if Tailwind is used |
-| eslint-config-prettier | Disable conflicting formatting rules |
-| Husky | Official Git hook setup |
-| lint-staged | Pre-commit checks on staged files |
-| Commitlint | Conventional Commits |
-| Vitest | Deterministic unit tests |
-| GitHub Actions | Required pull-request and push checks |
+| Tool                   | Standard                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| ESLint                 | Flat Config, `@eslint/js`, `typescript-eslint`, `eslint-plugin-astro`                 |
+| Prettier               | Root config and `prettier-plugin-astro`; add Tailwind plugin only if Tailwind is used |
+| eslint-config-prettier | Disable conflicting formatting rules                                                  |
+| Husky                  | Official Git hook setup                                                               |
+| lint-staged            | Pre-commit checks on staged files                                                     |
+| Commitlint             | Conventional Commits                                                                  |
+| Vitest                 | Deterministic unit tests                                                              |
+| GitHub Actions         | Required pull-request and push checks                                                 |
 
 ## Required root files
 
