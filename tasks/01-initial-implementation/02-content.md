@@ -1,6 +1,6 @@
 # Task 02 — Shared Content System
 
-**Status:** IN_PROGRESS
+**Status:** BLOCKED
 
 **Depends on:** Task 01 DONE  
 **Read:** [Content model](../../docs/content-model.md), [Architecture](../../docs/architecture.md)
@@ -40,3 +40,16 @@ Environment: macOS arm64, Node 22.23.4/pnpm 12.18.0 via pinned `npm exec`. Offic
 - Python inspection of `apps/site/dist/index.html`: `<strong>Keystatic</strong>` and `/images/pages/home/sample.png` present; matching built image exists.
 - Paths and `pathPrefix` decision documented in `docs/content-model.md`; fixtures are Reader-validated, but actual new-schema Admin writes are not yet claimed.
 - Started approved Node-only provisioning configuration and opened `/keystatic/setup` in dedicated Chrome; prepared deployed preview URL and requested account-owner GitHub App creation/installation for this repository only. No credentials committed. Runtime deployment and actual UI CRUD/image validation remain pending; Task 03 must not start yet.
+
+### 2026-11-06 — preview deployment and browser validation checkpoint
+
+- Implementation checkpoint committed as `fbe5acf` and pushed to `origin/main`, including cleanup/foundation history. Pre-commit/commit-msg hooks passed; pre-push typecheck and all 4 tests passed.
+- `pnpm install --frozen-lockfile`: exit 0 after final dependency changes.
+- `pnpm --filter @starter/admin exec wrangler deploy`: exit 0 with official generated config; preview Worker `astro-keystatic-starter-admin-preview`, version `8872b224-42e8-4be5-8df3-22e5806da00a`, URL `https://astro-keystatic-starter-admin-preview.jonkim0309.workers.dev`. Deployment reported only ASSETS; no KV/R2/D1/Images bindings were provisioned. This deployment has no GitHub App credentials yet.
+- Python urllib preview request returned HTTP 403; `curl` for `/keystatic` returned HTTP 200. As in the earlier probe, the client-dependent discrepancy is undiagnosed; a shell response is not OAuth/write evidence.
+- Official Site `astro preview` on port 4323 plus Playwright/system Chrome: rendered `strong` text was `Keystatic`; sample image had alt `Starter sample`, `complete=true`, natural dimensions 8×8. Closed the Site tab and stopped preview through `astro preview stop`.
+- GitHub Actions run `42228796905` on fbe5acf completed with `conclusion: success`, confirmed via `gh run view 42228796905 --json status,conclusion`. This verifies the configured frozen install and root checks on the Linux runner.
+
+**Exact blocker:** account-owner browser login and new GitHub App creation/installation are required to obtain the documented credentials and perform deployed UI writes. Dedicated Chrome remains at GitHub login after the official setup form submission. Requested App name `Astro Keystatic Starter Admin Preview` and installation restricted to `HyeongjongKIM/astro-keystatic-starter`. Node-only provisioning server remains at `http://127.0.0.1:4321`; no local auth file values are included in tracked evidence.
+
+After creation/installation: provision Worker secrets privately, rebuild with the public App slug, complete real OAuth and create/read/update/delete/image checks, inspect the resulting repository files/commits, pull those commits and validate Site reading/rendering against actual serialized output. Only then mark Task 02 DONE and begin Task 03. No architecture change is proposed.
