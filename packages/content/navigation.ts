@@ -3,6 +3,7 @@ import type { Page } from './index';
 export const HOME_SLUG = 'home';
 export const RESERVED_ROOTS = new Set([
   'posts',
+  'journal',
   'api',
   'keystatic',
   '_astro',

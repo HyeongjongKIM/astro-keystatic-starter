@@ -94,6 +94,7 @@ describe('Page routes and navigation', () => {
   it.each([
     'posts',
     'posts/story',
+    'journal',
     'api',
     'images/example',
     'keystatic',

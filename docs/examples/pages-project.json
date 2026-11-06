@@ -1,0 +1,88 @@
+{
+  "name": "customer-site",
+  "production_branch": "main",
+  "build_config": {
+    "root_dir": "",
+    "build_command": "pnpm install --frozen-lockfile && pnpm --filter @starter/site build",
+    "destination_dir": "apps/site/dist",
+    "build_caching": true
+  },
+  "source": {
+    "type": "github",
+    "config": {
+      "owner": "OWNER",
+      "owner_id": "OWNER_ID",
+      "repo_name": "REPOSITORY",
+      "repo_id": "REPOSITORY_ID",
+      "production_branch": "main",
+      "production_deployments_enabled": true,
+      "preview_deployment_setting": "custom",
+      "preview_branch_includes": ["preview"],
+      "preview_branch_excludes": ["main"],
+      "path_includes": [
+        "apps/site/*",
+        "packages/content/*",
+        "packages/config/*",
+        "content/*",
+        "package.json",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+        ".nvmrc"
+      ],
+      "path_excludes": [],
+      "pr_comments_enabled": true
+    }
+  },
+  "deployment_configs": {
+    "production": {
+      "env_vars": {
+        "NODE_VERSION": {
+          "type": "plain_text",
+          "value": "22.23.4"
+        },
+        "PNPM_VERSION": {
+          "type": "plain_text",
+          "value": "12.18.0"
+        },
+        "SKIP_DEPENDENCY_INSTALL": {
+          "type": "plain_text",
+          "value": "true"
+        },
+        "PUBLIC_SITE_URL": {
+          "type": "plain_text",
+          "value": "https://customer-site.pages.dev"
+        },
+        "HUSKY": {
+          "type": "plain_text",
+          "value": "0"
+        }
+      },
+      "build_image_major_version": 3
+    },
+    "preview": {
+      "env_vars": {
+        "NODE_VERSION": {
+          "type": "plain_text",
+          "value": "22.23.4"
+        },
+        "PNPM_VERSION": {
+          "type": "plain_text",
+          "value": "12.18.0"
+        },
+        "SKIP_DEPENDENCY_INSTALL": {
+          "type": "plain_text",
+          "value": "true"
+        },
+        "PUBLIC_SITE_URL": {
+          "type": "plain_text",
+          "value": "https://preview.customer-site.pages.dev"
+        },
+        "HUSKY": {
+          "type": "plain_text",
+          "value": "0"
+        }
+      },
+      "build_image_major_version": 3
+    }
+  }
+}

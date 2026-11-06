@@ -53,3 +53,5 @@ Create customer repository → create Pages/Worker → configure domain and GitH
 - https://developers.cloudflare.com/pages/configuration/redirects/
 
 Admin repository identity uses Astro `env.schema` as a public client variable, consumed from `astro:env/client`, because Keystatic config runs in both client and server bundles. Keep the same environment schema in default and Node provisioning configs. Set `KEYSTATIC_GITHUB_REPO` before building; runtime Worker secrets do not change the already-built editor repository selection. Never classify authentication credentials as public client variables.
+
+Full reproducible setup and operations: [customer-setup.md](customer-setup.md). The [Pages REST template](examples/pages-project.json) includes build settings, watch paths and separated URL/tooling variables. Admin deployment scripts select explicit preview/production configs and Astro modes; no content-triggered Admin build is configured.

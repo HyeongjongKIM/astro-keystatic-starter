@@ -3,10 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "astro dev --mode preview",
+    "build": "astro build --mode preview",
     "preview": "astro preview",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "build:production": "astro build --config astro.production.config.mjs --mode production",
+    "deploy:preview": "pnpm build && wrangler deploy",
+    "deploy:production": "pnpm build:production && wrangler deploy",
+    "setup:app": "astro dev --config astro.setup.config.mjs --mode production"
   },
   "dependencies": {
     "astro": "7.4.7",
