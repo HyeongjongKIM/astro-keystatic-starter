@@ -28,6 +28,13 @@ Create Keystatic Pages, Posts, and Site Settings with schema sharing and a minim
 
 ## Verification evidence
 
+### 2026-11-09 — collection list columns follow-up (DONE)
+
+- [x] Maintainer-requested scope: configure Pages list columns `title`, `order`, `showInNavigation` and Posts columns `title`, `status`, `publishedDate`. Previously neither collection configured columns, leaving the default slug-only view. Content fields and stored records are unchanged.
+- Official evidence: [Keystatic collection columns](https://keystatic.com/docs/collections#columns) documents additional field keys via `columns`; installed `@keystatic/core` 0.6.9 declares the option.
+- Environment: macOS arm64, Node 22.23.4/pnpm 12.18.0 via pinned `npm exec`. `pnpm check` exited 0: format, lint, types (no errors/warnings/hints), 28 tests, both builds and static Site verification passed. Existing Admin client chunk-size warning remains. `git diff --check` passed.
+- Browser visual validation and deployment were not performed. Local editors need the current Admin code; deployed Admin needs rebuild/deploy. No auth/write operations changed. Next task: none queued.
+
 ### 2026-11-09 — customer Admin branding follow-up (DONE)
 
 - [x] Maintainer-approved scope: expose public build-time `ADMIN_BRAND_NAME` through the existing Astro environment schema and shared `createContentConfig`, using official `ui.brand.name`. Missing/blank names fall back to `Content Admin`; whitespace is trimmed. Site Settings naming stays independent. Updated `.env.example`, root README and customer provisioning instructions.

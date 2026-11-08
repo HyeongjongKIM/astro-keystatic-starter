@@ -5,6 +5,7 @@ import { bodyField } from '../blocks/body';
 export const pages = collection({
   label: 'Pages',
   slugField: 'title',
+  columns: ['title', 'order', 'showInNavigation'],
   path: 'content/pages/**/',
   format: { data: 'yaml' },
   schema: {

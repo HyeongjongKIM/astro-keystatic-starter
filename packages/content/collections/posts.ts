@@ -5,6 +5,7 @@ import { bodyField } from '../blocks/body';
 export const posts = collection({
   label: 'Posts',
   slugField: 'title',
+  columns: ['title', 'status', 'publishedDate'],
   path: 'content/posts/*/',
   format: { data: 'yaml' },
   schema: {
