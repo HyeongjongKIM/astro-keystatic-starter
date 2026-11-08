@@ -27,6 +27,10 @@ Build a reusable, customer-specific Astro + Keystatic starter. This file governs
 - **Version policy:** Record selected dependency versions and official support evidence in Task 00. Pin reproducible tooling as specified.
 - **No assumptions:** Mark inferred proposals as proposals; record actual results in task evidence.
 
+## Commit messages
+
+Use Conventional Commits with optional scope: `admin` for Admin-only changes, `site` for public Site-only changes. Omit scope for shared changes, root tooling, and general docs. Choose by purpose, not file path. Other scopes are rejected by Commitlint.
+
 ## Required checks
 
 When configured, run `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, and relevant `pnpm build`. Never mark a check passed without running it. Workers auth and write operations require deployed E2E validation.

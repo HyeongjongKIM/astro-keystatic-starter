@@ -23,6 +23,8 @@ Full milestone context: [../../docs/roadmap.md](../../docs/roadmap.md).
 
 Task 01 records the completed 2026-11-09 maintainer-requested combined development command follow-up; phase status remains DONE.
 
+Task 01 also records the completed 2026-11-09 commit scope policy and CI validation follow-up; phase status remains DONE.
+
 Task 02 records the completed 2026-11-09 maintainer-requested customer Admin branding follow-up; phase status remains DONE.
 
 Task 02 also records the completed 2026-11-09 collection list columns follow-up for Pages and Posts; phase status remains DONE.

@@ -34,6 +34,7 @@ Check workspace package names and avoid recursive script loops.
 - commit-msg: `pnpm exec commitlint --edit "$1"`.
 - pre-push: `pnpm typecheck && pnpm test`.
 - CI: pinned Node/pnpm, frozen install, format, lint, typecheck, test, both builds. Hooks are not a substitute for CI.
+- Commitlint enforces the [commit rules](../AGENTS.md#commit-messages) locally and in CI. CI checks PR/push commit ranges; new-branch pushes check only the latest commit.
 - Runtime OAuth and GitHub writes need deployed preview tests; build success alone is insufficient.
 
 Avoid formatting generated artifacts and lockfiles. Validate compatibility before installing any additional plugin.

@@ -27,6 +27,12 @@ Initialize reproducible pnpm workspace with separate Astro Site and Keystatic Ad
 
 ## Verification evidence
 
+### 2026-11-09 — commit scope policy follow-up (DONE)
+
+- [x] Added the agreed commit rules to AGENTS.md, Commitlint and CI. Official sources: [rules](https://commitlint.js.org/reference/rules.html), [CI setup](https://commitlint.js.org/guides/ci-setup.html).
+- macOS arm64, Node 22.23.4/pnpm 12.18.0: eight accept/reject cases via `pnpm exec commitlint` passed; `pnpm exec commitlint --from 53bf965 --to HEAD --verbose` accepted all three commits. CI YAML parsed and run steps passed `bash -n`.
+- `pnpm check`: exit 0 (including 28 tests and both builds); existing Admin size warning remains. Remote CI unverified. Next task: none queued.
+
 ### 2026-11-09 — combined local development command
 
 - [x] Maintainer-requested tooling follow-up: root `pnpm dev` starts `dev:site` and `dev:admin` concurrently, with Site on 4321 and Admin on 4322. Individual commands remain available; README documents usage. No dependencies added.
