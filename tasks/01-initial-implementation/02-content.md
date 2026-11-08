@@ -28,6 +28,15 @@ Create Keystatic Pages, Posts, and Site Settings with schema sharing and a minim
 
 ## Verification evidence
 
+### 2026-11-09 — customer Admin branding follow-up (DONE)
+
+- [x] Maintainer-approved scope: expose public build-time `ADMIN_BRAND_NAME` through the existing Astro environment schema and shared `createContentConfig`, using official `ui.brand.name`. Missing/blank names fall back to `Content Admin`; whitespace is trimmed. Site Settings naming stays independent. Updated `.env.example`, root README and customer provisioning instructions.
+- Official evidence: [Keystatic UI](https://keystatic.com/docs/user-interface), [Astro environment variables](https://docs.astro.build/en/guides/environment-variables/), and installed `@keystatic/core` 0.6.9 declarations expose `ui.brand.name`.
+- Environment: macOS arm64, Node 22.23.4/pnpm 12.18.0 through pinned `npm exec`.
+- Initial `pnpm check` stopped at formatting in `keystatic.config.ts`; ran Prettier on that file. Subsequent `pnpm check` exited 0: format, lint, types (no errors/warnings/hints), 28 tests, both builds and static Site verification passed. Existing Admin chunk-size warning remains.
+- `rg -l 'Content Admin' apps/admin/dist/client` found the default name in the preview client bundle. `ADMIN_BRAND_NAME='Customer Brand Verification' pnpm --filter @starter/admin build:production` exited 0; `rg -l 'Customer Brand Verification' apps/admin/dist/client` confirmed the override in the production client bundle. The override was command-scoped; no customer environment files were changed.
+- No deployment or browser visual validation performed; no authentication/write behavior changed. Next task: the pending Posts/Pages Admin column report, outside this branding follow-up.
+
 ### 2026-11-06 — implementation checkpoint; deployed validation pending
 
 Environment: macOS arm64, Node 22.23.4/pnpm 12.18.0 via pinned `npm exec`. Official Blocks, MDX, nested wildcard, content organization, Reader API and Astro MDX/config-import documentation consulted. Root was clean at start, following foundation commit 57c9a2f.

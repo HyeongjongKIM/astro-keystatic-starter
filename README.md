@@ -70,6 +70,8 @@ The retained `tasks/01-initial-implementation/compatibility-probe` is excluded f
 
 Site identity is editable in Keystatic Site Settings. Branding CSS variables live in `apps/site/src/styles/global.css`. Copy `apps/site/.env.example` to `.env` and set `PUBLIC_SITE_URL` to the deployment origin before building; it controls canonical, Open Graph, RSS and sitemap URLs. The development fallback is `https://example.com`, not a customer production domain.
 
+Set `ADMIN_BRAND_NAME="Customer Brand"` in `apps/admin/.env` for the Admin's top-left title (default: `Content Admin`). Restart development servers or rebuild/redeploy Admin after changing it. This public setting is independent of the Site Settings name.
+
 Editor images are stored in `apps/site/src/assets/images` and referenced with the `@assets` alias, then optimized at build time through Astro Image. Public Site output has no authentication routes or browser-time GitHub requests.
 
 Deployment and customer operations: [customer setup](docs/customer-setup.md). Preview and production Admin use separate Apps, Workers and secrets.

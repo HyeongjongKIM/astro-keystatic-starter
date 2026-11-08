@@ -32,13 +32,15 @@ Update the Worker names in `apps/admin/wrangler.jsonc` (preview) and `wrangler.p
 
 Set shared `KEYSTATIC_GITHUB_REPO=OWNER/REPOSITORY` in ignored `apps/admin/.env`. Repository identity is explicitly public through Astro's environment schema. Each environment needs a separate GitHub App and unique runtime secrets.
 
+Set `ADMIN_BRAND_NAME="Customer Brand"` in the same `.env` to customize the Admin's top-left title through Keystatic's official `ui.brand.name`. This is a public build-time value, shared by preview and production; missing or blank values display `Content Admin`. Rebuild and redeploy each Admin environment after changing it (restart local development servers). Public Site naming remains controlled by Site Settings. See [Keystatic UI configuration](https://keystatic.com/docs/user-interface) and [Astro environment variables](https://docs.astro.build/en/guides/environment-variables/).
+
 For a new production App, run:
 
 ```sh
 pnpm --filter @starter/admin setup:app --host 127.0.0.1 --port 4321
 ```
 
-Open `http://127.0.0.1:4321/keystatic/setup`, enter the exact production Worker origin and create a uniquely named App (GitHub limits names to 34 characters). Install only on the customer repository. Official setup writes generated credentials and the public App slug to ignored `.env`. Move those generated settings into ignored `.env.production`, retaining only the shared repository setting in base `.env`. Never print or commit these values. Stop setup using `pnpm --filter @starter/admin exec astro dev stop`.
+Open `http://127.0.0.1:4321/keystatic/setup`, enter the exact production Worker origin and create a uniquely named App (GitHub limits names to 34 characters). Install only on the customer repository. Official setup writes generated credentials and the public App slug to ignored `.env`. Move those generated settings into ignored `.env.production`, retaining only the shared repository and Admin branding settings in base `.env`. Never print or commit these values. Stop setup using `pnpm --filter @starter/admin exec astro dev stop`.
 
 For preview, provision using the same Node config with `--mode preview` and save generated settings in `.env.preview`. Ensure base `.env` contains no App credentials and that the target mode's file has no existing credentials before creating another App. Copy `.env.preview.example` / `.env.production.example` for the non-secret slug settings. GitHub installation callbacks can return to loopback; use the corresponding mode's provisioning server for that App. If it is not running, complete installation then use the deployed editor's normal login. A 401 caused by a different App's local callback must not be bypassed.
 

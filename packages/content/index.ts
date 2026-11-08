@@ -5,9 +5,13 @@ import { posts } from './collections/posts';
 import { siteSettings } from './singletons/site-settings';
 
 // All schema/image paths are relative to the repository root. No pathPrefix is needed.
-export function createContentConfig(repo: `${string}/${string}`) {
+export function createContentConfig(
+  repo: `${string}/${string}`,
+  adminBrandName = 'Content Admin',
+) {
   return config({
     storage: { kind: 'github', repo },
+    ui: { brand: { name: adminBrandName.trim() || 'Content Admin' } },
     collections: { pages, posts },
     singletons: { siteSettings },
   });
