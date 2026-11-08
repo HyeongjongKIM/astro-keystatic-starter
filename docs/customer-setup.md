@@ -62,7 +62,7 @@ These commands rebuild the matching mode/config before deploying, so Wrangler us
 
 Register each environment's `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` through official `wrangler secret put KEY --name WORKER` or `wrangler secret bulk --name WORKER` using private stdin. An initial deployment may be needed to create the Worker before registering secrets. A public slug is build-time configuration; changing it requires a rebuild. Runtime Secrets do not change the editor's built repository/App identity. Keep secrets out of Wrangler vars and all PUBLIC_/client variables.
 
-Local Workers API development has a known unresolved `exports is not defined` issue on the selected stack. Node is approved only for App provisioning. Validate authentication and writes on the deployed Worker; do not infer support from a build or editor shell response.
+Local Workers API development requires the tracked `vite.optimizeDeps.include` entry for `@keystatic/core > cookie`; it fixes the previously recorded `exports is not defined` error. Completed local OAuth and authenticated writes remain unverified. Node is approved only for App provisioning. Validate authentication and writes on the deployed Worker; do not infer support from a build or editor shell response.
 
 ## Publish and verify
 
@@ -103,4 +103,4 @@ During investigation, previously visited deleted paths sometimes returned old HT
 
 No paid upgrade or public support message was sent. The reference account's Free-plan support portal directed technical issues to Community/AI/docs. The [reproduction draft](../tasks/01-initial-implementation/pages-cache-support.md) and [Task 05 evidence](../tasks/01-initial-implementation/05-deployment.md) preserve the observed results. Further support posting and infrastructure experiments are on hold under the maintainer's deferral.
 
-The separate known local Workers auth-development error and Admin bundle-size warning remain documented in [known issues](known-issues.md). Use deployed validation for authentication and writes, and the approved Node configuration only for App provisioning.
+The local Workers module-error fix, remaining local OAuth validation limits and Admin bundle-size warning are documented in [known issues](known-issues.md). Use deployed validation for authentication and writes, and the approved Node configuration only for App provisioning.

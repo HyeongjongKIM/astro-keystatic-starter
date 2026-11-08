@@ -17,5 +17,5 @@ Investigation: [Task 05 evidence](../tasks/01-initial-implementation/05-deployme
 
 ## Other recorded limitations
 
-- Local Workers authentication development has a recorded `exports is not defined` error. Deployed OAuth and writes were validated; the Node configuration is only for GitHub App provisioning. See [Task 00](../tasks/01-initial-implementation/00-compatibility.md).
+- The local Workers `exports is not defined` regression is fixed by pre-bundling Keystatic's CommonJS `cookie` dependency. Local unauthenticated auth routes were verified; completed local OAuth and authenticated writes remain unverified. Node remains only for GitHub App provisioning. See [Task 00](../tasks/01-initial-implementation/00-compatibility.md).
 - Admin builds emit a client chunk-size warning. Builds and type checks pass; bundle optimization is deferred.

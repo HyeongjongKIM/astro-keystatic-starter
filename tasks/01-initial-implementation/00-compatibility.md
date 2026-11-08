@@ -226,3 +226,9 @@ Official setup references consulted: [Astro installation](https://docs.astro.bui
 ### 2026-11-06 — Task 04 dependency selections
 
 Official npm metadata and documentation were inspected for `@astrojs/sitemap@3.7.4`, `@astrojs/rss@4.0.19`, `axe-core@4.14.0` (browser audit only), and `yaml@2.9.1` (static-output verification only). Vite `8.3.6`, already selected within Astro's `^8.3.5` dependency range, is declared directly for its documented `loadEnv` config API. All exact versions and transitive resolution are retained in manifests/lockfile. Official Astro sitemap, RSS, images, Keystatic Astro images recipe, Vite environment variables, YAML and axe-core API documentation were consulted.
+
+### 2026-11-09 — local Workers module error follow-up
+
+Environment: macOS arm64, Node 22.23.4, pnpm 12.18.0; dependency versions unchanged. Inspector exception tracing identified `cookie@1.1.1/dist/index.js` using CommonJS `exports` without conversion in the local Workers runner. Added `vite.optimizeDeps.include: ['@keystatic/core > cookie']` using Vite's documented [nested CommonJS dependency optimization](https://vite.dev/config/dep-optimization-options#optimizedeps-exclude).
+
+After restarting `pnpm --filter @starter/admin dev --host 127.0.0.1 --port 4322`, local HTTP checks returned editor 200, refresh without cookies 401 and login 307 to GitHub OAuth, replacing the previous API 500. `pnpm check` passed (format, lint, typecheck, 28 tests, Site/preview Admin builds and static-output verification); `pnpm --filter @starter/admin build:production` passed with the existing chunk-size warning. Completed local OAuth, valid-token refresh and authenticated writes remain unverified; no new deployed E2E was performed. Deployment architecture and Node-only App provisioning are unchanged.

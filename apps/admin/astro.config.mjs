@@ -11,4 +11,10 @@ export default defineConfig({
   session: false,
   adapter: cloudflare({ imageService: 'passthrough' }),
   integrations: [react(), markdoc(), keystatic()],
+  vite: {
+    optimizeDeps: {
+      // Keystatic's auth API imports CommonJS cookie; Workers dev needs ESM.
+      include: ['@keystatic/core > cookie'],
+    },
+  },
 });
