@@ -50,3 +50,11 @@ Avoid formatting generated artifacts and lockfiles. Validate compatibility befor
 ## Public output verification
 
 `pnpm check` also runs `pnpm verify:site` after both builds. It checks current published/draft Posts against built routes, index, RSS and sitemap, plus image dimensions/optimized URLs, metadata, 404 noindex and absence of server/Admin artifacts. Schema tests use isolated fixtures instead of depending on editable starter content. `axe-core` is pinned for browser accessibility smoke audits; root CI does not claim full browser or assistive-technology coverage.
+
+## Local Admin runtime and historical fixtures
+
+The local development API runner's `exports is not defined` error is fixed by pre-bundling Keystatic's nested CommonJS `cookie` dependency. Local unauthenticated auth routes were verified; completed local OAuth and authenticated writes remain unverified. Deployed OAuth/CRUD evidence and runtime limitations are recorded in [runtime compatibility](../tasks/01-initial-implementation/00-compatibility.md).
+
+The separate `apps/admin/astro.setup.config.mjs` is for Node-only GitHub App provisioning via `pnpm --filter @starter/admin setup:app`. Use the default Workers config for builds and deployment.
+
+The retained `tasks/01-initial-implementation/compatibility-probe` is excluded from the workspace and root format/lint checks to preserve historical reproduction files. Root lockfile and generated outputs are excluded from formatting.

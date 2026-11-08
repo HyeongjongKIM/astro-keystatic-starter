@@ -3,20 +3,25 @@
 ## Targets
 
 - `apps/site`: Astro static build to Cloudflare Pages.
-- `apps/admin`: Astro + Keystatic server routes to Cloudflare Workers, **only after Task 00 validates compatibility**.
+- `apps/admin`: Astro + Keystatic server routes to Cloudflare Workers.
 
 Keystatic uses server-side Node APIs and the Workers runtime is different from Node.js. An Astro adapter compiling successfully does not prove OAuth and GitHub write behavior.
 
 ## Configuration contract
 
-| Name                               | Scope | Classification                                  |
-| ---------------------------------- | ----- | ----------------------------------------------- |
-| `PUBLIC_SITE_URL`                  | Site  | Public build-time URL; starter-defined          |
-| `KEYSTATIC_GITHUB_REPO`            | Admin | Public build-time `owner/repo`; starter-defined |
-| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Admin | Public Keystatic Astro setting                  |
-| `KEYSTATIC_GITHUB_CLIENT_ID`       | Admin | GitHub App identifier                           |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET`   | Admin | Secret                                          |
-| `KEYSTATIC_SECRET`                 | Admin | Secret                                          |
+All file paths below are relative to the repository root. Real environment files are ignored; tracked `.example` files provide templates.
+
+| Variable                           | Location                                                        | Required                                                | Classification                        | Rebuild after change       |
+| ---------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------- | -------------------------- |
+| `PUBLIC_SITE_URL`                  | `apps/site/.env` locally; Pages production/preview variables    | For deployment; local fallback is `https://example.com` | Public Site origin                    | Site                       |
+| `KEYSTATIC_GITHUB_REPO`            | `apps/admin/.env`                                               | Yes, before provisioning/building                       | Public `owner/repository`             | Admin                      |
+| `ADMIN_BRAND_NAME`                 | `apps/admin/.env`                                               | No; defaults to `Content Admin`                         | Public Admin title                    | Admin                      |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | `apps/admin/.env.preview` / `.env.production`                   | Yes, for the matching App                               | Public App slug                       | Admin                      |
+| `KEYSTATIC_GITHUB_CLIENT_ID`       | Local Workers: `apps/admin/.dev.vars`; deployed: Worker secrets | Yes, for authentication                                 | App identifier; keep with credentials | No; update runtime setting |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET`   | Local Workers: `apps/admin/.dev.vars`; deployed: Worker secrets | Yes, for authentication                                 | Secret                                | No; update runtime secret  |
+| `KEYSTATIC_SECRET`                 | Local Workers: `apps/admin/.dev.vars`; deployed: Worker secrets | Yes, for authentication                                 | Secret                                | No; update runtime secret  |
+
+GitHub App provisioning initially generates credentials in `apps/admin/.env`. Move them into the matching mode file as described in [customer setup](customer-setup.md#provision-the-admin-apps-and-workers), and register them separately as Worker runtime secrets. Keep only shared repository/branding values in base `.env`. Restart local development servers after configuration changes.
 
 Starter-defined variables must actually be consumed in application code. Never put secrets in `PUBLIC_` values, tracked config, or Wrangler `vars`.
 

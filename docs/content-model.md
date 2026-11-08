@@ -2,7 +2,7 @@
 
 ## Entities
 
-| Key            | Keystatic type | Initial fields                                            |
+| Key            | Keystatic type | Fields                                                    |
 | -------------- | -------------- | --------------------------------------------------------- |
 | `pages`        | Collection     | title/slug, description, order, showInNavigation, content |
 | `posts`        | Collection     | title/slug, excerpt, publishedDate, status, content       |
@@ -12,26 +12,26 @@ Do **not** create a separate Navigation entity or Directory type.
 
 ## Hierarchical Pages
 
-| Page        | Slug                            | URL                     |
-| ----------- | ------------------------------- | ----------------------- |
-| Home        | explicit reserved special value | `/`                     |
-| About       | `about`                         | `/about`                |
-| Projects    | `projects`                      | `/projects`             |
-| Photography | `projects/photography`          | `/projects/photography` |
+| Page        | Slug                   | URL                     |
+| ----------- | ---------------------- | ----------------------- |
+| Home        | `home`                 | `/`                     |
+| About       | `about`                | `/about`                |
+| Projects    | `projects`             | `/projects`             |
+| Photography | `projects/photography` | `/projects/photography` |
 
-- Evaluate Keystatic's documented nested `**` collection path and Astro's `[...slug].astro` + `getStaticPaths()`.
+- Nested Pages use Keystatic's `**` collection path and Astro's `[...slug].astro` + `getStaticPaths()`.
 - Derive navigation and breadcrumbs from the same Page collection used for static routes.
 - Sort siblings by numeric `order`, then slug for deterministic ties.
 - `showInNavigation` defaults to true and does not control route publication.
-- Initial proposed hidden-parent policy: hide that subtree in menus but keep public descendant URLs; test before release.
+- Hidden parents hide their subtree in menus while descendant URLs remain public.
 - Reject missing parents, duplicate paths, reserved route names, and conflicting Home routes.
 - Slug changes can break backlinks; manage deliberate redirects, not implicit magic migrations.
 
 ## Body content
 
-Both Pages and Posts use one shared Keystatic `fields.blocks()` field. The only MVP block type is `richText`, implemented with `fields.mdx()` and the standard editor. Verify serialized output and Astro rendering against installed versions.
+Both Pages and Posts use one shared Keystatic `fields.blocks()` field. The only MVP block type is `richText`, implemented with `fields.mdx()` and the standard editor. The Site renders the linked MDX files through the Astro MDX integration.
 
-Future block additions must include matching schema, Astro renderer, fixture, and tests. Do not build custom blocks now.
+Future block additions must include matching schema, Astro renderer, fixture, and tests. Custom blocks are outside the current starter scope.
 
 ## Publication and tests
 
@@ -57,7 +57,7 @@ All Keystatic paths are relative to the repository root. `storage.pathPrefix` is
 - Rich text images: `apps/site/src/assets/images/{pages|posts}/`; serialized references start `@assets/images/{pages|posts}/`. Settings images use `apps/site/src/assets/images/settings/`. Keep these repository and URL paths paired when customizing.
 - YAML records contain title text; the slug is derived from the entry path through Keystatic's slug field. Posts default to draft; `isPublished` filters only explicit `published` status.
 
-The samples are starter content. The `home` sample currently renders at `/`; Task 03 owns the complete Home/reserved-route policy and hierarchy validation. No separate Navigation model is introduced. MDX files are tracked editable content, not generated outputs; never put secrets in them.
+The samples are starter content. The `home` Page renders at `/` under the route policy below. MDX files are tracked editable content, not generated outputs; never put secrets in them.
 
 ## Route policy
 
@@ -67,6 +67,6 @@ Root namespaces reserved for generated/system routes: `posts`, `journal` (redire
 
 Hidden-parent policy: `showInNavigation: false` removes that Page and its descendants from menus. It does not suppress static routes or breadcrumb ancestors. Siblings sort by numeric order and then lexical slug; input enumeration and machine locale do not affect ties. Deleting a parent requires moving/deleting descendants first; otherwise the next build fails.
 
-Task 04 migrates the initial public-image fixtures to imported source assets for optimization, following the [official Keystatic Astro image recipe](https://keystatic.com/docs/recipes/astro-images). Site tsconfig maps `@assets/*` to `src/assets/*`; the MDX renderer maps standard image elements to an Astro Image component via a documented dynamic glob. Imported images emit dimensions and optimized WebP files; the logo uses the same resolver. Empty alt text is supported for decorative images; editors should provide descriptive alt text for meaningful images. Unknown image references fail the build. Historical Task 02 evidence refers to the earlier validated public layout.
+Images use imported source assets for optimization, following the [official Keystatic Astro image recipe](https://keystatic.com/docs/recipes/astro-images). Site tsconfig maps `@assets/*` to `src/assets/*`; the MDX renderer maps standard image elements to an Astro Image component via a documented dynamic glob. Imported images emit dimensions and optimized WebP files; the logo uses the same resolver. Empty alt text is supported for decorative images; editors should provide descriptive alt text for meaningful images. Unknown image references fail the build.
 
 Unit tests use independent fixtures under `packages/content/fixtures`, so ordinary customer edits do not invalidate sample-specific assertions. `pnpm verify:site` checks built output against the current committed Posts, including draft exclusion. Posts are generated under `/posts/` and discovered through editorial links such as the Home journal link; primary menus remain derived only from Pages.

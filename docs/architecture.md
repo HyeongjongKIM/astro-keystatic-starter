@@ -1,6 +1,6 @@
 # Architecture Specification
 
-## Monorepo target
+## Repository structure
 
 ```text
 astro-keystatic-starter/
@@ -34,7 +34,7 @@ astro-keystatic-starter/
 └── package.json
 ```
 
-The precise Keystatic file paths and image directories must be validated using the selected version's `path`, `format`, and `storage.pathPrefix` options.
+See the [content storage layout](content-model.md#mvp-storage-layout) for the configured content and image paths.
 
 ## Responsibilities
 
@@ -54,7 +54,7 @@ Editor save → GitHub commit → Cloudflare Pages build → public static HTML.
 - No Admin secrets, authentication code, or privileged SDKs in the public Site bundle.
 - Reject URL namespace collisions and malformed page hierarchy during build.
 - Do not create a shared UI library until reuse is demonstrated.
-- Do not silently modify the confirmed architecture when the runtime gate fails; report the blocker.
+- Runtime changes require deployed authentication and GitHub write validation; a successful build alone does not establish compatibility.
 
 ## Official sources
 

@@ -27,6 +27,16 @@ Initialize reproducible pnpm workspace with separate Astro Site and Keystatic Ad
 
 ## Verification evidence
 
+### 2026-11-09 — documentation organization follow-up (DONE)
+
+- [x] Maintainer-requested documentation cleanup: reconciled historical proposals with current content/runtime contracts, centralized environment variable metadata in deployment docs, separated customer setup from operations, and moved reference deployment/investigation details into [historical notes](reference-deployment.md). Roadmap now records product direction; execution status remains in task indexes. README links to setup and operations separately.
+- macOS arm64, pinned Node 22.23.4/pnpm 12.18.0 via `npm exec --yes --package=node@22.23.4 --package=pnpm@12.18.0 -- pnpm check`: exit 0; format, lint, types, 28 tests, Site/Admin builds and static output verification passed. A Python check of local Markdown link targets in README, top-level docs and historical notes found no missing files. Existing Admin chunk-size warning remains. No runtime changes or deployed authentication/write validation. Next task: none queued.
+
+### 2026-11-09 — project README documentation follow-up (DONE)
+
+- [x] Maintainer-requested documentation cleanup: README now introduces the project, features, local usage, configuration, and user-facing documentation. Removed task status, agent workflow links, and implementation planning; moved local runtime caveats and historical fixture exclusions to `docs/tooling.md`. Known issues remain linked for users.
+- macOS arm64, pinned Node 22.23.4/pnpm 12.18.0 via `npm exec --yes --package=node@22.23.4 --package=pnpm@12.18.0 -- pnpm check`: exit 0; format, lint, types, 28 tests, Site/Admin builds and static output verification passed. Existing Admin client chunk size warning remains. Documentation-only change; no deployed OAuth/write validation performed. Next task: none queued.
+
 ### 2026-11-09 — root development/build shortcuts (DONE)
 
 - [x] Added `dev:stop`, `build:site`, `build:admin:preview`, `build:admin:production`, and `preview:site`; updated README. Stop uses [pnpm recursive exec](https://pnpm.io/cli/exec) with both app filters and `--no-bail` so both commands are attempted.

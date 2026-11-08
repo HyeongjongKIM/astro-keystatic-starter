@@ -1,26 +1,23 @@
-# Implementation Roadmap
+# Product roadmap
 
-Detailed executable acceptance criteria are maintained in [tasks/](../tasks/README.md).
+The starter provides a static Astro Site and a separate Keystatic Admin, with Git-backed content, automatic Page navigation, Posts, image optimization, SEO, and independent customer deployments. See [architecture](architecture.md) and [content model](content-model.md) for the current contracts.
 
-| Order | Deliverable                                     | Task                                                                       | Status |
-| ----- | ----------------------------------------------- | -------------------------------------------------------------------------- | ------ |
-| 0     | Validate Admin runtime and GitHub writes        | [00-compatibility](../tasks/01-initial-implementation/00-compatibility.md) | DONE   |
-| 1     | Initialize workspace and quality tools          | [01-foundation](../tasks/01-initial-implementation/01-foundation.md)       | DONE   |
-| 2     | Implement shared content schema and reader      | [02-content](../tasks/01-initial-implementation/02-content.md)             | DONE   |
-| 3     | Generate static routes, navigation, breadcrumbs | [03-navigation](../tasks/01-initial-implementation/03-navigation.md)       | DONE   |
-| 4     | Build accessible public templates and SEO       | [04-site](../tasks/01-initial-implementation/04-site.md)                   | DONE   |
-| 5     | Configure Cloudflare and customer handoff       | [05-deployment](../tasks/01-initial-implementation/05-deployment.md)       | DONE   |
+Execution order, task status, acceptance criteria, and verification evidence are maintained only in the [task queue](../tasks/README.md). Current limitations are maintained in [known issues](known-issues.md). No next implementation phase is scheduled.
 
-Initial implementation is complete. The maintainer accepted [CACHE-01](known-issues.md) as an unresolved, non-blocking limitation; immediate global deletion visibility is deferred. No next implementation phase is currently scheduled.
+## Future candidates
 
-## Definition of done
+These are deferred proposals, not committed deliverables:
 
-- Every task acceptance criterion passes, including commands and end-to-end checks when specified. The explicit CACHE-01 exception for initial implementation is recorded above; its failed observations remain in the task evidence.
-- `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, and appropriate builds pass once available.
-- No secrets in source, unsupported APIs, unapproved architecture changes, or unrelated refactors.
-- Task status, verification evidence, version information, and outstanding limitations are recorded.
-- A customer can follow the final deployment guide without access to a private reference project.
+- Gallery, video, and hero blocks.
+- Multilingual content and search.
+- Scheduled publishing and advanced draft preview.
+- Automatic redirects after slug changes.
+- Shared UI and themes when customer reuse demonstrates a need.
 
-## Deferred
+## Delivery criteria
 
-Gallery/video/hero blocks; multilingual content; search; scheduled publishing; advanced draft preview; automatic redirect migration; shared UI/themes until needed.
+- Task acceptance criteria pass, including deployed authentication/write checks when applicable.
+- Required format, lint, type, test, and build checks pass.
+- No secrets in source, unsupported APIs, or unapproved architecture changes.
+- Task evidence records actual results and outstanding limitations.
+- A customer can follow setup and operations documentation without access to a private reference project.

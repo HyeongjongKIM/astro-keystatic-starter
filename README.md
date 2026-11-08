@@ -2,9 +2,7 @@
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
-**Status:** Initial implementation (Tasks 00–05) is complete. Site and Admin are deployed and the customer handoff guide is available. Deleted-page cache freshness remains unresolved and is deferred by maintainer decision as [CACHE-01](docs/known-issues.md).
-
-## Target architecture
+## Architecture
 
 | Component          | Technology                    | Deployment                |
 | ------------------ | ----------------------------- | ------------------------- |
@@ -15,26 +13,13 @@ Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-d
 
 Each customer receives an independently deployed copy of this repository. No database or R2 in the MVP.
 
-## Agent documentation
+## Features
 
-1. [AGENTS.md](AGENTS.md) — mandatory coding-agent instructions
-2. [tasks/README.md](tasks/README.md) — phase queue, with task execution order and status in each phase README
-3. [docs/roadmap.md](docs/roadmap.md) — milestones and definition of done
-4. [docs/architecture.md](docs/architecture.md) — app and package boundaries
-5. [docs/content-model.md](docs/content-model.md) — Pages, Posts, Blocks, automatic navigation
-6. [docs/deployment.md](docs/deployment.md) — environments, secrets, deployment
-7. [docs/tooling.md](docs/tooling.md) — lint, format, hooks, tests, CI
-
-## Non-negotiable product decisions
-
-- Pages are the source of truth for URLs, navigation, and breadcrumbs; no Navigation singleton.
-- All navigable items are Pages, with nested slugs; no separate Directory type.
-- Page and Post bodies begin with one Keystatic `fields.blocks()` type containing an MDX rich-text field.
-- Use official APIs and integrations. Do not introduce unsupported runtime workarounds.
-- Validate Keystatic/Astro/Workers compatibility before implementing the rest of the project.
-- Custom blocks, search, multilingual support, complex theming, and scheduled publishing are deferred.
-
-The project has no dependency on any separate reference repository.
+- Pages with nested URLs, automatic navigation, and breadcrumbs.
+- Posts and Pages with MDX rich text, edited through Keystatic.
+- Git-backed content and images, with build-time image optimization.
+- Separate static public Site and authenticated Admin deployments.
+- Editable site identity and configurable Admin branding.
 
 ## Local development
 
@@ -67,16 +52,22 @@ pnpm check
 
 Admin secrets belong in ignored `apps/admin/.dev.vars` (copy `.dev.vars.example`). The shared repository setting belongs in ignored `apps/admin/.env`; environment-specific App settings belong in `.env.preview` and `.env.production` (see their examples). Never put secrets in a `PUBLIC_` variable. Set `KEYSTATIC_GITHUB_REPO=owner/repository` in Admin `.env` before provisioning/building; the tracked config defaults to a placeholder.
 
-The selected Workers runtime passed deployed OAuth/CRUD validation in Task 00. The local development API runner's `exports is not defined` error is fixed by pre-bundling Keystatic's nested CommonJS `cookie` dependency. Local unauthenticated auth routes were verified; completed local OAuth and authenticated writes remain unverified. The separate `apps/admin/astro.setup.config.mjs` is for approved Node-only GitHub App provisioning, via `pnpm --filter @starter/admin setup:app`; it is not a production hosting option. Use the default Workers config for builds and deployment. See Task 00 for deployed evidence and limitations.
-
-The retained `tasks/01-initial-implementation/compatibility-probe` is excluded from the workspace and root format/lint checks to preserve historical reproduction files. Root lockfile and generated outputs are excluded from formatting.
-
 Site identity is editable in Keystatic Site Settings. Branding CSS variables live in `apps/site/src/styles/global.css`. Copy `apps/site/.env.example` to `.env` and set `PUBLIC_SITE_URL` to the deployment origin before building; it controls canonical, Open Graph, RSS and sitemap URLs. The development fallback is `https://example.com`, not a customer production domain.
 
 Set `ADMIN_BRAND_NAME="Customer Brand"` in `apps/admin/.env` for the Admin's top-left title (default: `Content Admin`). Restart development servers or rebuild/redeploy Admin after changing it. This public setting is independent of the Site Settings name.
 
 Editor images are stored in `apps/site/src/assets/images` and referenced with the `@assets` alias, then optimized at build time through Astro Image. Public Site output has no authentication routes or browser-time GitHub requests.
 
-Deployment and customer operations: [customer setup](docs/customer-setup.md). Preview and production Admin use separate Apps, Workers and secrets.
+Deployment: [customer setup](docs/customer-setup.md). Publishing and maintenance: [operations](docs/operations.md). Preview and production Admin use separate Apps, Workers and secrets.
 
 Deploy Admin from the repository root with `pnpm deploy:admin:preview` or `pnpm deploy:admin:production`. Each command builds the selected environment before deploying through Wrangler; run them sequentially.
+
+## Documentation
+
+- [Customer setup](docs/customer-setup.md) — deployment and GitHub Apps.
+- [Operations](docs/operations.md) — publishing, rollback, access removal, and troubleshooting.
+- [Architecture](docs/architecture.md) — application and package boundaries.
+- [Content model](docs/content-model.md) — Pages, Posts, Blocks, and navigation.
+- [Deployment configuration](docs/deployment.md) — environments, variables, and secrets.
+- [Developer tooling](docs/tooling.md) — checks, hooks, and CI.
+- [Known issues](docs/known-issues.md) — current limitations, including deleted-page cache freshness.

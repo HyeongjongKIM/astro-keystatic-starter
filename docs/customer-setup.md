@@ -28,6 +28,8 @@ Push `main` for production and `preview` for preview. A new project can also be 
 
 ## Provision the Admin Apps and Workers
 
+The [configuration reference](deployment.md#configuration-contract) lists environment files, required values, secrecy, and rebuild requirements.
+
 Update the Worker names in `apps/admin/wrangler.jsonc` (preview) and `wrangler.production.jsonc` (production). Both use the documented Cloudflare adapter, sessions disabled and passthrough Admin image service, avoiding unnecessary KV/Images services. Do not deploy the Node setup configuration.
 
 Set shared `KEYSTATIC_GITHUB_REPO=OWNER/REPOSITORY` in ignored `apps/admin/.env`. Repository identity is explicitly public through Astro's environment schema. Each environment needs a separate GitHub App and unique runtime secrets.
@@ -66,43 +68,14 @@ Register each environment's `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIE
 
 Local Workers API development requires the tracked `vite.optimizeDeps.include` entry for `@keystatic/core > cookie`; it fixes the previously recorded `exports is not defined` error. Completed local OAuth and authenticated writes remain unverified. Node is approved only for App provisioning. Validate authentication and writes on the deployed Worker; do not infer support from a build or editor shell response.
 
-## Publish and verify
+## Next steps
 
-Log in to the deployed Admin, create a temporary nested Page under an existing parent, add a Rich text block and upload an image. Save. Confirm a GitHub commit contains YAML, linked MDX and an image under `apps/site/src/assets/images`; image references use `@assets`. Confirm Pages creates a `github:push` deployment for the same SHA and the public URL/menu/breadcrumb/image updates after success. Verify image dimensions/optimized WebP, canonical origin, `/rss.xml`, `/sitemap-index.xml`, `/robots.txt`, draft exclusion and an unknown-path 404. `/journal` and `/journal/` deliberately redirect to `/posts/` with 301; remove these rules and reserved slug together if changing the convention.
+Follow [publishing and verification](operations.md#publish-and-verify), then review [rollback and access removal](operations.md#rollback-and-access-removal). Current limitations are maintained in [known issues](known-issues.md).
 
-Delete temporary content through Admin and verify its image also disappears from Git and a new Site deployment removes the URL. Neither content commit should trigger an Admin deployment: Admin deployment is deliberately manual and independent. Use `git pull --rebase` before coding after editor commits; preserve unrelated local work first. No forced push is needed.
+## Custom domains
 
-Run `pnpm check` locally and confirm GitHub Actions. Unit fixtures are independent of customer edits; `verify:site` checks built output against current Posts. Browser accessibility audits are smoke checks, not exhaustive assistive-technology validation.
+Register the customer domain in Pages before adding its CNAME; set production `PUBLIC_SITE_URL` and rebuild. Cloudflare documents account Bulk Redirects to send the production pages.dev hostname to the custom origin. Preserve query string, subpath matching and path suffix; keep Include subdomains off when preview/deployment aliases must remain independent. Manage or disable the redirect before detaching or changing the custom domain.
 
-## Rollback and access removal
+See [custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/) and [Pages domain redirects](https://developers.cloudflare.com/pages/how-to/redirect-to-custom-domain/).
 
-In Pages Deployments, select a previously successful production deployment and Rollback to this deployment, or use the official rollback API. Preview deployments are not rollback targets. Confirm both the selected canonical deployment ID and actual public responses; allow propagation before concluding a failure. Restore a newer successful deployment with the same mechanism. Rollback changes the served Site, not repository content; the next Git push can publish current content again. Use an intentional Git revert if content must also be reverted.
-
-For revocation, use GitHub Settings → Applications → Installed GitHub Apps → Configure for the exact environment's App → Uninstall (or remove a collaborator's repository access when offboarding that user). Confirm pending saves fail and no new Git commit is made. The tested procedure removes an App installation; collaborator removal is an operational alternative, not a claimed test. Public static pages must remain available. Reinstall through the registered App's Install App screen, select only the same customer repo and re-login if needed; existing credentials remain specific to that App. Do not uninstall another environment's App to test isolation.
-
-Rotate compromised GitHub App credentials and Worker secrets, then verify a fresh login/write. If retiring a customer, remove only that customer's Pages project, Workers, App registrations/installations and local credentials after deciding what content to retain.
-
-## Troubleshooting
-
-- Repo not found: verify the public build-time repository setting and selected App installation; rebuild after changing identity.
-- Missing credentials / OAuth failure: verify all three runtime secrets, public slug, exact callback and the matching environment's App.
-- Setup loses manifest after GitHub login: return to Keystatic setup and submit again after login; avoid duplicate App registrations.
-- Newly saved content fails build: check missing parent Pages, reserved slugs, image alias/path, required date/status and the specific build error. Avoid hotfixing framework internals.
-- Local runner error: use deployed validation and retain the recorded limitation; do not move production Admin to Node as a workaround.
-- Pages build failure: inspect the Git SHA/build logs and Node/pnpm versions. This starter's Site build is separate from root CI; a successful Site deployment does not establish passing lint/tests.
-
-Official references: [Pages monorepos](https://developers.cloudflare.com/pages/configuration/monorepos/), [build image](https://developers.cloudflare.com/pages/configuration/build-image/), [watch paths](https://developers.cloudflare.com/pages/configuration/build-watch-paths/), [rollbacks](https://developers.cloudflare.com/pages/configuration/rollbacks/), [redirects](https://developers.cloudflare.com/pages/configuration/redirects/), [Keystatic GitHub mode](https://keystatic.com/docs/github-mode), [Astro Cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/).
-
-## Reference deployment and unresolved deletion freshness
-
-The approved reference production origin is `https://astro-starter.hyeongjongkim.dev`, backed by the existing Git-connected Pages project. Preview remains `https://preview.astro-keystatic-starter-site.pages.dev`. The personal site's apex/www connections remain intact.
-
-For a customer custom domain, register it in Pages before adding its CNAME; set production PUBLIC_SITE_URL and rebuild. Cloudflare documents account Bulk Redirects to send the production pages.dev hostname to the custom origin. Preserve query string, subpath matching and path suffix; keep Include subdomains off when preview/deployment aliases must remain independent. The reference uses list `starter_production_domain`, one 301 entry from `astro-keystatic-starter-site.pages.dev` to its custom origin. Manage or disable this rule before detaching/changing that custom domain. See [custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/) and [Pages domain redirects](https://developers.cloudflare.com/pages/how-to/redirect-to-custom-domain/).
-
-The maintainer accepted deleted-page freshness as an unresolved, non-blocking limitation for initial implementation on 2026-11-07 KST. See [CACHE-01](known-issues.md) for its disposition, operational checks and reopening conditions. This is a deferral, not a verified cache fix or an immediate global deletion guarantee.
-
-During investigation, previously visited deleted paths sometimes returned old HTTP 200 after successful deployments and accepted cache purges, while current deployment-specific URLs and other network paths returned 404. Fresh tests under DNS Only reproduced the behavior, so DNS Only was rejected as a general fix and the starter CNAME was restored to Proxied. No additional Cache Rules, Page Rules or Worker route was introduced. Query variants are diagnostic only. Allow propagation, check the unchanged URL, and record timestamps/response headers when following up; Pages' documented asset retention is not a verified deletion SLA.
-
-No paid upgrade or public support message was sent. The reference account's Free-plan support portal directed technical issues to Community/AI/docs. The [reproduction draft](../tasks/01-initial-implementation/pages-cache-support.md) and [Task 05 evidence](../tasks/01-initial-implementation/05-deployment.md) preserve the observed results. Further support posting and infrastructure experiments are on hold under the maintainer's deferral.
-
-The local Workers module-error fix, remaining local OAuth validation limits and Admin bundle-size warning are documented in [known issues](known-issues.md). Use deployed validation for authentication and writes, and the approved Node configuration only for App provisioning.
+Official references: [Pages monorepos](https://developers.cloudflare.com/pages/configuration/monorepos/), [build image](https://developers.cloudflare.com/pages/configuration/build-image/), [watch paths](https://developers.cloudflare.com/pages/configuration/build-watch-paths/), [Keystatic GitHub mode](https://keystatic.com/docs/github-mode), [Astro Cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/).
