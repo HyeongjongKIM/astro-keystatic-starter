@@ -27,6 +27,16 @@ Initialize reproducible pnpm workspace with separate Astro Site and Keystatic Ad
 
 ## Verification evidence
 
+### 2026-11-09 — root development/build shortcuts (DONE)
+
+- [x] Added `dev:stop`, `build:site`, `build:admin:preview`, `build:admin:production`, and `preview:site`; updated README. Stop uses [pnpm recursive exec](https://pnpm.io/cli/exec) with both app filters and `--no-bail` so both commands are attempted.
+- macOS arm64, Node 22.23.4/pnpm 12.18.0: `pnpm check` and `pnpm build:admin:production` exited 0 (28 tests, Site/Admin builds, static verification). Existing Admin size warning remains. A read-only `node -p process.cwd()` using the stop command's recursive flags confirmed both app directories; running development servers were not stopped, and Site preview was not launched. Next task: none queued.
+
+### 2026-11-09 — root Admin deployment aliases (DONE)
+
+- [x] Added `deploy:admin:preview` and `deploy:admin:production` at root, forwarding to existing Admin build/Wrangler scripts; updated README and customer guide.
+- macOS arm64, Node 22.23.4/pnpm 12.18.0: Node assertions confirmed both aliases target existing scripts. `pnpm check` exited 0 (28 tests, both builds, static verification); existing Admin size warning remains. Deployment commands were not executed. Next task: none queued.
+
 ### 2026-11-09 — commit scope policy follow-up (DONE)
 
 - [x] Added the agreed commit rules to AGENTS.md, Commitlint and CI. Official sources: [rules](https://commitlint.js.org/reference/rules.html), [CI setup](https://commitlint.js.org/guides/ci-setup.html).

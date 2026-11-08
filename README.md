@@ -45,18 +45,21 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-`pnpm dev` starts both apps concurrently in one terminal using pnpm's built-in script runner. Site uses `http://localhost:4321` and Admin uses `http://localhost:4322/keystatic`. To run only one app, use `pnpm dev:site` or `pnpm dev:admin`. The static Site and Workers Admin build separately:
+`pnpm dev` starts both apps concurrently in one terminal using pnpm's built-in script runner. Site uses `http://localhost:4321` and Admin uses `http://localhost:4322/keystatic`. To run only one app, use `pnpm dev:site` or `pnpm dev:admin`.
 
 Astro starts development servers in the background. Stop both before restarting:
 
 ```sh
-pnpm --filter @starter/site exec astro dev stop
-pnpm --filter @starter/admin exec astro dev stop
+pnpm dev:stop
 ```
 
+Build the apps separately, and preview the built static Site locally:
+
 ```sh
-pnpm --filter @starter/site build
-pnpm --filter @starter/admin build
+pnpm build:site
+pnpm preview:site
+pnpm build:admin:preview
+pnpm build:admin:production
 pnpm check
 ```
 
@@ -75,3 +78,5 @@ Set `ADMIN_BRAND_NAME="Customer Brand"` in `apps/admin/.env` for the Admin's top
 Editor images are stored in `apps/site/src/assets/images` and referenced with the `@assets` alias, then optimized at build time through Astro Image. Public Site output has no authentication routes or browser-time GitHub requests.
 
 Deployment and customer operations: [customer setup](docs/customer-setup.md). Preview and production Admin use separate Apps, Workers and secrets.
+
+Deploy Admin from the repository root with `pnpm deploy:admin:preview` or `pnpm deploy:admin:production`. Each command builds the selected environment before deploying through Wrangler; run them sequentially.

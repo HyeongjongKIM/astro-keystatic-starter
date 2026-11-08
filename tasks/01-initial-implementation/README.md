@@ -25,6 +25,10 @@ Task 01 records the completed 2026-11-09 maintainer-requested combined developme
 
 Task 01 also records the completed 2026-11-09 commit scope policy and CI validation follow-up; phase status remains DONE.
 
+Task 01 records the completed root Admin deployment aliases follow-up; phase status remains DONE.
+
+Task 01 records the completed root development/build shortcuts follow-up; phase status remains DONE.
+
 Task 02 records the completed 2026-11-09 maintainer-requested customer Admin branding follow-up; phase status remains DONE.
 
 Task 02 also records the completed 2026-11-09 collection list columns follow-up for Pages and Posts; phase status remains DONE.

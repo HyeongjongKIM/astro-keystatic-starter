@@ -53,11 +53,11 @@ https://PRODUCTION-WORKER.workers.dev/api/keystatic/github/oauth/callback
 
 Official setup uses metadata/pull requests read and code read/write. Check the installation selects only the customer repo. Do not widen repository scope to resolve a login failure.
 
-Build and deploy independently:
+Build and deploy Admin from the repository root:
 
 ```sh
-pnpm --filter @starter/admin deploy:preview
-pnpm --filter @starter/admin deploy:production
+pnpm deploy:admin:preview
+pnpm deploy:admin:production
 ```
 
 These commands rebuild the matching mode/config before deploying, so Wrangler uses the correct generated config and Worker name. Both currently build into Admin `dist`; deploy sequentially, never reuse a build from the other environment. Site `dist` is independent. Default `pnpm build` builds Site and preview Admin; run `pnpm --filter @starter/admin build:production` when validating production config changes.
