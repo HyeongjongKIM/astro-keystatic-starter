@@ -27,6 +27,15 @@ Initialize reproducible pnpm workspace with separate Astro Site and Keystatic Ad
 
 ## Verification evidence
 
+### 2026-11-09 — combined local development command
+
+- [x] Maintainer-requested tooling follow-up: root `pnpm dev` starts `dev:site` and `dev:admin` concurrently, with Site on 4321 and Admin on 4322. Individual commands remain available; README documents usage. No dependencies added.
+- Official API: [pnpm run](https://pnpm.io/cli/run), regex script selection runs concurrently on the pinned pnpm 12.18.0.
+- Environment: macOS arm64; shell Node 22.21.1 was rejected by Astro, so verification used `npm exec --yes --package=node@22.23.4 --package=pnpm@12.18.0 --`.
+- `pnpm dev`: exit 0; both Astro background servers reported running on their assigned ports. `curl` against Site `/` and Admin `/keystatic` returned HTTP 200. Servers left running for local use; authentication and writes were not tested.
+- `pnpm check`: exit 0; format, lint, typecheck, 28 tests, both builds and static output verification passed. Existing Admin client chunk size warning remains.
+- Next task: no queued phase; the maintainer's Posts/Pages Admin column issue remains pending as a separate request.
+
 ### 2026-11-06 — local verification
 
 Environment: macOS arm64, pinned Node 22.23.4 and pnpm 12.18.0 through `npm exec --yes --package=node@22.23.4 --package=pnpm@12.18.0 --`. Additional dependency selections and official peer/engine evidence are recorded in Task 00.

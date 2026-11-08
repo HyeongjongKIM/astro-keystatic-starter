@@ -8,8 +8,9 @@
     "pnpm": "12.18.0"
   },
   "scripts": {
-    "dev:site": "pnpm --filter @starter/site dev",
-    "dev:admin": "pnpm --filter @starter/admin dev",
+    "dev": "pnpm run \"/^dev:(site|admin)$/\"",
+    "dev:site": "pnpm --filter @starter/site dev --port 4321",
+    "dev:admin": "pnpm --filter @starter/admin dev --port 4322",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",

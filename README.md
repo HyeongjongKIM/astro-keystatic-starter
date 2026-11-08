@@ -42,11 +42,17 @@ Use Node `22.23.4` (`nvm install && nvm use`) and pnpm `12.18.0` (root `packageM
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm dev:site
-pnpm dev:admin
+pnpm dev
 ```
 
-Run the apps in separate terminals; use `pnpm --filter @starter/admin dev --port 4322` when Site already uses port 4321. The static Site and Workers Admin build separately:
+`pnpm dev` starts both apps concurrently in one terminal using pnpm's built-in script runner. Site uses `http://localhost:4321` and Admin uses `http://localhost:4322/keystatic`. To run only one app, use `pnpm dev:site` or `pnpm dev:admin`. The static Site and Workers Admin build separately:
+
+Astro starts development servers in the background. Stop both before restarting:
+
+```sh
+pnpm --filter @starter/site exec astro dev stop
+pnpm --filter @starter/admin exec astro dev stop
+```
 
 ```sh
 pnpm --filter @starter/site build

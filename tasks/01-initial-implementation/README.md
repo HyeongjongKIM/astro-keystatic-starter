@@ -20,3 +20,5 @@ Follow tasks in order. Each task has explicit dependencies and acceptance criter
 Update the task's status and verification log after completion, then update this phase index. Update the phase status in [the phase queue](../README.md) when it changes. Never replace actual evidence with expected outputs. Decisions that alter architecture require maintainer confirmation.
 
 Full milestone context: [../../docs/roadmap.md](../../docs/roadmap.md).
+
+Task 01 records the completed 2026-11-09 maintainer-requested combined development command follow-up; phase status remains DONE.
