@@ -27,6 +27,12 @@ Initialize reproducible pnpm workspace with separate Astro Site and Keystatic Ad
 
 ## Verification evidence
 
+### 2026-11-10 — ESLint safety rules follow-up (DONE)
+
+- [x] Added eight individual type-aware safety rules to the existing TS/TSX project-service configuration: floating/misused promises, await-thenable, only-throw-error, unnecessary assertions/conditions, deprecated APIs, and exhaustive switches. Conditions and deprecations report warnings; the other six report errors. Added strict equality and core duplicate-import checks, allowing separate type imports. Removed one unnecessary non-null assertion from the RSS publication date. No new dependencies or React rules.
+- Official sources: [individual typed rules](https://typescript-eslint.io/getting-started/typed-linting/#enabling-individual-type-checked-rules), [duplicate imports](https://eslint.org/docs/latest/rules/no-duplicate-imports), and [strict equality](https://eslint.org/docs/latest/rules/eqeqeq).
+- macOS arm64, Node 22.23.4/pnpm 12.18.0: `PATH=/Users/dsntech/.nvm/versions/node/v22.23.4/bin:$PATH pnpm check` exited 0: format, lint (no warnings), types, 28 tests, Site/Admin builds, and static output verification passed. Existing Admin chunk-size warning remains. An in-memory ESLint `lintText` smoke check using Node assertions confirmed diagnostics from all ten added rules and accepted separate value/type imports; no fixture files were written. `git diff --check` passed. No deployed authentication/write validation needed for this tooling change. Next task: none queued.
+
 ### 2026-11-09 — documentation organization follow-up (DONE)
 
 - [x] Maintainer-requested documentation cleanup: reconciled historical proposals with current content/runtime contracts, centralized environment variable metadata in deployment docs, separated customer setup from operations, and moved reference deployment/investigation details into [historical notes](reference-deployment.md). Roadmap now records product direction; execution status remains in task indexes. README links to setup and operations separately.

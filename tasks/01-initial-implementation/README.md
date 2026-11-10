@@ -36,3 +36,5 @@ Task 02 also records the completed 2026-11-09 collection list columns follow-up 
 Task 01 records the completed 2026-11-09 maintainer-requested project README cleanup; phase status remains DONE.
 
 Task 01 records the completed 2026-11-09 documentation organization follow-up; reference environment details are preserved in [historical deployment notes](reference-deployment.md). Phase status remains DONE.
+
+Task 01 records the completed 2026-11-10 ESLint safety rules follow-up; phase status remains DONE.

@@ -16,6 +16,12 @@ export default [
     ],
   },
   js.configs.recommended,
+  {
+    rules: {
+      eqeqeq: 'error',
+      'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
+    },
+  },
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,
   {
@@ -28,6 +34,14 @@ export default [
     },
     rules: {
       '@typescript-eslint/consistent-type-exports': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/only-throw-error': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/no-unnecessary-condition': 'warn',
+      '@typescript-eslint/no-deprecated': 'warn',
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
     },
   },
   {

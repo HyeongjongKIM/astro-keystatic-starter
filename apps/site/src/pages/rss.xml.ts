@@ -11,7 +11,7 @@ export async function GET(context: APIContext) {
     items: (await publishedPosts()).map(({ slug, entry }) => ({
       title: entry.title,
       description: entry.excerpt,
-      pubDate: new Date(entry.publishedDate!),
+      pubDate: new Date(entry.publishedDate),
       link: `/posts/${slug}/`,
     })),
   });
