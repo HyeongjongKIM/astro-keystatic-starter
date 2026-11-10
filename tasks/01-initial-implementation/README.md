@@ -4,7 +4,7 @@
 
 Deliver the initial Astro + Keystatic MVP, from runtime compatibility validation through customer deployment and handoff.
 
-Completed with maintainer-approved [CACHE-01](../../docs/known-issues.md) deferred as an unresolved, non-blocking limitation. No subsequent phase is defined.
+Completed with maintainer-approved [CACHE-01](../../docs/known-issues.md) deferred as an unresolved, non-blocking limitation. Subsequent work is tracked in [the phase queue](../README.md).
 
 Follow tasks in order. Each task has explicit dependencies and acceptance criteria. Do not begin dependent tasks when an earlier gate is blocked.
 

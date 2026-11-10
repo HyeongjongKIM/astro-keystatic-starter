@@ -2,7 +2,7 @@
 
 The starter provides a static Astro Site and a separate Keystatic Admin, with Git-backed content, automatic Page navigation, Posts, image optimization, SEO, and independent customer deployments. See [architecture](architecture.md) and [content model](content-model.md) for the current contracts.
 
-Execution order, task status, acceptance criteria, and verification evidence are maintained only in the [task queue](../tasks/README.md). Current limitations are maintained in [known issues](known-issues.md). No next implementation phase is scheduled.
+Execution order, task status, acceptance criteria, and verification evidence are maintained only in the [task queue](../tasks/README.md). Current limitations are maintained in [known issues](known-issues.md). Update this roadmap when product direction or major goals change; individual task additions and status changes belong in the task queue.
 
 ## Future candidates
 

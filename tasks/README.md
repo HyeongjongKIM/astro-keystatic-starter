@@ -2,11 +2,12 @@
 
 Organize tasks by phase. Start with the earliest phase that is not DONE, then select the earliest task whose dependencies are completed from that phase's README. Do not advance past a blocked dependency or phase.
 
-| Phase                                                              | Goal                                                   | Dependency | Status |
-| ------------------------------------------------------------------ | ------------------------------------------------------ | ---------- | ------ |
-| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff | None       | DONE   |
+| Phase                                                              | Goal                                                            | Dependency | Status |
+| ------------------------------------------------------------------ | --------------------------------------------------------------- | ---------- | ------ |
+| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff          | None       | DONE   |
+| [02 — Repository workflow](02-repository-workflow/README.md)       | Define branch, content publishing, CI, and deployment workflows | 01 DONE    | TODO   |
 
-Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. No next phase has been defined.
+Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow planning is queued next; implementation has not started.
 
 ## Organization rules
 
