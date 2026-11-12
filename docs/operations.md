@@ -1,6 +1,6 @@
 # Content operations and maintenance
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
 
 Complete [customer setup](customer-setup.md) before using the deployed Admin. For configuration changes, use the [configuration reference](deployment.md#configuration-contract).
 
@@ -25,6 +25,7 @@ Rotate compromised GitHub App credentials and Worker secrets, then verify a fres
 - Repo not found: verify the public build-time repository setting and selected App installation; rebuild after changing identity.
 - Missing credentials / OAuth failure: verify all three runtime secrets, public slug, exact callback and the matching environment's App.
 - Setup loses manifest after GitHub login: return to Keystatic setup and submit again after login; avoid duplicate App registrations.
+- Editor reports “Expected branch to point to … Pull and try again”: another editor or developer advanced the branch after this form loaded. Preserve any unsaved text, reload to read the current branch, then retry. Do not force-push or overwrite the newer commits.
 - Newly saved content fails build: check missing parent Pages, reserved slugs, image alias/path, required date/status and the specific build error. Avoid hotfixing framework internals.
 - Local runner error: confirm the tracked dependency pre-bundling configuration described in [developer tooling](tooling.md#local-admin-runtime-and-historical-fixtures). Local authenticated writes remain unverified; validate authentication and writes on the deployed Worker.
 - Pages build failure: inspect the Git SHA/build logs and Node/pnpm versions. Inspect the Actions validation gate and deployment job. Independent Pages Git builds must remain disabled to preserve the CI gate.

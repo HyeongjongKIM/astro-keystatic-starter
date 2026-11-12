@@ -1,17 +1,17 @@
 # Repository Workflow Task Queue
 
-**Status:** IN_PROGRESS
+**Status:** DONE
 
 **Depends on:** [Phase 01](../01-initial-implementation/README.md) DONE
 
 Define a reusable branch and publishing strategy for this template and independent customer repositories, then implement change-aware CI and verify deployment triggers. Maintainer priority: complete this phase before Site UI foundation work.
 
-| ID  | Task                                                                   | Dependency    | Status      |
-| --- | ---------------------------------------------------------------------- | ------------- | ----------- |
-| 00  | [Branch and content publishing policy](00-branch-publishing-policy.md) | Phase 01 DONE | DONE        |
-| 01  | [Change-aware CI and deployment verification](01-ci-deployment.md)     | 00            | IN_PROGRESS |
+| ID  | Task                                                                   | Dependency    | Status |
+| --- | ---------------------------------------------------------------------- | ------------- | ------ |
+| 00  | [Branch and content publishing policy](00-branch-publishing-policy.md) | Phase 01 DONE | DONE   |
+| 01  | [Change-aware CI and deployment verification](01-ci-deployment.md)     | 00            | DONE   |
 
-Task 00 policy is confirmed and documented in [repository workflow](../../docs/repository-workflow.md). Content is saved on `dev`; merge-commit PRs promote code and content together to `main`, with zero required approvals and required CI. Both apps deploy affected targets only after CI succeeds. Task 01 applies the policy and verifies live behavior; historical `preview` resources are preserved during transition.
+Task 00 policy is confirmed and documented in [repository workflow](../../docs/repository-workflow.md). Content is saved on `dev`; merge-commit PRs promote code and content together to `main`, with zero required approvals and required CI. Both apps deploy affected targets only after CI succeeds. Task 01 applied the policy and verified live behavior, including protected publication, independent deployments and failure/skip cases. Historical `preview` resources are preserved. Existing accepted CACHE-01 freshness limits remain documented in the task evidence.
 
 ## Planning evidence
 

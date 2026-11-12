@@ -1,6 +1,6 @@
 # Cloudflare Deployment and Configuration
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
 
 ## Targets
 
