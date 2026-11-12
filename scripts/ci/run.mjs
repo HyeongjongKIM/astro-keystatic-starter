@@ -146,6 +146,24 @@ if (command === 'plan') {
     throw new Error(
       'Stale deployment: run full recovery on the current branch head',
     );
+} else if (command === 'upload-site') {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+  execFileSync(
+    'wrangler',
+    [
+      'pages',
+      'deploy',
+      'output/site-artifact/dist',
+      '--project-name',
+      process.env.CLOUDFLARE_PAGES_PROJECT,
+      '--branch',
+      process.env.GITHUB_REF_NAME,
+      '--commit-hash',
+      process.env.GITHUB_SHA,
+      '--commit-dirty=false',
+    ],
+    { cwd: root, stdio: 'inherit' },
+  );
 } else {
   throw new Error(
     `Unknown CI command in ${fileURLToPath(import.meta.url)}: ${command}`,
