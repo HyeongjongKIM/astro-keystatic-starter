@@ -38,7 +38,7 @@
       "env_vars": {
         "NODE_VERSION": {
           "type": "plain_text",
-          "value": "22.23.4"
+          "value": "22.23.5"
         },
         "PNPM_VERSION": {
           "type": "plain_text",
@@ -63,7 +63,7 @@
       "env_vars": {
         "NODE_VERSION": {
           "type": "plain_text",
-          "value": "22.23.4"
+          "value": "22.23.5"
         },
         "PNPM_VERSION": {
           "type": "plain_text",
