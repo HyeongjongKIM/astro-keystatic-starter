@@ -6,18 +6,12 @@
 
 Define a reusable branch and publishing strategy for this template and independent customer repositories, then implement change-aware CI and verify deployment triggers. Maintainer priority: complete this phase before Site UI foundation work.
 
-| ID  | Task                                                                   | Dependency    | Status      |
-| --- | ---------------------------------------------------------------------- | ------------- | ----------- |
-| 00  | [Branch and content publishing policy](00-branch-publishing-policy.md) | Phase 01 DONE | IN_PROGRESS |
-| 01  | [Change-aware CI and deployment verification](01-ci-deployment.md)     | 00            | TODO        |
+| ID  | Task                                                                   | Dependency    | Status |
+| --- | ---------------------------------------------------------------------- | ------------- | ------ |
+| 00  | [Branch and content publishing policy](00-branch-publishing-policy.md) | Phase 01 DONE | DONE   |
+| 01  | [Change-aware CI and deployment verification](01-ci-deployment.md)     | 00            | TODO   |
 
-Task 00 inspection is in progress; publishing and protection decisions remain pending. No workflows, repository rules, GitHub App permissions, or Cloudflare settings have been changed. Task 00 must resolve the policy decisions before Task 01 applies settings. Keep the task evidence, this index, and [the phase queue](../README.md) consistent when statuses change.
-
-Agreed baseline: development work is collected on `dev` and promoted to production `main` through PRs, with no required feature/fix/docs branches. Site preview is intended to use `dev`; the existing `preview` transition and Keystatic content-save target remain unresolved in Task 00.
-
-Admin automatic deployment is also in scope: affected `dev` updates deploy the preview Worker and affected `main` updates deploy the production Worker after successful checks. Docs-only, editorial-content/image-only, and Site-only changes must not deploy Admin; Admin-only changes must not deploy Site. Shared changes require target-specific impact classification. This policy is planned, not implemented.
-
-2026-11-12: Task 00 inspected tracked configuration and remote branches. Private-repository rules/protection reads returned plan-related HTTP 403; the maintainer intends to make the repository public. Content publishing, Site gating, and merge/review decisions are pending. No external settings have changed.
+Task 00 policy is confirmed and documented in [repository workflow](../../docs/repository-workflow.md). Content is saved on `dev`; merge-commit PRs promote code and content together to `main`, with zero required approvals and required CI. Both apps deploy affected targets only after CI succeeds. Task 01 applies the policy and verifies live behavior; historical `preview` resources are preserved during transition.
 
 ## Planning evidence
 

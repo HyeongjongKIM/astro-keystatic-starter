@@ -1,5 +1,7 @@
 # Customer setup and operations
 
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Phase 02 is migrating the historical `preview`/manual-deployment setup described below; use its task evidence to distinguish current live settings from the confirmed target policy.
+
 ## Create an independent customer repository
 
 Copy this starter into a new customer-owned repository; do not share a deployment, App installation, secrets or content between customers. Keep the schema test fixtures separate from editorial content. Set the customer identity in `content/settings/site.yaml`; edit Pages/Posts in Keystatic after setup. Pages determine primary menus and breadcrumbs. Use `home` for Home and create parent Pages before nested children. Use draft/published for Posts; dates do not schedule publication.

@@ -1,6 +1,6 @@
 # Task 00 — Branch and Content Publishing Policy
 
-**Status:** IN_PROGRESS
+**Status:** DONE
 
 **Depends on:** [Phase 01](../01-initial-implementation/README.md) DONE
 
@@ -34,27 +34,23 @@ Determine deployment impact from changed files and actual build dependencies, no
 
 Mixed changes use the union of affected targets. Use a clear path-based policy for shared files and dependencies; conservative validation and deployment of both targets is acceptable when impact cannot be safely separated. Fine-grained dependency-graph analysis is not required. Content schema changes can require Admin deployment even though editorial content changes do not; never silently skip a potentially affected target.
 
-## Decisions still to resolve
+## Confirmed decisions
 
-- Inspect current Pages and Keystatic dependencies on `preview` before confirming its transition to `dev`. Do not delete or repoint the existing branch or environment as part of planning.
-- Confirm the Keystatic content-save target: `main` for direct publication, or `dev` for preview followed by a `dev` to `main` PR. Content and code accumulated on `dev` are promoted together; discuss that consequence before selecting the target.
-- Verify the chosen publishing path against branch protections, App permissions, and supported Keystatic behavior. No content-save target or bypass permission is approved yet.
-- Resolve review/merge details and whether CI success must gate Site production deployment. Admin automatic deployments must already wait for applicable checks to pass.
-- Define customer-specific template-update PRs without requiring additional permanent branches; template generation does not imply automatic update propagation.
+On 2026-11-12 the maintainer confirmed all recommended options: content saves to `dev`, code/content promotion together through `dev` to `main`, Site and Admin deployments after successful CI, merge commits with zero required approvals and required checks. The complete implementation contract is [repository workflow](../../docs/repository-workflow.md). No App bypass or permission expansion is needed; exact branch enforcement comes from protected `main` and editor selection of `dev`, not an undocumented Keystatic option.
 
 ## Work
 
-- [ ] Inspect current GitHub Actions triggers, Keystatic branch behavior, and tracked Pages settings; separately inspect actual repository rules, GitHub App access, and Cloudflare settings when access is available. Mark unknown external settings explicitly.
-- [ ] Consult current official GitHub, Keystatic, and Cloudflare documentation. Verify support before proposing bypass actors or branch restrictions; do not widen App permissions as a workaround.
-- [ ] Document the agreed `main`/`dev` roles and `dev` to `main` PR path; resolve merge/review details, how `dev` stays synchronized after promotion, and how developers reconcile editor commits without force-pushing production history.
-- [ ] Confirm with the maintainer whether content publishes directly or requires review. Document how the selected policy works with required PR/check rules and the exact GitHub App identity and allowed paths/operations where supported. Do not infer compatibility from a UI build.
-- [ ] Define which checks are required for each change category: docs/tasks, content/images, Site, Admin, shared schema/configuration, dependencies, and CI/build tooling. Mixed or uncertain changes must receive the union of affected checks or a conservative full check.
-- [ ] Define relevant-file production (`main`) and preview (`dev`) triggers, including non-UI changes that affect public output. Resolve migration from the existing `preview` setup and whether CI success must gate production deployment; record that independent Pages Git builds do not inherently wait for Actions.
-- [ ] Specify Admin automatic deployment through the existing environment-specific build/deploy commands and supported Wrangler/GitHub Actions APIs. Define exact affected paths/dependencies, required checks, retry behavior, environment-specific serialization, and prevention of stale or duplicate deployments. Content, Site-only, and docs-only changes must not trigger an unrelated Admin deployment.
-- [ ] Define per-customer Cloudflare deployment credentials and environment-specific public Admin build settings. Keep Keystatic authentication secrets in the matching Workers; do not expose deployment tokens to PR validation or log secrets.
-- [ ] Define how commit-message validation handles developer commits and Keystatic-generated commits without disabling validation for all bots.
-- [ ] Define template-local configuration versus per-customer GitHub/Cloudflare/App setup, update delivery, and operator responsibilities.
-- [ ] Update customer setup, operations, deployment, and tooling documentation where applicable. Avoid duplicating task status in the product roadmap.
+- [x] Inspect current GitHub Actions triggers, Keystatic branch behavior, and tracked Pages settings; separately inspect actual repository rules, GitHub App access, and Cloudflare settings when access is available. Mark unknown external settings explicitly.
+- [x] Consult current official GitHub, Keystatic, and Cloudflare documentation. Verify support before proposing bypass actors or branch restrictions; do not widen App permissions as a workaround.
+- [x] Document the agreed `main`/`dev` roles and `dev` to `main` PR path; resolve merge/review details, how `dev` stays synchronized after promotion, and how developers reconcile editor commits without force-pushing production history.
+- [x] Confirm with the maintainer whether content publishes directly or requires review. Document how the selected policy works with required PR/check rules and the exact GitHub App identity and allowed paths/operations where supported. Do not infer compatibility from a UI build.
+- [x] Define which checks are required for each change category: docs/tasks, content/images, Site, Admin, shared schema/configuration, dependencies, and CI/build tooling. Mixed or uncertain changes must receive the union of affected checks or a conservative full check.
+- [x] Define relevant-file production (`main`) and preview (`dev`) triggers, including non-UI changes that affect public output. Resolve migration from the existing `preview` setup and whether CI success must gate production deployment; record that independent Pages Git builds do not inherently wait for Actions.
+- [x] Specify Admin automatic deployment through the existing environment-specific build/deploy commands and supported Wrangler/GitHub Actions APIs. Define exact affected paths/dependencies, required checks, retry behavior, environment-specific serialization, and prevention of stale or duplicate deployments. Content, Site-only, and docs-only changes must not trigger an unrelated Admin deployment.
+- [x] Define per-customer Cloudflare deployment credentials and environment-specific public Admin build settings. Keep Keystatic authentication secrets in the matching Workers; do not expose deployment tokens to PR validation or log secrets.
+- [x] Define how commit-message validation handles developer commits and Keystatic-generated commits without disabling validation for all bots.
+- [x] Define template-local configuration versus per-customer GitHub/Cloudflare/App setup, update delivery, and operator responsibilities.
+- [x] Update customer setup, operations, deployment, and tooling documentation where applicable. Avoid duplicating task status in the product roadmap.
 
 ## Acceptance criteria
 
@@ -101,3 +97,15 @@ Environment: macOS arm64, Node `v22.23.4`, pnpm `12.18.0`. Initial working tree 
 Pending maintainer decisions: content save target (including joint code/content promotion on `dev`), Site CI gate, and merge/review policy. Recommendations are proposals only: save on `dev`, deploy both targets after successful CI, and use merge commits with zero required approvals plus required checks for a solo maintainer. Keep `dev` after promotion and synchronize it by merging `main`; never force-push production history. No bypass, permission widening, branch transition, workflow activation, or deployment is approved by these proposals. Task 01 remains dependent on Task 00 completion.
 
 Verification for this documentation-only inspection: `pnpm format:check` and `git diff --check` exited 0; Python local Markdown link validation passed all 21 links across the phase queue and Phase 02 documents. A subsequent repository API read still reported `private`. Application checks and builds were not run because no application or workflow code changed.
+
+### 2026-11-12 — Confirmed policy and live inventory
+
+The maintainer made the repository public and confirmed the recommendations above. `gh api repos/HyeongjongKIM/astro-keystatic-starter` returned `public`; rulesets read returned `[]`; `branches/main/protection` returned HTTP 404 `Branch not protected`. The earlier plan-related 403 is resolved. No rules were changed in Task 00.
+
+Wrangler 4.158.0 `whoami` and `pages project list` exited 0. Authenticated Cloudflare API reads verified account `199c99f6a960ac0f6d972bf769a837bb`, Pages project `astro-keystatic-starter-site` connected to this exact repository, production `main`, preview include `preview`, the tracked root build/output settings, production URL `https://astro-starter.hyeongjongkim.dev`, and preview URL `https://preview.astro-keystatic-starter-site.pages.dev`. Existing domains are preserved. Workers `astro-keystatic-starter-admin-preview` and `astro-keystatic-starter-admin` exist, each with all three named Keystatic secret bindings; only names/types were read, never secret values. No Cloudflare setting was changed.
+
+After maintainer browser login, inspected installations `179286338` (App slug `astro-keystatic-admin-preview`) and `179284653` (`hyeongjongkim-keystatic-admin`). Both select only `HyeongjongKIM/astro-keystatic-starter`, with metadata/pull requests read and code read/write. Each App settings page has the matching `https://<worker>.jonkim0309.workers.dev/api/keystatic/github/oauth/callback`; neither callback depends on the Pages `preview` alias. Exact protected-branch save behavior remains a Task 01 deployed acceptance test, not a Task 00 compatibility claim. GitHub CLI installation reads were unavailable (403/404); browser inspection supplied the evidence.
+
+`gh variable list` and `gh secret list` exited 0 with no entries. CI token/environment provisioning and remote deployment tests belong to Task 01. Existing local Admin environment files are absent; no credential regeneration is required because deployed Worker secrets are retained. Public Worker requests through Python returned HTTP 403, so this inspection does not establish editor availability.
+
+Final Task 00 verification on macOS arm64, 2026-11-12: `pnpm format:check`, `git diff --check`, and local Markdown link validation (36 links) passed. `pnpm check` exited 0: format, lint, both app type checks (zero diagnostics), 28 tests, Site/preview Admin builds and static-output verification passed. Admin retained the existing chunk-size warning. Browser-generated inspection snapshots initially caused format-check failures; those disposable files were removed and the check passed. No remote write or deployment was performed for Task 00. Task 01 is next.
