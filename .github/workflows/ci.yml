@@ -17,7 +17,7 @@ jobs:
       site: ${{ steps.plan.outputs.site }}
       admin: ${{ steps.plan.outputs.admin }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -39,7 +39,7 @@ jobs:
     env:
       PUBLIC_SITE_URL: ${{ github.ref_name == 'main' && github.event_name != 'pull_request' && vars.PRODUCTION_PUBLIC_SITE_URL || vars.PREVIEW_PUBLIC_SITE_URL || 'https://example.com' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
@@ -51,7 +51,7 @@ jobs:
           mkdir -p output/site-artifact
           cp -R apps/site/dist output/site-artifact/dist
           printf '%s' "$PUBLIC_SITE_URL" > output/site-artifact/origin.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: validated-site
           path: output/site-artifact/
@@ -65,7 +65,7 @@ jobs:
       KEYSTATIC_GITHUB_REPO: ${{ vars.KEYSTATIC_GITHUB_REPO || github.repository }}
       ADMIN_BRAND_NAME: ${{ vars.ADMIN_BRAND_NAME }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
@@ -82,10 +82,10 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: 22.23.4
       - run: node scripts/ci/run.mjs gate
@@ -112,11 +112,11 @@ jobs:
       KEYSTATIC_GITHUB_REPO: ${{ vars.KEYSTATIC_GITHUB_REPO }}
       PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ vars.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8.0.2
         with:
           name: validated-site
           path: output/site-artifact
@@ -151,7 +151,7 @@ jobs:
       ADMIN_BRAND_NAME: ${{ vars.ADMIN_BRAND_NAME }}
       DEPLOY_TARGET: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
