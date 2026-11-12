@@ -5,6 +5,7 @@ import {
   mkdirSync,
   rmSync,
   readFileSync,
+  chmodSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -175,5 +176,45 @@ describe('workflow deployment boundaries', () => {
         expect(text).not.toContain('secrets.');
       }
     }
+  });
+});
+
+describe('Site upload command', () => {
+  it('invokes Wrangler from repository root with explicit project, branch and SHA', () => {
+    const binary = join(cwd, 'wrangler');
+    const recorded = join(cwd, 'upload.json');
+    writeFileSync(
+      binary,
+      '#!/usr/bin/env node\n' +
+        "require('node:fs').writeFileSync(process.env.UPLOAD_RECORD, JSON.stringify({cwd:process.cwd(),args:process.argv.slice(2)}));\n",
+    );
+    chmodSync(binary, 0o755);
+    const result = run(
+      'upload-site',
+      {},
+      {
+        PATH: `${cwd}:${process.env.PATH}`,
+        UPLOAD_RECORD: recorded,
+        CLOUDFLARE_PAGES_PROJECT: 'customer-project',
+        GITHUB_REF_NAME: 'dev',
+      },
+    );
+    expect(result.status).toBe(0);
+    const actual = JSON.parse(readFileSync(recorded, 'utf8'));
+    expect(actual.cwd).toBe(
+      fileURLToPath(new URL('../../', import.meta.url)).replace(/\/$/, ''),
+    );
+    expect(actual.args).toEqual([
+      'pages',
+      'deploy',
+      'output/site-artifact/dist',
+      '--project-name',
+      'customer-project',
+      '--branch',
+      'dev',
+      '--commit-hash',
+      git('rev-parse', 'HEAD'),
+      '--commit-dirty=false',
+    ]);
   });
 });
