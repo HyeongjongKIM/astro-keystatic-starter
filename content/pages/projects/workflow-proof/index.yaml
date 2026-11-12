@@ -1,0 +1,7 @@
+title: Workflow verification
+description: Temporary repository workflow verification.
+order: 0
+showInNavigation: true
+content:
+  - discriminant: richText
+    value: {}
