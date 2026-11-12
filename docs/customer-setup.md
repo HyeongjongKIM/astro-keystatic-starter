@@ -6,7 +6,7 @@ The confirmed [repository workflow](repository-workflow.md) defines `dev` editor
 
 Copy this starter into a new customer-owned repository; do not share a deployment, App installation, secrets or content between customers. Keep the schema test fixtures separate from editorial content. Set the customer identity in `content/settings/site.yaml`; edit Pages/Posts in Keystatic after setup. Pages determine primary menus and breadcrumbs. Use `home` for Home and create parent Pages before nested children. Use draft/published for Posts; dates do not schedule publication.
 
-Use Node 22.23.4 and pnpm 12.18.0, then run `pnpm install --frozen-lockfile` and `pnpm check`. The default Site URL is example.com for local builds; set the real origin before publishing. The `.vscode` folder recommends Astro, ESLint and Prettier.
+Use Node 22.23.5 and pnpm 12.18.0, then run `pnpm install --frozen-lockfile` and `pnpm check`. The default Site URL is example.com for local builds; set the real origin before publishing. The `.vscode` folder recommends Astro, ESLint and Prettier.
 
 ## Configure branches and static Site hosting
 
@@ -14,7 +14,7 @@ Generate only the template default branch, then create `dev` from the customer's
 
 Authorize Cloudflare's official GitHub integration for the customer repository. Create a Pages project with production branch `main`, repository root, build command `pnpm install --frozen-lockfile && pnpm --filter @starter/site build`, and output `apps/site/dist`. Preserve existing domains when adopting this workflow. The [Pages REST template](examples/pages-project.json) retains these recovery build settings, but disables automatic production and preview Git builds. Actions uploads validated static output with explicit `main` or `dev` branch and SHA; independent Pages Git builds would bypass the CI gate.
 
-Set Node `22.23.4`, pnpm `12.18.0`, `HUSKY=0`, and `SKIP_DEPENDENCY_INSTALL=true` in Pages for manual Git-build recovery. Configure production `PUBLIC_SITE_URL` to the customer origin and preview to `https://dev.CUSTOMER-SITE.pages.dev`. Pages environment variables do not automatically reach Actions. The Actions configuration below is authoritative for automatic deployment.
+Set Node `22.23.5`, pnpm `12.18.0`, `HUSKY=0`, and `SKIP_DEPENDENCY_INSTALL=true` in Pages for manual Git-build recovery. Configure production `PUBLIC_SITE_URL` to the customer origin and preview to `https://dev.CUSTOMER-SITE.pages.dev`. Pages environment variables do not automatically reach Actions. The Actions configuration below is authoritative for automatic deployment.
 
 Create GitHub environments `preview` and `production`, allowing only branches `dev` and `main` respectively, without required reviewers. Populate each environment:
 

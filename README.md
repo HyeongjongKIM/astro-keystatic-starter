@@ -23,7 +23,7 @@ Each customer receives an independently deployed copy of this repository. No dat
 
 ## Local development
 
-Use Node `22.23.4` (`nvm install && nvm use`) and pnpm `12.18.0` (root `packageManager`). Install pnpm using its official installation instructions, then run:
+Use Node `22.23.5` (`nvm install && nvm use`) and pnpm `12.18.0` (root `packageManager`). Install pnpm using its official installation instructions, then run:
 
 ```sh
 pnpm install --frozen-lockfile
