@@ -15,9 +15,9 @@
       "repo_name": "REPOSITORY",
       "repo_id": "REPOSITORY_ID",
       "production_branch": "main",
-      "production_deployments_enabled": true,
-      "preview_deployment_setting": "custom",
-      "preview_branch_includes": ["preview"],
+      "production_deployments_enabled": false,
+      "preview_deployment_setting": "none",
+      "preview_branch_includes": ["dev"],
       "preview_branch_excludes": ["main"],
       "path_includes": [
         "apps/site/*",
@@ -75,7 +75,7 @@
         },
         "PUBLIC_SITE_URL": {
           "type": "plain_text",
-          "value": "https://preview.customer-site.pages.dev"
+          "value": "https://dev.customer-site.pages.dev"
         },
         "HUSKY": {
           "type": "plain_text",

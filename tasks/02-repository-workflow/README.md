@@ -6,10 +6,10 @@
 
 Define a reusable branch and publishing strategy for this template and independent customer repositories, then implement change-aware CI and verify deployment triggers. Maintainer priority: complete this phase before Site UI foundation work.
 
-| ID  | Task                                                                   | Dependency    | Status |
-| --- | ---------------------------------------------------------------------- | ------------- | ------ |
-| 00  | [Branch and content publishing policy](00-branch-publishing-policy.md) | Phase 01 DONE | DONE   |
-| 01  | [Change-aware CI and deployment verification](01-ci-deployment.md)     | 00            | TODO   |
+| ID  | Task                                                                   | Dependency    | Status      |
+| --- | ---------------------------------------------------------------------- | ------------- | ----------- |
+| 00  | [Branch and content publishing policy](00-branch-publishing-policy.md) | Phase 01 DONE | DONE        |
+| 01  | [Change-aware CI and deployment verification](01-ci-deployment.md)     | 00            | IN_PROGRESS |
 
 Task 00 policy is confirmed and documented in [repository workflow](../../docs/repository-workflow.md). Content is saved on `dev`; merge-commit PRs promote code and content together to `main`, with zero required approvals and required CI. Both apps deploy affected targets only after CI succeeds. Task 01 applies the policy and verifies live behavior; historical `preview` resources are preserved during transition.
 

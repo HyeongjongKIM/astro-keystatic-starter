@@ -1,6 +1,6 @@
 # Task 01 — Change-aware CI and Deployment Verification
 
-**Status:** TODO
+**Status:** IN_PROGRESS
 
 **Depends on:** [Task 00](00-branch-publishing-policy.md) DONE
 
@@ -86,3 +86,26 @@ Validate workflow YAML and meaningful classification/gate tests, then exercise t
 2026-11-10: Planning only. Scope includes change-aware CI, Site deployment conditions, and Admin automatic deployment after successful checks. The maintainer requested consolidation of repeated requirements while retaining external setup and remote verification details. No workflow or external setting has been changed; implementation verification is pending. Status remains TODO.
 
 Documentation validation on macOS arm64: `pnpm format:check` and `git diff --check` exited 0; a Python path-existence check passed for 16 local links across the three Phase 02 documents. Existing staged content was preserved; this revision remains unstaged. Application and remote checks were not run for the documentation revision.
+
+### 2026-11-12 — Local implementation and environment preparation
+
+Environment verified with `uname -sm`: Darwin x86_64; Node `22.23.4`, pnpm `12.18.0`, pinned Wrangler `4.158.0`. Local implementation remains on `main` during the authorized initial transition. Task 00 completed in `42687b7`; this task has not yet activated a remote workflow.
+
+Implemented path classification and NUL-delimited Git comparisons (push base, PR merge base, deletion/rename endpoints, conservative full validation for missing/new-branch bases). Docs-only changes still run formatting, local Markdown links and per-commit checks. The stable `Required checks` job validates required and intentionally skipped results; deployment jobs explicitly reject failed/cancelled validation. Validation jobs have no deployment environment or secrets.
+
+Added Site artifact deployment with validated-origin matching and explicit branch/SHA, environment-specific Admin deployment through existing commands, app/branch concurrency without cancelling active uploads, branch-head checks through the authenticated GitHub API (supports private customers), and full manual recovery. Deployment tokens are supplied only to deployment steps. Both environments require `DEPLOY_ENABLED=true`; unconfigured deployment fails visibly.
+
+Local verification observed:
+
+- `pnpm check` exited 0: format, lint, app/shared types, 69 tests in four files, Site/preview Admin builds and static-output verification passed. `pnpm build:admin:production` separately exited 0. Both Admin modes retain the existing chunk-size warning.
+- After the private-repository head-query and explicit deployment status-condition changes, `pnpm lint` and `pnpm test` exited 0 (69 tests), and actionlint passed again.
+- Tests include real temporary Git repositories for PR target divergence, deletion/rename, unavailable/new-branch bases, manual recovery after docs-only commits, and stale/disabled/missing-setting deployment rejection. Workflow boundary tests check required-job wiring and secret isolation. These are local tests, not remote deployment evidence.
+- `node scripts/ci/run.mjs docs` passed 114 tracked local Markdown links before the evidence update. `git diff --check` exited 0.
+- actionlint `1.7.12`, downloaded from its official release with SHA256 verified against the release checksum file, passed `.github/workflows/ci.yml` with `-shellcheck=`. Shellcheck was not installed/invoked. An initial arm64 binary could not run on this x86_64 host; the verified amd64 binary passed. This is a local verification tool, not a new repository dependency.
+- Initial lint found a duplicate/missing test import; it was corrected before the passing checks. Browser snapshots initially interfered with root formatting; generated `.playwright-mcp/` files are now ignored alongside existing browser artifacts.
+
+External writes observed and read back:
+
+- Created GitHub environments `preview` and `production`, no required reviewers, custom branch policies restricted respectively to branch `dev` and branch `main`. Registered verified account/project, environment Site origins, repository and matching public App slugs. `DEPLOY_ENABLED=false` in both environments.
+- Registered matching repository public validation variables for the repository, both App slugs and both Site origins. No authentication credential was copied from Worker secrets or local Wrangler OAuth.
+- At preparation time, both environment secret lists were empty. Maintainer asked the agent to create/register the deployment token directly; Cloudflare browser currently requires account login. Token provisioning, effective token permissions, activation, branches/protections, competing Cloudflare triggers and deployed validation remain pending. Existing Pages Git deployment settings are unchanged until credentials and activation are ready. No workflow push or deployment has occurred in this task yet.

@@ -13,3 +13,5 @@ dist/
 output/
 .playwright-cli/
 .DS_Store
+
+.playwright-mcp/

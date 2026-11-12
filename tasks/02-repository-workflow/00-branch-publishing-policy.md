@@ -84,7 +84,7 @@ On 2026-11-12 the maintainer confirmed all recommended options: content saves to
 
 ### 2026-11-12 — Initial inspection
 
-Environment: macOS arm64, Node `v22.23.4`, pnpm `12.18.0`. Initial working tree was clean on `main` at `f933c524dcede2559bcdfab9ff55c7f8f8d5b735`.
+Environment: macOS x86_64, Node `v22.23.4`, pnpm `12.18.0`. Initial working tree was clean on `main` at `f933c524dcede2559bcdfab9ff55c7f8f8d5b735`.
 
 - `git ls-remote --heads origin` exited 0: remote branches are `main` and `preview`; `dev` does not exist. Remote `preview` is at `c97563de2ab592ff58ff8d58c5d5bbd5aaee8ea4`. No branch was changed.
 - `gh api repos/HyeongjongKIM/astro-keystatic-starter` exited 0: intended repository is private, default branch is `main`, and merge, squash, and rebase merging are enabled.
@@ -108,4 +108,6 @@ After maintainer browser login, inspected installations `179286338` (App slug `a
 
 `gh variable list` and `gh secret list` exited 0 with no entries. CI token/environment provisioning and remote deployment tests belong to Task 01. Existing local Admin environment files are absent; no credential regeneration is required because deployed Worker secrets are retained. Public Worker requests through Python returned HTTP 403, so this inspection does not establish editor availability.
 
-Final Task 00 verification on macOS arm64, 2026-11-12: `pnpm format:check`, `git diff --check`, and local Markdown link validation (36 links) passed. `pnpm check` exited 0: format, lint, both app type checks (zero diagnostics), 28 tests, Site/preview Admin builds and static-output verification passed. Admin retained the existing chunk-size warning. Browser-generated inspection snapshots initially caused format-check failures; those disposable files were removed and the check passed. No remote write or deployment was performed for Task 00. Task 01 is next.
+Final Task 00 verification on macOS x86_64, 2026-11-12: `pnpm format:check`, `git diff --check`, and local Markdown link validation (36 links) passed. `pnpm check` exited 0: format, lint, both app type checks (zero diagnostics), 28 tests, Site/preview Admin builds and static-output verification passed. Admin retained the existing chunk-size warning. Browser-generated inspection snapshots initially caused format-check failures; those disposable files were removed and the check passed. No remote write or deployment was performed for Task 00. Task 01 is next.
+
+Environment correction: `uname -sm` on 2026-11-12 reports `Darwin x86_64`; the initial architecture label was corrected to match the observed execution environment.

@@ -1,14 +1,14 @@
 # Content operations and maintenance
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Phase 02 is migrating the historical `preview`/manual-deployment setup described below; use its task evidence to distinguish current live settings from the confirmed target policy.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
 
 Complete [customer setup](customer-setup.md) before using the deployed Admin. For configuration changes, use the [configuration reference](deployment.md#configuration-contract).
 
 ## Publish and verify
 
-Log in to the deployed Admin, create a temporary nested Page under an existing parent, add a Rich text block and upload an image. Save. Confirm a GitHub commit contains YAML, linked MDX and an image under `apps/site/src/assets/images`; image references use `@assets`. Confirm Pages creates a `github:push` deployment for the same SHA and the public URL/menu/breadcrumb/image updates after success. Verify image dimensions/optimized WebP, canonical origin, `/rss.xml`, `/sitemap-index.xml`, `/robots.txt`, draft exclusion and an unknown-path 404. `/journal` and `/journal/` deliberately redirect to `/posts/` with 301; remove these rules and reserved slug together if changing the convention.
+Log in to the deployed Admin, create a temporary nested Page under an existing parent, add a Rich text block and upload an image. Select branch `dev` before saving. Save. Confirm a GitHub commit on `dev` contains YAML, linked MDX and an image under `apps/site/src/assets/images`; image references use `@assets`. Confirm the Actions Site validation and `Required checks` succeed, then the Site deployment uploads the same SHA to the `dev` preview and the public URL/menu/breadcrumb/image updates after success. Verify image dimensions/optimized WebP, canonical origin, `/rss.xml`, `/sitemap-index.xml`, `/robots.txt`, draft exclusion and an unknown-path 404. `/journal` and `/journal/` deliberately redirect to `/posts/` with 301; remove these rules and reserved slug together if changing the convention.
 
-Delete temporary content through Admin and verify its image also disappears from Git and a new Site deployment removes the URL. Neither content commit should trigger an Admin deployment: Admin deployment is deliberately manual and independent. Use `git pull --rebase` before coding after editor commits; preserve unrelated local work first. No forced push is needed.
+Delete temporary content through Admin and verify its image also disappears from Git and a new Site deployment removes the URL. Neither content commit should trigger an Admin deployment. Promote `dev` through a merge-commit PR to `main` after required checks pass; production deployment also waits for CI. Use `git pull --rebase origin dev` before coding after editor commits; preserve unrelated local work first. No forced push is needed.
 
 Run `pnpm check` locally and confirm GitHub Actions. Unit fixtures are independent of customer edits; `verify:site` checks built output against current Posts. Browser accessibility audits are smoke checks, not exhaustive assistive-technology validation.
 
@@ -27,10 +27,16 @@ Rotate compromised GitHub App credentials and Worker secrets, then verify a fres
 - Setup loses manifest after GitHub login: return to Keystatic setup and submit again after login; avoid duplicate App registrations.
 - Newly saved content fails build: check missing parent Pages, reserved slugs, image alias/path, required date/status and the specific build error. Avoid hotfixing framework internals.
 - Local runner error: confirm the tracked dependency pre-bundling configuration described in [developer tooling](tooling.md#local-admin-runtime-and-historical-fixtures). Local authenticated writes remain unverified; validate authentication and writes on the deployed Worker.
-- Pages build failure: inspect the Git SHA/build logs and Node/pnpm versions. This starter's Site build is separate from root CI; a successful Site deployment does not establish passing lint/tests.
+- Pages build failure: inspect the Git SHA/build logs and Node/pnpm versions. Inspect the Actions validation gate and deployment job. Independent Pages Git builds must remain disabled to preserve the CI gate.
 
 ## Known limitations
 
 Deleted public URLs may continue returning cached HTML after a successful deletion deployment. Confirm the Git commit and deployment, then check the unchanged URL and record timestamps and response headers if old content persists. See [CACHE-01](known-issues.md#cache-01--delayed-visibility-of-deleted-pages-content) for observed behavior and investigation evidence.
 
 Official references: [Pages rollbacks](https://developers.cloudflare.com/pages/configuration/rollbacks/), [Pages redirects](https://developers.cloudflare.com/pages/configuration/redirects/).
+
+## Failed deployment and recovery
+
+For a failed deployment whose SHA is still the branch head, rerun failed jobs in its Actions run. Deployment concurrency serializes each app/branch without cancelling an active upload; a head check rejects stale queued runs. If the branch advanced, run the `CI` workflow manually on the current `dev` or `main` head. Manual dispatch performs full validation and deploys both targets, including changes missed by later docs-only pushes. Do not rerun an old SHA or rely on an unrelated push to repair a failed/stale deployment. A new commit during an upload can leave the prior validated version live until the next successful run.
+
+Local Admin recovery commands remain `pnpm deploy:admin:preview` and `pnpm deploy:admin:production`; verify the correct repository/App public settings, branch head and full checks first, and run the commands sequentially. An emergency local deployment is an operator action, not proof the automatic workflow succeeded. Keep `dev` after promotion and merge `main` back into it; never force-push publication history.

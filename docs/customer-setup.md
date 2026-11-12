@@ -1,6 +1,6 @@
 # Customer setup and operations
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Phase 02 is migrating the historical `preview`/manual-deployment setup described below; use its task evidence to distinguish current live settings from the confirmed target policy.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
 
 ## Create an independent customer repository
 
@@ -8,25 +8,32 @@ Copy this starter into a new customer-owned repository; do not share a deploymen
 
 Use Node 22.23.4 and pnpm 12.18.0, then run `pnpm install --frozen-lockfile` and `pnpm check`. The default Site URL is example.com for local builds; set the real origin before publishing. The `.vscode` folder recommends Astro, ESLint and Prettier.
 
-## Connect the static Site to Cloudflare Pages
+## Configure branches and static Site hosting
 
-Authorize Cloudflare's official GitHub integration for the customer repository through the normal account-owner flow. Create a Git-connected Pages project (not Direct Upload) with production branch `main` and one preview branch `preview`:
+Generate only the template default branch, then create `dev` from the customer's `main`. Use [the workflow policy](repository-workflow.md) for branch protection and PR publication. Editors save on `dev`; merging the PR publishes accumulated code and content together.
 
-| Setting              | Value                                                                         |
-| -------------------- | ----------------------------------------------------------------------------- |
-| Root directory       | repository root (empty)                                                       |
-| Build command        | `pnpm install --frozen-lockfile && pnpm --filter @starter/site build`         |
-| Output               | `apps/site/dist`                                                              |
-| Build image          | v3                                                                            |
-| Node / pnpm          | `NODE_VERSION=22.23.4`, `PNPM_VERSION=12.18.0`                                |
-| Install              | `SKIP_DEPENDENCY_INSTALL=true` (build command performs frozen install)        |
-| Git hooks on builder | `HUSKY=0`                                                                     |
-| Production URL       | `PUBLIC_SITE_URL=https://CUSTOMER-SITE.pages.dev` (or approved custom origin) |
-| Preview URL          | `PUBLIC_SITE_URL=https://preview.CUSTOMER-SITE.pages.dev`                     |
+Authorize Cloudflare's official GitHub integration for the customer repository. Create a Pages project with production branch `main`, repository root, build command `pnpm install --frozen-lockfile && pnpm --filter @starter/site build`, and output `apps/site/dist`. Preserve existing domains when adopting this workflow. The [Pages REST template](examples/pages-project.json) retains these recovery build settings, but disables automatic production and preview Git builds. Actions uploads validated static output with explicit `main` or `dev` branch and SHA; independent Pages Git builds would bypass the CI gate.
 
-Use separate production/preview variables. Set preview branches to custom/include `preview` and exclude `main`. Watch includes are `apps/site/*`, `packages/content/*`, `packages/config/*`, `content/*`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.nvmrc`; excludes empty. Pages wildcards include nested directories. This catches image/content changes and skips Admin-only changes. [pages-project.json](examples/pages-project.json) is a non-secret REST API template: replace project name, owner/repository names and numeric IDs, plus both URL values. The official project API can apply it after repository authorization.
+Set Node `22.23.4`, pnpm `12.18.0`, `HUSKY=0`, and `SKIP_DEPENDENCY_INSTALL=true` in Pages for manual Git-build recovery. Configure production `PUBLIC_SITE_URL` to the customer origin and preview to `https://dev.CUSTOMER-SITE.pages.dev`. Pages environment variables do not automatically reach Actions. The Actions configuration below is authoritative for automatic deployment.
 
-Push `main` for production and `preview` for preview. A new project can also be built from its authorized Git branch through the official deployment API. Keep a successful deployment ID before rollback testing. Site deploys contain only static assets and need no Keystatic credentials or database.
+Create GitHub environments `preview` and `production`, allowing only branches `dev` and `main` respectively, without required reviewers. Populate each environment:
+
+| Name                               | Kind     | Value                                                    |
+| ---------------------------------- | -------- | -------------------------------------------------------- |
+| `CLOUDFLARE_ACCOUNT_ID`            | Variable | Customer account ID                                      |
+| `CLOUDFLARE_PAGES_PROJECT`         | Variable | Existing Pages project name                              |
+| `PUBLIC_SITE_URL`                  | Variable | Matching production origin or `dev` preview origin       |
+| `KEYSTATIC_GITHUB_REPO`            | Variable | `OWNER/REPOSITORY`                                       |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Variable | Matching environment's App slug                          |
+| `ADMIN_BRAND_NAME`                 | Variable | Optional Admin title                                     |
+| `CLOUDFLARE_API_TOKEN`             | Secret   | Customer-account-scoped deployment token                 |
+| `DEPLOY_ENABLED`                   | Variable | `true` only after all settings and credentials are ready |
+
+Use the official Cloudflare token UI, limiting resources to the customer account. Grant Pages Edit, Workers Scripts Edit and Account Settings Read required for account lookup; add no unrelated zones or products. Retain the existing Worker runtime authentication secrets. Never use an expiring local Wrangler OAuth token as the CI credential.
+
+For validation jobs without deployment secrets, set repository variables `KEYSTATIC_GITHUB_REPO`, optional `ADMIN_BRAND_NAME`, `PREVIEW_KEYSTATIC_GITHUB_APP_SLUG`, `PRODUCTION_KEYSTATIC_GITHUB_APP_SLUG`, `PREVIEW_PUBLIC_SITE_URL` and `PRODUCTION_PUBLIC_SITE_URL`. Keep these public values aligned with environment variables: Site deployment rejects an origin different from its validated artifact. Unprovisioned copies can run checks against placeholders but cannot deploy until configured.
+
+Before activating the workflow, inspect and disable automatic Pages Git builds and any competing Workers Git build triggers, while preserving the old `preview` branch/alias until `dev` deployment succeeds. Run remote checks before making `Required checks` mandatory. Protect `main` against direct saves, deletion and force pushes, including administrators, with PRs, zero approvals, merge commits and required checks; protect `dev` against deletion/force pushes without blocking direct editorial commits. Verify the effective rules and real editor saves after activation. No App bypass is used.
 
 ## Provision the Admin Apps and Workers
 

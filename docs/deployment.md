@@ -1,6 +1,6 @@
 # Cloudflare Deployment and Configuration
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Phase 02 is migrating the historical `preview`/manual-deployment setup described below; use its task evidence to distinguish current live settings from the confirmed target policy.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
 
 ## Targets
 
@@ -37,9 +37,11 @@ Starter-defined variables must actually be consumed in application code. Never p
 
 ## Build triggers
 
-- Site must rebuild when `apps/site/**`, `packages/content/**`, `packages/config/**`, `content/**`, or relevant lock/config files change.
-- Admin builds independently from its root directory and Wrangler config.
-- A Keystatic content commit must trigger a Site deployment without rebuilding Admin unnecessarily.
+GitHub Actions owns automatic deployments: affected `dev` pushes deploy preview; affected `main` pushes deploy production after `Required checks`. PRs only validate. Docs-only changes deploy neither app, editorial content/images and Site-only changes skip Admin, and Admin-only changes skip Site. Dependencies, shared configuration and unknown paths conservatively affect both. See the [path matrix](repository-workflow.md#validation-and-deployment-matrix).
+
+Disable Pages automatic production/preview Git builds and competing Workers Git build triggers. Site uploads a validated artifact using official Wrangler Pages commands, with branch and SHA supplied explicitly. Admin uses the existing environment-specific build/deploy commands. The local full `pnpm check` remains independent of change classification.
+
+Configure public validation values as repository variables and deployment settings/token separately in branch-restricted GitHub environments, as listed in [customer setup](customer-setup.md#configure-branches-and-static-site-hosting). Do not expose deployment tokens to PR jobs. Worker authentication secrets remain in each Worker. Deployments are serialized per app/environment; stale queued SHAs fail and require [recovery](operations.md#failed-deployment-and-recovery).
 
 ## Customer handoff
 
@@ -61,4 +63,4 @@ Create customer repository → create Pages/Worker → configure domain and GitH
 
 Admin repository identity uses Astro `env.schema` as a public client variable, consumed from `astro:env/client`, because Keystatic config runs in both client and server bundles. Keep the same environment schema in default and Node provisioning configs. Set `KEYSTATIC_GITHUB_REPO` before building; runtime Worker secrets do not change the already-built editor repository selection. Never classify authentication credentials as public client variables.
 
-Full reproducible setup and operations: [customer-setup.md](customer-setup.md). The [Pages REST template](examples/pages-project.json) includes build settings, watch paths and separated URL/tooling variables. Admin deployment scripts select explicit preview/production configs and Astro modes; no content-triggered Admin build is configured.
+Full reproducible setup and operations: [customer-setup.md](customer-setup.md). The [Pages REST template](examples/pages-project.json) includes build settings, watch paths and separated URL/tooling variables. Admin deployment scripts select explicit preview/production configs and Astro modes; editorial-only changes do not trigger Admin deployment.

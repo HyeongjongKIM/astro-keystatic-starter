@@ -1,39 +1,165 @@
 name: CI
 on:
   push:
+    branches: [dev, main]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
+env:
+  HUSKY: '0'
 jobs:
-  check:
+  prepare:
+    name: Classify and validate
     runs-on: ubuntu-latest
+    outputs:
+      site: ${{ steps.plan.outputs.site }}
+      admin: ${{ steps.plan.outputs.admin }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - id: plan
+        run: node scripts/ci/run.mjs plan
+      - run: node scripts/ci/run.mjs commits
+      - run: pnpm format:check
+      - run: node scripts/ci/run.mjs docs
+      - if: steps.plan.outputs.lint == 'true'
+        run: pnpm lint
+      - if: steps.plan.outputs.test == 'true'
+        run: pnpm test
+  site:
+    name: Validate Site
+    needs: prepare
+    if: needs.prepare.outputs.site == 'true'
+    runs-on: ubuntu-latest
+    env:
+      PUBLIC_SITE_URL: ${{ github.ref_name == 'main' && github.event_name != 'pull_request' && vars.PRODUCTION_PUBLIC_SITE_URL || vars.PREVIEW_PUBLIC_SITE_URL || 'https://example.com' }}
+    steps:
+      - uses: actions/checkout@v4
         with:
-          version: 12.18.0
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @starter/site typecheck
+      - run: pnpm build:site
+      - run: pnpm verify:site
+      - name: Prepare validated static output
+        run: |
+          mkdir -p output/site-artifact
+          cp -R apps/site/dist output/site-artifact/dist
+          printf '%s' "$PUBLIC_SITE_URL" > output/site-artifact/origin.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validated-site
+          path: output/site-artifact/
+          retention-days: 7
+  admin:
+    name: Validate Admin
+    needs: prepare
+    if: needs.prepare.outputs.admin == 'true'
+    runs-on: ubuntu-latest
+    env:
+      KEYSTATIC_GITHUB_REPO: ${{ vars.KEYSTATIC_GITHUB_REPO || github.repository }}
+      ADMIN_BRAND_NAME: ${{ vars.ADMIN_BRAND_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @starter/admin typecheck
+      - run: pnpm build:admin:preview
+        env:
+          PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ vars.PREVIEW_KEYSTATIC_GITHUB_APP_SLUG || 'unconfigured-preview' }}
+      - run: pnpm build:admin:production
+        env:
+          PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ vars.PRODUCTION_KEYSTATIC_GITHUB_APP_SLUG || 'unconfigured-production' }}
+  required:
+    name: Required checks
+    needs: [prepare, site, admin]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22.23.4
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Validate pull request commit messages
-        if: github.event_name == 'pull_request'
+      - run: node scripts/ci/run.mjs gate
         env:
-          COMMIT_FROM: ${{ github.event.pull_request.base.sha }}
-          COMMIT_TO: ${{ github.event.pull_request.head.sha }}
-        run: pnpm exec commitlint --from "$COMMIT_FROM" --to "$COMMIT_TO" --verbose
-      - name: Validate pushed commit messages
-        if: github.event_name == 'push'
-        env:
-          COMMIT_FROM: ${{ github.event.before }}
-          COMMIT_TO: ${{ github.sha }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+  deploy-site:
+    name: Deploy Site
+    needs: [prepare, required]
+    if: >-
+      !cancelled() && needs.required.result == 'success' && needs.prepare.outputs.site == 'true' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (github.ref_name == 'dev' || github.ref_name == 'main')
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    concurrency:
+      group: deploy-site-${{ github.ref_name }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DEPLOY_ENABLED: ${{ vars.DEPLOY_ENABLED }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+      PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+      KEYSTATIC_GITHUB_REPO: ${{ vars.KEYSTATIC_GITHUB_REPO }}
+      PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ vars.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v4
+        with:
+          name: validated-site
+          path: output/site-artifact
+      - name: Verify build origin and deployment head
         run: |
-          if [ "$COMMIT_FROM" = "0000000000000000000000000000000000000000" ]; then
-            pnpm exec commitlint --last --verbose
-          else
-            pnpm exec commitlint --from "$COMMIT_FROM" --to "$COMMIT_TO" --verbose
-          fi
-      - run: pnpm check
+          node scripts/ci/run.mjs deploy-guard
+          node --input-type=module -e "import {readFileSync} from 'node:fs'; if (readFileSync('output/site-artifact/origin.txt', 'utf8') !== process.env.PUBLIC_SITE_URL) throw new Error('Site origin differs from validated build');"
+      - name: Upload validated Site
+        run: pnpm --filter @starter/admin exec node ../../scripts/ci/run.mjs upload-site
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  deploy-admin:
+    name: Deploy Admin
+    needs: [prepare, required]
+    if: >-
+      !cancelled() && needs.required.result == 'success' && needs.prepare.outputs.admin == 'true' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (github.ref_name == 'dev' || github.ref_name == 'main')
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    concurrency:
+      group: deploy-admin-${{ github.ref_name }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DEPLOY_ENABLED: ${{ vars.DEPLOY_ENABLED }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+      PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+      KEYSTATIC_GITHUB_REPO: ${{ vars.KEYSTATIC_GITHUB_REPO }}
+      PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ vars.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG }}
+      ADMIN_BRAND_NAME: ${{ vars.ADMIN_BRAND_NAME }}
+      DEPLOY_TARGET: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Verify deployment head
+        run: node scripts/ci/run.mjs deploy-guard
+      - name: Recheck head and deploy Admin
+        run: |
+          node scripts/ci/run.mjs deploy-guard
+          pnpm "deploy:admin:$DEPLOY_TARGET"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

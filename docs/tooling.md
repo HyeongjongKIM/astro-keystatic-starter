@@ -1,6 +1,6 @@
 # Developer Tooling and CI
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Phase 02 is migrating the historical `preview`/manual-deployment setup described below; use its task evidence to distinguish current live settings from the confirmed target policy.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
 
 ## Tools
 
@@ -35,8 +35,8 @@ Check workspace package names and avoid recursive script loops.
 - pre-commit: `pnpm exec lint-staged` (ESLint fix + Prettier as appropriate for JS/TS/Astro/JSON/CSS/MD).
 - commit-msg: `pnpm exec commitlint --edit "$1"`.
 - pre-push: `pnpm typecheck && pnpm test`.
-- CI: pinned Node/pnpm, frozen install, format, lint, typecheck, test, both builds. Hooks are not a substitute for CI.
-- Commitlint enforces the [commit rules](../AGENTS.md#commit-messages) locally and in CI. CI checks PR/push commit ranges; new-branch pushes check only the latest commit.
+- CI: pinned Node/pnpm, frozen install, formatting, Markdown links and per-commit validation for all changes; path-aware lint/tests and affected app types/builds follow the [workflow matrix](repository-workflow.md). Admin validation builds both modes. `Required checks` always concludes, including docs-only PRs, and rejects failed/cancelled or unexpected skipped jobs. Hooks are not a substitute for CI.
+- Commitlint enforces the [commit rules](../AGENTS.md#commit-messages) locally and in CI. CI checks PR/push commit ranges; new-branch pushes check the latest commit and conservatively validate both apps. Only exact Keystatic editorial messages with exclusively recognized content/image paths receive a compatibility exception; bot authors are not generally exempt. Change classification, editorial exceptions and required-check outcomes have deterministic regression tests under `scripts/ci/`.
 - Runtime OAuth and GitHub writes need deployed preview tests; build success alone is insufficient.
 
 Avoid formatting generated artifacts and lockfiles. Validate compatibility before installing any additional plugin.
