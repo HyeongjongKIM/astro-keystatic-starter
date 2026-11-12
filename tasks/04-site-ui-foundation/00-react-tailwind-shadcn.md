@@ -2,7 +2,8 @@
 
 **Status:** TODO
 
-**Depends on:** [Phase 02 — Repository workflow](../02-repository-workflow/README.md) DONE  
+**Depends on:** [Phase 03 — Publishing workflow improvements](../03-publishing-workflow-improvements/README.md) DONE
+
 **Read:** [Architecture](../../docs/architecture.md), [Tooling](../../docs/tooling.md), [Content model](../../docs/content-model.md)
 
 ## Goal
@@ -72,3 +73,5 @@ Inspect built Site in a browser at desktop and mobile widths. Exercise the selec
 ## Verification evidence
 
 2026-11-10: Planning only. Reordered as Phase 03 after Repository workflow at the maintainer's request. Dependency selections, compatibility validation, implementation, application checks, and browser verification have not been performed for this task. Status remains TODO.
+
+2026-11-12: Task moved unchanged in scope to Phase 04; Publishing workflow improvements is the new prerequisite Phase 03. Historical planning statements above retain their original dates and ordering context. Implementation remains TODO.
