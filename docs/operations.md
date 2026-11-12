@@ -1,6 +1,6 @@
 # Content operations and maintenance
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. Use Phase 02 task evidence for the current rollout and deployed verification status.
+The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
 
 Complete [customer setup](customer-setup.md) before using the deployed Admin. For configuration changes, use the [configuration reference](deployment.md#configuration-contract).
 

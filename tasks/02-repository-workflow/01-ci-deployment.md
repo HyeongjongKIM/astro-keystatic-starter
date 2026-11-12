@@ -1,6 +1,6 @@
 # Task 01 — Change-aware CI and Deployment Verification
 
-**Status:** IN_PROGRESS
+**Status:** DONE
 
 **Depends on:** [Task 00](00-branch-publishing-policy.md) DONE
 
@@ -18,34 +18,34 @@ Create or synchronize `dev` without discarding existing work. Confirm remote che
 
 ## Work
 
-- [ ] Configure `dev` push, `dev` to `main` PR, and `main` update checks according to Task 00; reduce duplicate runs while retaining useful development feedback.
-- [ ] Detect changes with correct push/PR comparison bases, including new branches, deletions, renames, and mixed changes. Apply Task 00's path matrix; use conservative full validation when impact is unclear. Keep pinned tooling, frozen installs, commit validation, and the full local `pnpm check` command.
-- [ ] Provide a stable required final check that reports applicable failures/cancellations correctly and does not leave docs-only PRs Pending because a workflow was filtered out.
-- [ ] Configure Site production from `main` and preview from `dev` using the hosting mechanism resolved in Task 00. Apply the approved transition from `preview` and the agreed Site CI gate; do not assume Pages Git integration waits for Actions.
-- [ ] Automate Admin deployment through official Wrangler/GitHub Actions tooling and the existing environment-specific build/deploy commands: affected `dev` updates deploy preview, affected `main` updates deploy production, only after required checks pass. PR checks must not deploy or receive deployment credentials.
-- [ ] Apply actual GitHub and Cloudflare settings using the checklist below. Inspect current values and the intended diff before changes, then read back effective settings. If access or required values are missing, report the exact remaining step instead of claiming setup is complete.
-- [ ] Add meaningful tests for change classification and required-check results. Verify both deployment and skip cases, including shared/mixed changes and failed checks. Use straightforward environment-specific concurrency and a documented failed-deployment retry procedure; a custom deployed-SHA tracking system is not required.
-- [ ] Verify remote Actions, Site deployments, Admin deployments, and deployed OAuth/GitHub writes. Record run/deployment URLs, source SHAs, environment, dates, and results; clean up temporary validation content.
-- [ ] Update existing setup/operations/tooling documentation for the changed workflow, environment values, and recovery procedure. Distinguish reusable template files from settings each customer must provision; update task and phase status from observed results.
+- [x] Configure `dev` push, `dev` to `main` PR, and `main` update checks according to Task 00; reduce duplicate runs while retaining useful development feedback.
+- [x] Detect changes with correct push/PR comparison bases, including new branches, deletions, renames, and mixed changes. Apply Task 00's path matrix; use conservative full validation when impact is unclear. Keep pinned tooling, frozen installs, commit validation, and the full local `pnpm check` command.
+- [x] Provide a stable required final check that reports applicable failures/cancellations correctly and does not leave docs-only PRs Pending because a workflow was filtered out.
+- [x] Configure Site production from `main` and preview from `dev` using the hosting mechanism resolved in Task 00. Apply the approved transition from `preview` and the agreed Site CI gate; do not assume Pages Git integration waits for Actions.
+- [x] Automate Admin deployment through official Wrangler/GitHub Actions tooling and the existing environment-specific build/deploy commands: affected `dev` updates deploy preview, affected `main` updates deploy production, only after required checks pass. PR checks must not deploy or receive deployment credentials.
+- [x] Apply actual GitHub and Cloudflare settings using the checklist below. Inspect current values and the intended diff before changes, then read back effective settings. If access or required values are missing, report the exact remaining step instead of claiming setup is complete.
+- [x] Add meaningful tests for change classification and required-check results. Verify both deployment and skip cases, including shared/mixed changes and failed checks. Use straightforward environment-specific concurrency and a documented failed-deployment retry procedure; a custom deployed-SHA tracking system is not required.
+- [x] Verify remote Actions, Site deployments, Admin deployments, and deployed OAuth/GitHub writes. Record run/deployment URLs, source SHAs, environment, dates, and results; clean up temporary validation content.
+- [x] Update existing setup/operations/tooling documentation for the changed workflow, environment values, and recovery procedure. Distinguish reusable template files from settings each customer must provision; update task and phase status from observed results.
 
 ## External settings checklist
 
 ### Site — Cloudflare Pages
 
-- [ ] Verify Git repository, production branch `main`, preview branch selection `dev`, and the approved migration from `preview`. Preserve existing domains and callback dependencies until the transition is verified.
-- [ ] Verify repository-root frozen-install/Site build settings, `apps/site/dist`, pinned Node/pnpm, and environment-specific `PUBLIC_SITE_URL`. Reconcile the [Pages template](../../docs/examples/pages-project.json) with live settings and Task 00's selected deployment mechanism.
-- [ ] Apply Site watch paths or the selected deployment conditions for content/images, Site code, shared dependencies, and relevant build configuration. Docs/task-only and Admin-only changes must skip Site deployment. Check Cloudflare wildcard semantics separately from GitHub path matching.
+- [x] Verify Git repository, production branch `main`, preview branch selection `dev`, and the approved migration from `preview`. Preserve existing domains and callback dependencies until the transition is verified.
+- [x] Verify repository-root frozen-install/Site build settings, `apps/site/dist`, pinned Node/pnpm, and environment-specific `PUBLIC_SITE_URL`. Reconcile the [Pages template](../../docs/examples/pages-project.json) with live settings and Task 00's selected deployment mechanism.
+- [x] Apply Site watch paths or the selected deployment conditions for content/images, Site code, shared dependencies, and relevant build configuration. Docs/task-only and Admin-only changes must skip Site deployment. Check Cloudflare wildcard semantics separately from GitHub path matching.
 
 ### Admin — Workers and GitHub Actions
 
-- [ ] Verify matching preview/production Worker names, Wrangler/Astro configurations, and `dev`/`main` mapping. Configure automatic deployment in Actions without a second conflicting Worker Git deployment trigger; retain local recovery commands.
-- [ ] Configure Cloudflare deployment credentials and environment-specific public build values through GitHub secrets/variables: account identity, deployment token, `KEYSTATIC_GITHUB_REPO`, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`, and optional `ADMIN_BRAND_NAME`. Ignored local `.env` files are not available in CI.
-- [ ] Confirm each Worker has its own valid `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, and `KEYSTATIC_SECRET`, matching GitHub App installation and OAuth callback. Preserve existing valid secrets; provision only missing/changed values through authorized secret operations and never print them.
+- [x] Verify matching preview/production Worker names, Wrangler/Astro configurations, and `dev`/`main` mapping. Configure automatic deployment in Actions without a second conflicting Worker Git deployment trigger; retain local recovery commands.
+- [x] Configure Cloudflare deployment credentials and environment-specific public build values through GitHub secrets/variables: account identity, deployment token, `KEYSTATIC_GITHUB_REPO`, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`, and optional `ADMIN_BRAND_NAME`. Ignored local `.env` files are not available in CI.
+- [x] Confirm each Worker has its own valid `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, and `KEYSTATIC_SECRET`, matching GitHub App installation and OAuth callback. Preserve existing valid secrets; provision only missing/changed values through authorized secret operations and never print them.
 
 ### GitHub and verification
 
-- [ ] Apply Task 00's branch protection/ruleset with actual remote check names and the approved Keystatic content-save path. Confirm effective settings and successful publication after protection is active.
-- [ ] Verify the following matrix in the intended environments. For shared code/dependencies, use a clear path-based policy; conservatively checking and deploying both targets is acceptable when impact cannot be safely separated. Fine-grained dependency-graph analysis is not required.
+- [x] Apply Task 00's branch protection/ruleset with actual remote check names and the approved Keystatic content-save path. Confirm effective settings and successful publication after protection is active.
+- [x] Verify the following matrix in the intended environments. For shared code/dependencies, use a clear path-based policy; conservatively checking and deploying both targets is acceptable when impact cannot be safely separated. Fine-grained dependency-graph analysis is not required.
 
 | Change                                    | Expected CI                         | Site deployment | Admin deployment             |
 | ----------------------------------------- | ----------------------------------- | --------------- | ---------------------------- |
@@ -153,3 +153,20 @@ The production Admin's first deletion request encountered Keystatic's expected-h
 - Cleanup [PR 3](https://github.com/HyeongjongKIM/astro-keystatic-starter/pull/3) passed merge-result validation [43150468493](https://github.com/HyeongjongKIM/astro-keystatic-starter/actions/runs/43150468493) and merged to `5c1f85f5c0ff21dc83c3d770cf7fee28191e6e9d`. Production run [43150636834](https://github.com/HyeongjongKIM/astro-keystatic-starter/actions/runs/43150636834) passed Site/required checks and Site deployment, skipping Admin. Fast-forwarded `dev` to the merge commit without force and retained both permanent branches plus the historical `preview` branch.
 - Preview cleanup deployment [573e65ae](https://573e65ae.astro-keystatic-starter-site.pages.dev) and production cleanup deployment [5b258f99](https://5b258f99.astro-keystatic-starter-site.pages.dev) succeeded for those source SHAs; production canonical-deployment readback confirmed its ID and disabled Git builds. Preview canonical deployment returned 404 for the temporary Page and marker, and its sitemap excluded the Page. The unchanged preview alias still returned cached 200 responses for both removed paths while its sitemap was current: this is the previously accepted CACHE-01 freshness limitation, not remaining repository/build content. No cache-busting workaround or architecture change was introduced.
 - After all temporary application files were removed, `pnpm check`, `pnpm build:admin:production`, `node scripts/ci/run.mjs docs` (114 local links) and `git diff --check` all exited 0 on Darwin x86_64, Node 22.23.4/pnpm 12.18.0. All 70 tests passed, both app type checks reported zero diagnostics, both Admin modes built, and static output verification passed. The existing Admin chunk-size warning remained. Remaining work at this checkpoint is documentation-only PR validation and final task/phase status evidence.
+
+### 2026-11-12 — Completion
+
+Documentation-only `dev` push [43150943135](https://github.com/HyeongjongKIM/astro-keystatic-starter/actions/runs/43150943135) and [PR 4](https://github.com/HyeongjongKIM/astro-keystatic-starter/pull/4) merge-result validation [43150991418](https://github.com/HyeongjongKIM/astro-keystatic-starter/actions/runs/43150991418), source `a3f86514340efa917b4c8daa8846f6187c86a6ef`, both passed `Required checks`; both app checks and both deployments were skipped. This directly verifies that a docs-only PR concludes rather than remaining Pending. PR 4 carries the final status update and must pass checks again before normal merge.
+
+Final Cloudflare readback verified Node 22.23.4, pnpm 12.18.0, `HUSKY=0`, frozen-install recovery settings and environment-specific Site origins in both Pages configurations. Both GitHub deployment environments report `DEPLOY_ENABLED=true`. Branch `preview` remains unchanged at `c97563de2ab592ff58ff8d58c5d5bbd5aaee8ea4`. Rules, public variables, credential names, deployed behavior and affected/skip cases are verified above.
+
+Current Admin deployments remained unchanged through subsequent editorial/Site-only events:
+
+- [Production Worker](https://astro-keystatic-starter-admin.jonkim0309.workers.dev/keystatic): deployment `e4048b06-34c0-4a5d-a646-40728b832858`, version `b5f6a6a1-95f7-4492-9550-44128070bd36`, 2026-11-12 03:36:08 UTC, from the successful `71820ca130157edd6f98c5c1ae6aad0237616683` production run.
+- [Preview Worker](https://astro-keystatic-starter-admin-preview.jonkim0309.workers.dev/keystatic): deployment `2de563a7-0ae0-4420-904f-f2bf5f9f3a49`, version `86428497-92e1-464a-95b7-eec43afebb9a`, 2026-11-12 03:42:55 UTC, from the successful Admin-only `dabc57a8087074db133c4ecbfd52d5c409a59348` run.
+
+Production cleanup deployment `5b258f99-428a-42e9-812b-a4f5f3e3bbc0` returned 404 for the removed Page and its sitemap excluded it. The unchanged production domain still returned cached 200 for that removed path while its sitemap was current, matching the previously accepted [CACHE-01](../../docs/known-issues.md#cache-01--delayed-visibility-of-deleted-pages-content) limitation. Repository files and new canonical deployment output are clean; do not equate cached alias responses with remaining content. The cache deferral remains unchanged from Phase 01 and is not a new Phase 02 deferral.
+
+Manual-dispatch full-recovery classification was exercised by local temporary-Git tests; a separate remote manual dispatch was not invoked. Actual remote failed validation, stale deployment rejection, latest-head recovery, both deployment environments, both Worker logins/writes, protected PR publication and docs-only skips were observed. There are no unresolved setup/access/policy blockers. Existing runner deprecation notices, Admin bundle warnings and accepted cache freshness limits remain documented; no framework patches or bypass permissions were introduced.
+
+Task 01 and Phase 02 are DONE. The next queued work is Phase 03 Site UI foundation, outside this implementation's scope.
