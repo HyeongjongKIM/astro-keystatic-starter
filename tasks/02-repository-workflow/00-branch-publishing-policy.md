@@ -1,6 +1,6 @@
 # Task 00 — Branch and Content Publishing Policy
 
-**Status:** TODO
+**Status:** IN_PROGRESS
 
 **Depends on:** [Phase 01](../01-initial-implementation/README.md) DONE
 
@@ -85,3 +85,19 @@ Mixed changes use the union of affected targets. Use a clear path-based policy f
 ## Verification evidence
 
 2026-11-10: Task created for planning. The maintainer subsequently agreed to `main` and `dev` as the two operating branches, collecting all development work on `dev` and promoting it through PRs to `main`, and requested change-aware Admin automatic deployment after checks. The intended preview source is `dev`; migration from `preview`, the Keystatic content-save target, protection details, and Site deployment gating remain unresolved. External settings and implementation are unverified. Status remains TODO.
+
+### 2026-11-12 — Initial inspection
+
+Environment: macOS arm64, Node `v22.23.4`, pnpm `12.18.0`. Initial working tree was clean on `main` at `f933c524dcede2559bcdfab9ff55c7f8f8d5b735`.
+
+- `git ls-remote --heads origin` exited 0: remote branches are `main` and `preview`; `dev` does not exist. Remote `preview` is at `c97563de2ab592ff58ff8d58c5d5bbd5aaee8ea4`. No branch was changed.
+- `gh api repos/HyeongjongKIM/astro-keystatic-starter` exited 0: intended repository is private, default branch is `main`, and merge, squash, and rebase merging are enabled.
+- Rulesets and `branches/main/protection` API reads both exited 1 with HTTP 403: GitHub requires upgrading to Pro or making this repository public. This response does not establish absence of protection. The maintainer subsequently said they would make the repository public; completion and effective rules still require readback.
+- Inspected `.github/workflows/ci.yml`: all pushes and PRs run commitlint and full `pnpm check`; no automatic Admin deployment exists.
+- Inspected `packages/content/index.ts` and Admin config: GitHub storage sets repository identity but no branch restriction. The official [Keystatic GitHub mode documentation](https://keystatic.com/docs/github-mode) documents the branch selector and `branchPrefix`; neither proves an exact save-target restriction or protected-branch write compatibility.
+- Tracked Pages example and customer setup select `preview`; production is `main`. Live Pages settings, GitHub App identity/installation permissions, callbacks, and Worker settings have not been inspected. Tracked Worker names are reference values, not verified deployment targets.
+- Consulted official GitHub rulesets, Keystatic GitHub mode/configuration, Cloudflare Pages branch controls/Git integration/watch paths, and Workers GitHub Actions documentation. [GitHub ruleset availability](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) distinguishes public Free repositories from private paid-plan repositories.
+
+Pending maintainer decisions: content save target (including joint code/content promotion on `dev`), Site CI gate, and merge/review policy. Recommendations are proposals only: save on `dev`, deploy both targets after successful CI, and use merge commits with zero required approvals plus required checks for a solo maintainer. Keep `dev` after promotion and synchronize it by merging `main`; never force-push production history. No bypass, permission widening, branch transition, workflow activation, or deployment is approved by these proposals. Task 01 remains dependent on Task 00 completion.
+
+Verification for this documentation-only inspection: `pnpm format:check` and `git diff --check` exited 0; Python local Markdown link validation passed all 21 links across the phase queue and Phase 02 documents. A subsequent repository API read still reported `private`. Application checks and builds were not run because no application or workflow code changed.
