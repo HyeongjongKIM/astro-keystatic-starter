@@ -8,6 +8,7 @@ Execution order, task status, acceptance criteria, and verification evidence are
 
 These are deferred proposals, not committed deliverables:
 
+- [Template initialization assistance](template-initialization-direction.md), with its approach and scope left open for later review.
 - Gallery, video, and hero blocks.
 - Multilingual content and search.
 - Scheduled publishing and advanced draft preview.
