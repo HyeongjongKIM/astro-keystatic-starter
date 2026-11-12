@@ -1,0 +1,46 @@
+name: Publish branches
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [dev, content, main]
+  workflow_dispatch:
+    inputs:
+      resume:
+        description: Explicitly resume a closed unmerged promotion PR
+        type: choice
+        default: none
+        options: [none, dev, content]
+permissions:
+  contents: read
+concurrency:
+  group: promotion-controller
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    if: github.ref == 'refs/heads/main' && vars.PROMOTION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: automation
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      # Install only trusted main dependencies before exposing the App key.
+      # No shared dependency cache is restored from unprivileged CI.
+      - uses: pnpm/action-setup@v6.1.1
+        with:
+          version: 12.18.0
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22.23.5
+      - run: pnpm install --frozen-lockfile
+        env:
+          HUSKY: '0'
+      - run: node scripts/publishing/run.mjs reconcile
+        env:
+          PROMOTION_ENABLED: ${{ vars.PROMOTION_ENABLED }}
+          PROMOTION_APP_CLIENT_ID: ${{ vars.PROMOTION_APP_CLIENT_ID }}
+          PROMOTION_APP_BOT: ${{ vars.PROMOTION_APP_BOT }}
+          PROMOTION_APP_PRIVATE_KEY: ${{ secrets.PROMOTION_APP_PRIVATE_KEY }}

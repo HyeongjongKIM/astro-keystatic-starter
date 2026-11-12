@@ -1,5 +1,7 @@
 # Repository and publishing workflow
 
+Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+
 Policy confirmed by the maintainer on 2026-11-12. External configuration and deployed verification are tracked in [Phase 02](../tasks/02-repository-workflow/README.md); this policy does not establish that migration has finished.
 
 ## Branches and publication

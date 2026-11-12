@@ -3,7 +3,7 @@ export function isEditorialPath(path) {
     /^(?:content\/(?:pages|posts)\/.+\/(?:index\.yaml|content\/\d+\/value\/body\.mdx)|content\/settings\/site\.yaml)$/.test(
       path,
     ) ||
-    /^apps\/site\/src\/assets\/images\/.+\.(?:png|jpe?g|gif|webp|avif|svg)$/i.test(
+    /^apps\/site\/src\/assets\/images\/(?:pages|posts|settings)\/.+\.(?:png|jpe?g|gif|webp|avif|svg)$/i.test(
       path,
     )
   );

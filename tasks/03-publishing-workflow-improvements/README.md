@@ -6,14 +6,14 @@
 
 Separate editorial publication from code development, automate promotion PR creation and merging after required checks, improve deployment recovery and target independence, reuse validated Admin artifacts, and automate Action dependency updates. The maintainer requested this as a new phase before Site UI foundation; Phase 02 remains completed history.
 
-| ID  | Task                                                                             | Dependency    | Status |
-| --- | -------------------------------------------------------------------------------- | ------------- | ------ |
-| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE   |
-| 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | TODO   |
-| 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | TODO   |
-| 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO   |
-| 04  | [Action pinning and update automation](04-actions-maintenance.md)                | 03            | TODO   |
-| 05  | [Deployed verification and customer handoff](05-deployed-verification.md)        | 00–04 DONE    | TODO   |
+| ID  | Task                                                                             | Dependency    | Status      |
+| --- | -------------------------------------------------------------------------------- | ------------- | ----------- |
+| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE        |
+| 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | IN_PROGRESS |
+| 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | TODO        |
+| 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO        |
+| 04  | [Action pinning and update automation](04-actions-maintenance.md)                | 03            | TODO        |
+| 05  | [Deployed verification and customer handoff](05-deployed-verification.md)        | 00–04 DONE    | TODO        |
 
 ## Planning baseline
 
@@ -50,3 +50,5 @@ Task 01 implements the confirmed policy, including main synchronization back to 
 2026-11-12: Task 00 read-only live investigation and concrete policy proposal are in progress; maintainer confirmation remains pending. Existing publishing operations remain unchanged. Tasks 01–05 have not started.
 
 2026-11-12: The maintainer delegated policy choices to the recommended approach. Task 00 is DONE; the selected [policy](../../docs/publishing-policy.md) is the implementation contract. The current manual operating workflow remains active until Task 01 migration. Tasks 01–05 remain TODO.
+
+2026-11-12: Task 01 implementation and regressions are prepared with automatic promotion disabled. The maintainer authorized commit/push to dev but prohibited merging. Protected-main bootstrap, App/environment/content provisioning and remote promotion verification remain pending; Task 01 is IN_PROGRESS and Tasks 02–05 remain TODO.
