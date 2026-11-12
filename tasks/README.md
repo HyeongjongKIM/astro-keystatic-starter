@@ -2,13 +2,13 @@
 
 Organize tasks by phase. Start with the earliest phase that is not DONE, then select the earliest task whose dependencies are completed from that phase's README. Do not advance past a blocked dependency or phase.
 
-| Phase                                                              | Goal                                                            | Dependency | Status |
-| ------------------------------------------------------------------ | --------------------------------------------------------------- | ---------- | ------ |
-| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff          | None       | DONE   |
-| [02 — Repository workflow](02-repository-workflow/README.md)       | Define branch, content publishing, CI, and deployment workflows | 01 DONE    | DONE   |
-| [03 — Site UI foundation](03-site-ui-foundation/README.md)         | Add React, Tailwind CSS, and shadcn/ui to Site                  | 02 DONE    | TODO   |
+| Phase                                                              | Goal                                                            | Dependency | Status      |
+| ------------------------------------------------------------------ | --------------------------------------------------------------- | ---------- | ----------- |
+| [01 — Initial implementation](01-initial-implementation/README.md) | Deliver the Astro + Keystatic MVP and customer handoff          | None       | DONE        |
+| [02 — Repository workflow](02-repository-workflow/README.md)       | Define branch, content publishing, CI, and deployment workflows | 01 DONE    | IN_PROGRESS |
+| [03 — Site UI foundation](03-site-ui-foundation/README.md)         | Add React, Tailwind CSS, and shadcn/ui to Site                  | 02 DONE    | TODO        |
 
-Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow is complete. Site UI foundation is next and has not started.
+Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow core is complete; a maintainer-requested Actions runtime maintenance task is in progress. Site UI foundation has not started.
 
 ## Organization rules
 
