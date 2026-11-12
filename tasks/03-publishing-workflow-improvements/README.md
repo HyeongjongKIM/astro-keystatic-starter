@@ -1,6 +1,6 @@
 # Publishing Workflow Improvements Task Queue
 
-**Status:** TODO
+**Status:** IN_PROGRESS
 
 **Depends on:** [Phase 02 — Repository workflow](../02-repository-workflow/README.md) DONE
 
@@ -8,7 +8,7 @@ Separate editorial publication from code development, automate promotion PR crea
 
 | ID  | Task                                                                             | Dependency    | Status |
 | --- | -------------------------------------------------------------------------------- | ------------- | ------ |
-| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | TODO   |
+| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE   |
 | 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | TODO   |
 | 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | TODO   |
 | 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO   |
@@ -46,3 +46,7 @@ Task 01 implements the confirmed policy, including main synchronization back to 
 2026-11-12: Maintainer requested creation of this phase after reviewing the current workflow. Created six TODO tasks and moved the unstarted Site UI foundation from Phase 03 to Phase 04. Planning only; application code, workflows, branch rules, hosting settings and credentials are unchanged. Validation results for this planning revision are recorded below.
 
 2026-11-12, Darwin x86_64, Node `v22.23.5`, pnpm `12.18.0`: `pnpm check` exited 0 (format, lint, both app/shared types with zero diagnostics, 70 tests, Site/preview Admin builds and static output verification). `node scripts/ci/run.mjs docs` passed 171 local Markdown links; `git diff --cached --check` passed after replacing an inherited Markdown hard-break with a blank line on the modified UI task dependency header. Structural checks confirmed six TODO task files and removal of the obsolete UI directory/path. Existing Admin bundle-size warnings remain. These are planning-change regression checks, not implementation or deployed behavior evidence for this phase. No new unit tests or deployed E2E were needed for this documentation-only revision.
+
+2026-11-12: Task 00 read-only live investigation and concrete policy proposal are in progress; maintainer confirmation remains pending. Existing publishing operations remain unchanged. Tasks 01–05 have not started.
+
+2026-11-12: The maintainer delegated policy choices to the recommended approach. Task 00 is DONE; the selected [policy](../../docs/publishing-policy.md) is the implementation contract. The current manual operating workflow remains active until Task 01 migration. Tasks 01–05 remain TODO.

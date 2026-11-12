@@ -2,14 +2,14 @@
 
 Organize tasks by phase. Start with the earliest phase that is not DONE, then select the earliest task whose dependencies are completed from that phase's README. Do not advance past a blocked dependency or phase.
 
-| Phase                                                                                  | Goal                                                                                             | Dependency | Status |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------- | ------ |
-| [01 — Initial implementation](01-initial-implementation/README.md)                     | Deliver the Astro + Keystatic MVP and customer handoff                                           | None       | DONE   |
-| [02 — Repository workflow](02-repository-workflow/README.md)                           | Define branch, content publishing, CI, and deployment workflows                                  | 01 DONE    | DONE   |
-| [03 — Publishing workflow improvements](03-publishing-workflow-improvements/README.md) | Separate content, automate promotion PRs/merges, improve recovery/artifacts and maintain Actions | 02 DONE    | TODO   |
-| [04 — Site UI foundation](04-site-ui-foundation/README.md)                             | Add React, Tailwind CSS, and shadcn/ui to Site                                                   | 03 DONE    | TODO   |
+| Phase                                                                                  | Goal                                                                                             | Dependency | Status      |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------- | ----------- |
+| [01 — Initial implementation](01-initial-implementation/README.md)                     | Deliver the Astro + Keystatic MVP and customer handoff                                           | None       | DONE        |
+| [02 — Repository workflow](02-repository-workflow/README.md)                           | Define branch, content publishing, CI, and deployment workflows                                  | 01 DONE    | DONE        |
+| [03 — Publishing workflow improvements](03-publishing-workflow-improvements/README.md) | Separate content, automate promotion PRs/merges, improve recovery/artifacts and maintain Actions | 02 DONE    | IN_PROGRESS |
+| [04 — Site UI foundation](04-site-ui-foundation/README.md)                             | Add React, Tailwind CSS, and shadcn/ui to Site                                                   | 03 DONE    | TODO        |
 
-Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow, Actions runtime maintenance and the Node 22 security patch are complete. Publishing workflow improvements is planned as Phase 03 before the unstarted Phase 04 Site UI foundation. Both phases remain TODO; creating the plan does not start implementation.
+Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow, Actions runtime maintenance and the Node 22 security patch are complete. Publishing workflow improvements is planned as Phase 03 before the unstarted Phase 04 Site UI foundation. Phase 03 Task 00 is DONE with the selected publishing policy; Task 01 is next and Phase 03 remains IN_PROGRESS. Phase 04 remains TODO. No Phase 03 implementation task has started.
 
 ## Organization rules
 
