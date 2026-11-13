@@ -9,7 +9,7 @@ Organize tasks by phase. Start with the earliest phase that is not DONE, then se
 | [03 — Publishing workflow improvements](03-publishing-workflow-improvements/README.md) | Separate content, automate promotion PRs/merges, improve recovery/artifacts and maintain Actions | 02 DONE    | IN_PROGRESS |
 | [04 — Site UI foundation](04-site-ui-foundation/README.md)                             | Add React, Tailwind CSS, and shadcn/ui to Site                                                   | 03 DONE    | TODO        |
 
-Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow, Actions runtime maintenance and the Node 22 security patch are complete. Publishing workflow improvements is planned as Phase 03 before the unstarted Phase 04 Site UI foundation. Phase 03 Task 00 is DONE with the selected publishing policy; Task 01 implementation is IN_PROGRESS with activation held pending protected-main bootstrap and remote verification. Phase 04 remains TODO. Task 01 remains incomplete; later tasks have not started.
+Initial implementation is complete with the maintainer-approved [CACHE-01](../docs/known-issues.md) deferral. Repository workflow, Actions runtime maintenance and the Node 22 security patch are complete. Publishing workflow improvements is planned as Phase 03 before the unstarted Phase 04 Site UI foundation. Phase 03 Task 00 is DONE with the selected publishing policy; Task 01 implementation and disabled App/environment provisioning are prepared; it remains IN_PROGRESS pending protected-main bootstrap and remote verification. Phase 04 remains TODO. Task 01 remains incomplete; later tasks have not started.
 
 ## Organization rules
 
