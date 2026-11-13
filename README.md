@@ -1,6 +1,6 @@
 # astro-keystatic-starter
 
-Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](docs/publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+Independent publishing uses `dev` for ready code, `content` for editorial saves, and protected PRs to `main`. See [activation and operator guidance](docs/publishing-setup.md) for provisioning, pause/resume and verification limits. A customer copy must complete provisioning before enabling automatic promotion.
 
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
@@ -50,7 +50,7 @@ pnpm build:admin:production
 pnpm check
 ```
 
-`pnpm check` runs format, lint, types, deterministic unit tests and both builds. Git hooks run lint-staged, Conventional Commit validation, and pre-push types/tests. [Repository workflow](docs/repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, change-aware CI and CI-gated independent deployments. Content contract tests cover nested Pages, linked MDX/image paths, draft filtering and invalid metadata; `pnpm verify:site` validates built output against current content.
+`pnpm check` runs format, lint, types, deterministic unit tests and both builds. Git hooks run lint-staged, Conventional Commit validation, and pre-push types/tests. [Repository workflow](docs/repository-workflow.md) defines `content` editorial saves, automatic protected PR promotion from dev/content to `main`, change-aware CI and CI-gated independent deployments. Content contract tests cover nested Pages, linked MDX/image paths, draft filtering and invalid metadata; `pnpm verify:site` validates built output against current content.
 
 Admin secrets belong in ignored `apps/admin/.dev.vars` (copy `.dev.vars.example`). The shared repository setting belongs in ignored `apps/admin/.env`; environment-specific App settings belong in `.env.preview` and `.env.production` (see their examples). Never put secrets in a `PUBLIC_` variable. Set `KEYSTATIC_GITHUB_REPO=owner/repository` in Admin `.env` before provisioning/building; the tracked config defaults to a placeholder.
 

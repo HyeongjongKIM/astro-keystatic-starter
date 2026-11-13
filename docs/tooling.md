@@ -1,8 +1,8 @@
 # Developer Tooling and CI
 
-Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+Independent publishing uses `dev` for ready code, `content` for editorial saves, and protected PRs to `main`. See [activation and operator guidance](publishing-setup.md) for provisioning, pause/resume and verification limits. A customer copy must complete provisioning before enabling automatic promotion.
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
+The confirmed [repository workflow](repository-workflow.md) defines `content` editorial saves, automatic protected PR promotion from dev/content to `main`, and CI-gated deployment of both apps. See [Task 03-01](../tasks/03-publishing-workflow-improvements/01-content-branch-preview.md) for activation evidence and remaining verification limits.
 
 ## Tools
 
