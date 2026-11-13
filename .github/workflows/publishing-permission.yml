@@ -1,0 +1,39 @@
+name: Verify publishing permission denial
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Ready promotion PR to inspect while publication is paused
+        type: choice
+        default: dev
+        options: [dev, content]
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+  checks: read
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/main' && vars.PROMOTION_ENABLED == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.1
+        with:
+          version: 12.18.0
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22.23.5
+      - run: pnpm install --frozen-lockfile
+        env:
+          HUSKY: '0'
+      - run: node scripts/publishing/verify-permission.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERIFY_BRANCH: ${{ inputs.branch }}
+          PROMOTION_ENABLED: ${{ vars.PROMOTION_ENABLED }}
+          PROMOTION_APP_BOT: ${{ vars.PROMOTION_APP_BOT }}

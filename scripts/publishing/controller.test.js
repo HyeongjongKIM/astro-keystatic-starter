@@ -389,4 +389,34 @@ describe('token and workflow boundaries', () => {
     expect(text).not.toContain('workflow_run.head_sha');
     expect(workflow.jobs.reconcile.steps[0].with.ref).toBe('${{ github.sha }}');
   });
+  it('runs the permission-denial acceptance probe with read-only credentials on paused main', () => {
+    const workflow = parse(
+      readFileSync(
+        new URL(
+          '../../.github/workflows/publishing-permission.yml',
+          import.meta.url,
+        ),
+        'utf8',
+      ),
+    );
+    expect(Object.keys(workflow.on)).toEqual(['workflow_dispatch']);
+    expect(workflow.permissions).toEqual({
+      contents: 'read',
+      'pull-requests': 'read',
+      actions: 'read',
+      checks: 'read',
+    });
+    expect(workflow.jobs.verify.if).toContain(
+      "github.ref == 'refs/heads/main'",
+    );
+    expect(workflow.jobs.verify.if).toContain(
+      "vars.PROMOTION_ENABLED == 'false'",
+    );
+    expect(workflow.jobs.verify.environment).toBeUndefined();
+    expect(JSON.stringify(workflow)).not.toContain('secrets.');
+    expect(workflow.jobs.verify.steps[0].with).toMatchObject({
+      ref: '${{ github.sha }}',
+      'persist-credentials': false,
+    });
+  });
 });
