@@ -110,8 +110,8 @@ if (command === 'plan') {
   }
   console.log(`Local Markdown links passed: ${count}`);
 } else if (command === 'deploy-guard') {
-  if (!['dev', 'main'].includes(process.env.GITHUB_REF_NAME))
-    throw new Error('Deployment requires dev or main');
+  if (!['dev', 'content', 'main'].includes(process.env.GITHUB_REF_NAME))
+    throw new Error('Deployment requires dev, content or main');
   if (process.env.DEPLOY_ENABLED !== 'true')
     throw new Error(
       'Configure deployment environment before enabling deployment',
@@ -120,8 +120,9 @@ if (command === 'plan') {
     'CLOUDFLARE_ACCOUNT_ID',
     'CLOUDFLARE_PAGES_PROJECT',
     'PUBLIC_SITE_URL',
-    'KEYSTATIC_GITHUB_REPO',
-    'PUBLIC_KEYSTATIC_GITHUB_APP_SLUG',
+    ...(process.env.GITHUB_REF_NAME === 'content'
+      ? []
+      : ['KEYSTATIC_GITHUB_REPO', 'PUBLIC_KEYSTATIC_GITHUB_APP_SLUG']),
   ];
   for (const key of required)
     if (!process.env[key]?.trim())

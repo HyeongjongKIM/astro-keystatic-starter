@@ -1,6 +1,6 @@
-# Task 01 — Content Branch and Preview Workflow
+# Task 01 — Content Branch, Previews and Automated Promotion
 
-**Status:** TODO
+**Status:** IN_PROGRESS
 
 **Depends on:** [Task 00](00-publishing-policy.md) DONE
 
@@ -8,28 +8,34 @@
 
 ## Goal
 
-Implement the confirmed editorial branch, independent preview and PR publication flow without changing content schemas or the static Site/Admin boundary.
+Implement the confirmed editorial branch, independent previews and automatic promotion PR creation/merging without changing content schemas or the static Site/Admin boundary.
 
 ## Work
 
 - [ ] Read and preserve current remote settings, branch work and preview/callback dependencies. Create or synchronize content from the approved main baseline without rewriting history.
-- [ ] Add the approved content-push and promotion-PR checks, stable required gate and Site deployment conditions. Preserve dev/main behavior, correct push/PR bases, new-branch fallback, deletion/rename handling and editorial commit-message compatibility.
-- [ ] Implement editorial path validation using Task 00's comparison/synchronization policy. Reject unintended code/config changes and test legitimate main synchronization, mixed changes and schema rollout ordering.
+- [x] Add the approved content-push and promotion-PR checks, stable required gate and Site deployment conditions. Preserve dev/main behavior, correct push/PR bases, new-branch fallback, deletion/rename handling and editorial commit-message compatibility.
+- [x] Implement Task 00's automatic promotion for dev → main and content → main. Create one PR when an eligible publication diff exists, reuse an open PR for later pushes and merge automatically only after current required checks and effective protection conditions are satisfied. Respect the confirmed readiness, draft/closed-PR and retry policies.
+- [ ] Use the supported credentials and event strategy verified in Task 00. Observe required PR CI on automation-created PRs and main CI after automatic merging. Privileged promotion must not execute untrusted PR code, expose tokens or use an admin bypass; validation remains read-only and PRs receive no deployment secrets.
+- [x] Handle concurrent source/base updates and repeated events without duplicate PRs or merging an unvalidated revision. Stop visibly on conflicts, failed/cancelled checks, missing permissions or unmet protections; provide a documented recovery/pause mechanism.
+- [x] Apply the approved Conventional Commit merge titles without rewriting existing history or deleting long-lived branches. Synchronize main back to dev/content according to policy, preserve concurrent work and prevent no-diff/synchronization-only promotion loops.
+- [x] Implement editorial path validation using Task 00's comparison/synchronization policy. Reject unintended code/config changes and test legitimate main synchronization, mixed changes and schema rollout ordering.
 - [ ] Configure separate code/content Site previews, matching PUBLIC_SITE_URL values, branch-restricted deployment environments and affected-target rules. Editorial-only changes must deploy Site and skip Admin; PRs must never receive deployment credentials.
 - [ ] Apply and read back agreed protection/environment settings only after remote check names are verified. Preserve protected main and valid App secrets/permissions; use only documented editor branch selection behavior.
-- [ ] Update editor entry guidance and customer setup/operations for branch selection, both promotion paths, synchronization and stale-form recovery. Reconcile live settings with tracked examples.
+- [x] Update editor entry guidance and customer setup/operations for branch selection, both automated promotion paths, publication readiness, synchronization, automation pause/resume and stale-form/conflict recovery. Reconcile live settings with tracked examples.
 - [ ] Add meaningful branch/classification/path-guard regressions and record remote preview/PR results. Leave comprehensive deployed matrix and cleanup evidence for Task 05.
 
 ## Acceptance criteria
 
-Editorial saves can be reviewed and published without promoting unreleased dev code. Both previews identify their intended source and canonical origin. Rules enforce the approved publication path without a main bypass, and synchronization does not defeat the content guard. Required checks conclude for docs-only and rejected editorial PRs.
+Eligible dev/content changes automatically create or reuse promotion PRs and merge after current required checks without routine manual PR creation or merging. Editorial saves publish without promoting unreleased dev code. Failed checks, conflicts and unmet protections block merging visibly; automatic main synchronization preserves work without promotion loops. Merge titles follow the agreed Conventional Commit policy. Both previews identify their intended source and canonical origin. Rules enforce the approved publication path without a main bypass, and synchronization does not defeat the content guard. Required checks conclude for docs-only and rejected editorial PRs.
 
 ## Verification plan
 
-Run `pnpm check`, `pnpm build:admin:production` when Admin configuration is affected, Markdown links, diff and workflow validation. Verify content push, both PR paths, forbidden editorial code changes and main synchronization remotely. Record source SHAs, run/deployment URLs and effective settings; editor authentication/writes require deployed evidence.
+Run `pnpm check`, `pnpm build:admin:production` when Admin configuration is affected, Markdown links, diff and workflow validation. Verify content push, both automatic PR/merge paths, required PR/main CI event propagation, repeated/no-diff pushes, title formatting, forbidden editorial code changes and main synchronization remotely. Exercise check failure, conflict, source/base changes, permission failure and pause/resume; confirm no bypass or loop. Record source SHAs, run/deployment URLs and effective settings; editor authentication/writes require deployed evidence.
 
 ## Official references to consult before implementation
 
+- [GitHub CLI PR creation](https://cli.github.com/manual/gh_pr_create)
+- [GitHub CLI merging and auto-merge](https://cli.github.com/manual/gh_pr_merge)
 - [Workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
 - [Keystatic GitHub mode](https://keystatic.com/docs/github-mode)
 - [Pages preview deployments](https://developers.cloudflare.com/pages/configuration/preview-deployments/)
@@ -38,3 +44,51 @@ Run `pnpm check`, `pnpm build:admin:production` when Admin configuration is affe
 ## Verification evidence
 
 2026-11-12: Planning only. Work, acceptance checks and deployment/service validation have not been performed. Status remains TODO.
+
+### 2026-11-12 — Implementation prepared, activation held
+
+The maintainer requested Task 01, then explicitly authorized committing and pushing to dev with **no merge**. Implemented local content CI/guard/Site-only deployment support and a default-disabled trusted-main promotion controller; automatic publication and protected-main bootstrap remain held under that instruction. No main merge, App registration, key generation, content branch creation, protection/environment change or editor migration has been performed. Existing remote protections/environments were read back and preserved. Task 01 cannot be marked DONE until its remote acceptance criteria are observed.
+
+Read README, phase/task/policy and all five linked specifications. Current official GitHub workflow-run, App token, PR/branch merge, environment, Keystatic branch selection and Pages alias documentation was consulted. Source/base refs and checkout/credential boundaries use supported APIs, not framework internals. No dependency versions changed.
+
+The implementation adds read-only content push/PR guards, per-commit inspection (including reverted code), signed bot/parent/clean-merge-tree verification for synchronization, separate content Site canonical/artifact settings, content Site deployment without Admin settings, and no content Admin deployment. The controller uses trusted main only, no untrusted cache/artifacts/code, a repository-scoped short-lived App token, one PR per source/base, protected head-matched merging, fixed Commitlint-validated titles, current PR CI/gate/base/head checks, conflict/permission/draft/closed-PR stops and explicit resume. It synchronizes main without force pushes. The default-disabled workflow does not activate from a dev push.
+
+Added activation/operator guidance and linked it from README/customer setup/operations/workflow/deployment/tooling, preserving the current manual operating procedure until migration. The activation sequence explicitly stops at protected-main bootstrap while the no-merge instruction applies. No content preview or automated CI event propagation is claimed from local tests.
+
+Local implementation checkboxes above do not represent deployed acceptance. Main bootstrap, App provisioning/permissions/event proof, content creation, environment/public-origin/token configuration and the remote scenarios remain unchecked. In particular GitHub workflow-run metadata and the App's verified synchronization commit attribution must be checked against real open promotion PRs after bootstrap; mocked API fixtures are not that evidence. Content/main conflicts use editorial-only alignment followed by a clean App sync and reapplication, rather than a blanket manual-merge exception.
+
+Local verification on 2026-11-12, Darwin x86_64, Node `v22.23.5`, pnpm `12.18.0`, Git `2.52.0`: `pnpm check` exited 0 (format/lint, zero type diagnostics, 104 tests, Site/preview Admin builds and static-output verification). A subsequent explicit run after the final source-head assertion passed `pnpm lint`, all 104 tests and `pnpm build:admin:production`. Existing Admin chunk-size warnings remain. Initial lint found a missing explicit Node Buffer import in the new JWT helper; corrected it before the passing runs. Official actionlint `v1.7.12` was downloaded into ignored output, its archive SHA256 matched the official checksum file, and `output/actionlint/actionlint -shellcheck= -pyflakes=` exited 0. Shellcheck/Pyflakes were not run. No dependency or lockfile changed. Markdown/diff checks and remote push/CI evidence are recorded after their final results below.
+
+Final pre-commit checks: `pnpm format:check` passed, `node scripts/ci/run.mjs docs` passed all 185 local Markdown links after staging the new files, `git diff --cached --check` passed, and actionlint passed again. The current main ruleset still requires strict GitHub Actions Required checks/PRs/merge commits with no bypass actors; preview/production environments still allow only dev/main. Promotion settings/App credentials remain absent, so automation is disabled by default.
+
+### 2026-11-12 — Dev push and preview regression evidence
+
+Committed implementation as `b70e1f2d070090f5d463cf610aa3ec40320f0f41` (`feat: prepare independent content publishing`) and pushed dev, including the previously local Task 00 policy commit `a082b37`. Commit hooks passed lint/format/Commitlint; the pre-push hook passed types with zero diagnostics and all 104 tests. No merge was requested or performed.
+
+GitHub Actions [run 43193750585](https://github.com/HyeongjongKIM/astro-keystatic-starter/actions/runs/43193750585), Linux hosted ubuntu-latest runner, completed **success** with all six jobs: Classify and validate, Validate Site, Validate Admin, Required checks, Deploy Site and Deploy Admin. Logs confirmed 185 Markdown links and all 104 tests. The new guard correctly reported “Not an editorial write” for this dev push; this does not test a content push. Preview/production Admin validation builds both passed. Source SHA was preserved through the Site artifact and deployment head checks.
+
+Site deployment [3cdffb5f](https://3cdffb5f.astro-keystatic-starter-site.pages.dev) completed and updated the existing dev alias. Preview Worker version `30aea7a4-4c85-4c05-9627-bf992fac3c33` deployed successfully. Browser fetch of the dev Site returned 200, `X-Robots-Tag: noindex` and canonical `https://dev.astro-keystatic-starter-site.pages.dev/`; the existing preview Admin dashboard rendered and its browser fetch returned 200. A Python urllib request to the Site returned 403, so it was not treated as a successful smoke check; ordinary browser inspection supplied the observed serving results. Existing browser session/dashboard rendering is not a new OAuth or authenticated-write E2E test. No content was saved.
+
+Readback after deployment: main is still `cf3e71c5d222f6fc804ccb5f8cfd5b0988c976e7`, preview still `c97563de2ab592ff58ff8d58c5d5bbd5aaee8ea4`, open PR count zero, and no content branch or promotion configuration variables exist. No automation environment/key was created. Automatic promotion remains disabled. Default-branch bootstrap, dedicated App provisioning, content branch/environment/token/origin provisioning and all automatic PR/merge/event/synchronization and deployed editorial-write scenarios remain pending under the maintainer's no-merge instruction. Task 01 stays IN_PROGRESS; Task 02 must not start yet.
+
+### 2026-11-13 — Pre-merge provisioning, disabled
+
+The maintainer asked the agent to continue the recommended App/environment preparation while retaining the no-merge instruction, and completed GitHub's additional owner authentication when prompted. Started from a clean dev worktree at `99b147c8e03a597e56362b3bf37eb20b56e1457c`. Read the task queue, current task/policy, README and linked specifications, then re-read official GitHub App/environment/branch-policy and Cloudflare token documentation. No later task was started.
+
+- [x] Created private App **Astro Starter Publishing**, slug `astro-starter-publishing`, App ID `5737147`, installation `181427696`. Browser readback confirms only `HyeongjongKIM/astro-keystatic-starter` selected. Permissions are metadata/actions/checks read, contents/pull requests/workflows write; no administration, bypass actor, webhook endpoint, user OAuth or client secret was added. Existing Keystatic Apps are unchanged. The public App lookup with the CLI user token returned 404 for this private App; owner browser and App JWT authentication supplied the actual evidence instead.
+- [x] Created `automation` environment ID `27142440026` with exactly one custom **branch** policy `main` (ID `66523272`); generated one App private key, registered it as `PROMOTION_APP_PRIVATE_KEY` there, and verified the secret name/timestamp. The temporary ignored download was chmod 600 and removed after registration and credential testing; its content was never returned or logged. Set public repository variables `PROMOTION_APP_CLIENT_ID`, `PROMOTION_APP_BOT=astro-starter-publishing[bot]` and `PROMOTION_ENABLED=false`.
+- [x] Executed the implementation's actual `installationToken` helper using the generated key: App JWT authentication, exact required-permission readback and repository-scoped installation-token creation succeeded. `/installation/repositories` returned exactly this one repository, and authenticated main-ref read returned `cf3e71c5d222f6fc804ccb5f8cfd5b0988c976e7`. Revoked the short-lived token in finally. No PR, synchronization commit, workflow dispatch or merge was performed. Read-only credential verification does not establish future write/event behavior.
+- [x] Created `content` deployment environment ID `27142442186`, with exactly one custom **branch** policy `content` (ID `66523276`). Registered account/project and `PUBLIC_SITE_URL=https://content.astro-keystatic-starter-site.pages.dev`; the repository `CONTENT_PUBLIC_SITE_URL` matches. Kept `DEPLOY_ENABLED=false`. No Admin settings or Worker secrets were copied there.
+- [x] Created separate Cloudflare user API token `astro-keystatic-starter-content`, token ID `5067aeaa7b05223c87ebbc3e2f1c0a67`, through the official UI. The reviewed payload grants only Pages Edit (`8d28297797f24fb8a0c332fe0866ec89`) and Account Settings Read (`c1fde68c7bcc44588cbb6ddbc16d6480`), scoped only to account `199c99f6a960ac0f6d972bf769a837bb`; no Workers/zone permissions or expiry. Official `/user/tokens/verify` returned active, and the token successfully read existing Pages project `astro-keystatic-starter-site`. Transferred its value directly from browser memory to `gh secret set CLOUDFLARE_API_TOKEN --env content` stdin through an ephemeral loopback POST receiver; verified the secret name/timestamp, closed the token display tab and all task receivers. No token value was printed or saved to a file. Initial browser fetch transfer attempts timed out without registration; ordinary form POST completed validation/registration successfully. No deployment was enabled or performed with this token.
+
+Final remote readback confirmed automation → main and content → content policies, both disabled flags, matching origins, and the two newly registered secret names. Preview → dev and production → main environment restrictions, main's required PR/strict Required checks/merge-commit-only rules with no bypass actors, existing App credentials, Pages domains/build controls and Workers were preserved. Main remains `cf3e71c5d222f6fc804ccb5f8cfd5b0988c976e7`; legacy preview remains `c97563de2ab592ff58ff8d58c5d5bbd5aaee8ea4`. No content branch, preview deployment or main merge was created. Preparing the disabled content environment ahead of branch creation does not activate an editorial path.
+
+The next dependency is the protected-main bootstrap in the documented migration order. It is intentionally held under the maintainer's no-merge instruction. After an authorized bootstrap, create content from then-current main, configure its branch protection, verify both previews and the full App PR/merge/event/sync/failure paths, and only then activate publishing. Task 01 remains IN_PROGRESS; Tasks 02–05 cannot start. Documentation checks and commit/push results follow below.
+
+### 2026-11-13 — Draft bootstrap review and final preparation checks
+
+Created **draft** [PR 11](https://github.com/HyeongjongKIM/astro-keystatic-starter/pull/11), dev → main, through the owner's current CLI authorization. The PR is for review and read-only CI only; it has not been marked ready, merged or given native auto-merge. Source `99b147c8e03a597e56362b3bf37eb20b56e1457c`, base `cf3e71c5d222f6fc804ccb5f8cfd5b0988c976e7`. GitHub CI [43338740528](https://github.com/HyeongjongKIM/astro-keystatic-starter/actions/runs/43338740528) passed Classify and validate, Validate Site, Validate Admin and Required checks; both deployment jobs skipped as intended for PRs. This manually created draft does not establish App-created event propagation.
+
+The real workflow-run API returned the expected source `head_sha`, PR number and head/base SHAs used by the controller. Fetching GitHub's synthetic inspection object `d36206d77c5d450c01d302513d0cb9b9274def7a` succeeded, and its parents exactly matched base then source. Fetching that object does not merge or move either branch. Ran the actual controller's dev inspection with a read-only API adapter against PR 11: it stopped with “draft PR pauses promotion”; **zero mutating API calls were attempted**. This validates the observed draft stop and API metadata shape, not the unexecuted merge/synchronization paths or App commit signatures.
+
+Local regression checks on 2026-11-13, Darwin x86_64, Node `v22.23.5`, pnpm `12.18.0`: `pnpm check` exited 0 (format/lint, zero type diagnostics, all 104 tests, Site/preview Admin builds and static-output verification). Existing Admin chunk-size warning remains. `node scripts/ci/run.mjs docs` passed 185 links and `git diff --check` passed. No source, workflow, dependency or content files changed in this preparation update; only task evidence/index documents changed. No new behavior tests were needed. Ready for a future explicitly authorized bootstrap merge, while current flags remain disabled and Task 01 remains IN_PROGRESS.

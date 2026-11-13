@@ -101,6 +101,10 @@ describe('editorial message compatibility', () => {
     ['arbitrary bot commit', ['content/posts/a/index.yaml']],
     ['Update content/settings/other', ['content/settings/site.yaml']],
     ['Update content/pages/about', []],
+    [
+      'Update content/pages/about',
+      ['apps/site/src/assets/images/other/photo.png'],
+    ],
   ])('rejects broad bot/message exemptions: %s', (message, paths) =>
     expect(isEditorialCommit(message, paths)).toBe(false),
   );

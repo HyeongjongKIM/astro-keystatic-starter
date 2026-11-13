@@ -1,5 +1,7 @@
 # astro-keystatic-starter
 
+Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](docs/publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+
 Reusable Astro + Keystatic starter for customer blogs, portfolios, and content-driven websites.
 
 ## Architecture

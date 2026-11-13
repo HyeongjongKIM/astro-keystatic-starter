@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [dev, main]
+    branches: [dev, content, main]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,6 +24,10 @@ jobs:
       - uses: ./.github/actions/setup
       - id: plan
         run: node scripts/ci/run.mjs plan
+      - run: node scripts/publishing/run.mjs guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROMOTION_APP_BOT: ${{ vars.PROMOTION_APP_BOT }}
       - run: node scripts/ci/run.mjs commits
       - run: pnpm format:check
       - run: node scripts/ci/run.mjs docs
@@ -37,7 +41,7 @@ jobs:
     if: needs.prepare.outputs.site == 'true'
     runs-on: ubuntu-latest
     env:
-      PUBLIC_SITE_URL: ${{ github.ref_name == 'main' && github.event_name != 'pull_request' && vars.PRODUCTION_PUBLIC_SITE_URL || vars.PREVIEW_PUBLIC_SITE_URL || 'https://example.com' }}
+      PUBLIC_SITE_URL: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && vars.PRODUCTION_PUBLIC_SITE_URL || github.ref_name == 'main' && vars.PRODUCTION_PUBLIC_SITE_URL || github.ref_name == 'content' && vars.CONTENT_PUBLIC_SITE_URL || vars.PREVIEW_PUBLIC_SITE_URL || 'https://example.com' }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -97,9 +101,9 @@ jobs:
     if: >-
       !cancelled() && needs.required.result == 'success' && needs.prepare.outputs.site == 'true' &&
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      (github.ref_name == 'dev' || github.ref_name == 'main')
+      (github.ref_name == 'dev' || github.ref_name == 'content' || github.ref_name == 'main')
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'content' && 'content' || 'preview' }}
     concurrency:
       group: deploy-site-${{ github.ref_name }}
       cancel-in-progress: false

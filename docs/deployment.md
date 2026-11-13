@@ -1,5 +1,7 @@
 # Cloudflare Deployment and Configuration
 
+Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+
 The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
 
 ## Targets

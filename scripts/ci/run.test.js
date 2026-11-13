@@ -149,6 +149,25 @@ describe('deployment guard', () => {
     ).not.toBe(0);
   });
 });
+describe('editorial Site deployment', () => {
+  it('accepts content without Worker public settings and still rejects stale content heads', () => {
+    git('branch', 'content');
+    git('remote', 'add', 'origin', cwd);
+    const env = {
+      GITHUB_REF_NAME: 'content',
+      DEPLOY_ENABLED: 'true',
+      CLOUDFLARE_ACCOUNT_ID: 'account',
+      CLOUDFLARE_PAGES_PROJECT: 'project',
+      PUBLIC_SITE_URL: 'https://content.example.com',
+      KEYSTATIC_GITHUB_REPO: '',
+      PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: '',
+    };
+    expect(run('deploy-guard', {}, env).status).toBe(0);
+    expect(
+      run('deploy-guard', {}, { ...env, GITHUB_SHA: '0'.repeat(40) }).status,
+    ).not.toBe(0);
+  });
+});
 describe('workflow deployment boundaries', () => {
   it('always reports required checks, never path-filters the workflow, and isolates deployment secrets', () => {
     const workflow = parse(
@@ -157,8 +176,8 @@ describe('workflow deployment boundaries', () => {
         'utf8',
       ),
     );
-    expect(workflow.on.push.branches).toEqual(['dev', 'main']);
-    expect(workflow.on.pull_request.branches).toEqual(['main']);
+    expect(workflow.on.push.branches).toEqual(['dev', 'content', 'main']);
+    expect(workflow.on.pull_request.branches).toEqual(['main', 'dev']);
     expect(workflow.on.push.paths).toBeUndefined();
     expect(workflow.jobs.required.if).toBe('always()');
     expect(workflow.jobs.required.needs).toEqual(['prepare', 'site', 'admin']);
