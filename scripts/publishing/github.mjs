@@ -72,11 +72,31 @@ export function verifySyncCommit(api, repository, bot) {
   return async (sha) => {
     if (!bot || !/^[\w-]+\[bot\]$/.test(bot)) return false;
     const commit = await api('GET', `/repos/${repository}/commits/${sha}`);
-    return (
-      commit.committer?.login === bot &&
-      commit.committer?.type === 'Bot' &&
-      commit.commit.verification?.verified === true &&
-      commit.commit.verification.reason === 'valid'
-    );
+    if (
+      commit.author?.login !== bot ||
+      commit.author?.type !== 'Bot' ||
+      ![bot, 'web-flow'].includes(commit.committer?.login) ||
+      commit.commit.verification?.verified !== true ||
+      commit.commit.verification.reason !== 'valid'
+    )
+      return false;
+    // GitHub signs App-authored API merges as web-flow. Bot signatures are
+    // issued only for App-authenticated requests without custom identity or
+    // signature fields. A user-signed commit with a forged author is not enough.
+    const [owner, name] = repository.split('/');
+    const result = await api('POST', '/graphql', {
+      query: `query SyncSignature($owner: String!, $name: String!, $sha: GitObjectID!) {
+        repository(owner: $owner, name: $name) {
+          object(oid: $sha) { ... on Commit {
+            signature { isValid wasSignedByGitHub }
+          } }
+        }
+      }`,
+      variables: { owner, name, sha },
+    });
+    if (result.errors?.length)
+      throw new Error('GitHub signature verification query failed');
+    const signature = result.data?.repository?.object?.signature;
+    return signature?.isValid === true && signature.wasSignedByGitHub === true;
   };
 }

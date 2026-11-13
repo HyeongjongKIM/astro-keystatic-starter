@@ -280,22 +280,54 @@ describe('token and workflow boundaries', () => {
       'API path',
     );
   });
-  it('requires a verified bot commit for sync identity', async () => {
+  it('accepts App-authored web-flow-signed merges and rejects forged identity/signatures', async () => {
     const commit = {
-      committer: { login: 'publishing[bot]', type: 'Bot' },
+      author: { login: 'publishing[bot]', type: 'Bot' },
+      committer: { login: 'web-flow', type: 'User' },
       commit: { verification: { verified: true, reason: 'valid' } },
     };
-    const verify = verifySyncCommit(
-      async () => commit,
-      repo,
-      'publishing[bot]',
+    const signature = { isValid: true, wasSignedByGitHub: true };
+    const api = vi.fn(async (method) =>
+      method === 'GET'
+        ? commit
+        : { data: { repository: { object: { signature } } } },
     );
+    const verify = verifySyncCommit(api, repo, 'publishing[bot]');
     expect(await verify(source)).toBe(true);
+    expect(api).toHaveBeenCalledWith(
+      'POST',
+      '/graphql',
+      expect.objectContaining({
+        variables: { owner: 'owner', name: 'repo', sha: source },
+      }),
+    );
     commit.commit.verification.verified = false;
     expect(await verify(source)).toBe(false);
     commit.commit.verification.verified = true;
-    commit.committer.login = 'editor';
+    commit.author.login = 'editor';
     expect(await verify(source)).toBe(false);
+    commit.author.login = 'publishing[bot]';
+    signature.wasSignedByGitHub = false;
+    expect(await verify(source)).toBe(false);
+    signature.wasSignedByGitHub = true;
+    signature.isValid = false;
+    expect(await verify(source)).toBe(false);
+  });
+  it('fails closed when GitHub cannot provide signature provenance', async () => {
+    const commit = {
+      author: { login: 'publishing[bot]', type: 'Bot' },
+      committer: { login: 'web-flow' },
+      commit: { verification: { verified: true, reason: 'valid' } },
+    };
+    const verify = verifySyncCommit(
+      async (method) =>
+        method === 'GET' ? commit : { errors: [{ message: 'unavailable' }] },
+      repo,
+      'publishing[bot]',
+    );
+    await expect(verify(source)).rejects.toThrow(
+      'signature verification query failed',
+    );
   });
   it('runs privileged controller from main without PR checkout, artifacts or dependency cache', () => {
     const workflow = parse(
