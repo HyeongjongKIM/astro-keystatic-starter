@@ -21,7 +21,6 @@ const pr = () => ({
   draft: false,
   head: { ref: 'dev', sha: source, repo: { full_name: repo } },
   base: { ref: 'main', sha: main },
-  merge_commit_sha: merge,
   mergeable: true,
   mergeable_state: 'clean',
 });
@@ -49,6 +48,8 @@ beforeEach(() => {
   calls = [];
   api = vi.fn(async (method, path, body) => {
     calls.push({ method, path, body });
+    if (path.includes('/git/ref/pull/7/merge'))
+      return { object: { sha: merge } };
     if (path.includes('/git/ref/heads/'))
       return { object: { sha: path.endsWith('/main') ? main : source } };
     if (path.includes('/pulls?')) return state.open;
@@ -95,6 +96,12 @@ describe('promotion reconciliation', () => {
     ]);
     expect(validateTitle).toHaveBeenCalledWith('chore: publish dev changes');
     expect(refresh).toHaveBeenCalledWith(merge);
+    expect(state.current).not.toHaveProperty('merge_commit_sha');
+    expect(
+      calls.findIndex((call) => call.path.endsWith('/pulls/7')),
+    ).toBeLessThan(
+      calls.findIndex((call) => call.path.endsWith('/git/ref/pull/7/merge')),
+    );
   });
   it('creates one PR and reuses it on later events', async () => {
     state.open = [];

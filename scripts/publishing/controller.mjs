@@ -128,11 +128,7 @@ export class PromotionController {
         `${branch}: PR state/head/base changed; reconcile current state`,
       );
     }
-    if (
-      !current.merge_commit_sha ||
-      current.mergeable !== true ||
-      current.mergeable_state !== 'clean'
-    ) {
+    if (current.mergeable !== true || current.mergeable_state !== 'clean') {
       throw new Error(
         `${branch}: PR is not mergeable with current protections`,
       );
@@ -171,10 +167,17 @@ export class PromotionController {
     const gate = jobs.jobs.filter((job) => job.name === 'Required checks');
     if (gate.length !== 1 || gate[0].conclusion !== 'success')
       throw new Error(`${branch}: missing successful required gate`);
-    // Prove CI's checked-out merge commit really has these two parents.
-    await this.refresh(current.merge_commit_sha);
+    // Requesting PR details above refreshes GitHub's merge candidate. The
+    // 2026-03-10 API removed merge_commit_sha; read the documented merge ref
+    // only AFTER mergeability is computed, then verify its actual parents.
+    const mergeRef = await this.api(
+      'GET',
+      `${this.root}/git/ref/pull/${pr.number}/merge`,
+    );
+    const mergeSha = mergeRef.object.sha;
+    await this.refresh(mergeSha);
     const parents = this.graph
-      .git('show', '-s', '--format=%P', current.merge_commit_sha)
+      .git('show', '-s', '--format=%P', mergeSha)
       .split(' ');
     if (
       parents.length !== 2 ||
