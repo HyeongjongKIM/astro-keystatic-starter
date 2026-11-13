@@ -1,6 +1,6 @@
 # Activate independent publishing
 
-The [selected policy](publishing-policy.md) separates ready code on dev from editorial saves on content. The implementation is prepared on dev; it is **not active** until the trusted controller is merged into main, the settings below are provisioned and remote behavior is verified. Keep using the existing [repository workflow](repository-workflow.md) until migration is complete. Do not send editors to an unprovisioned content branch.
+The [selected policy](publishing-policy.md) separates ready code on dev from editorial saves on content. This repository has bootstrapped the trusted controller and provisioned the content preview and dedicated publishing App. See [Task 03-01 evidence](../tasks/03-publishing-workflow-improvements/01-content-branch-preview.md) for observed runs, corrections and remaining acceptance work. Provisioning is customer-specific: a new copy must complete the migration below before editors select content or automatic publication is enabled. The repository variable is the current pause/resume authority; do not infer its value from this document.
 
 ## Provisioning contract
 
