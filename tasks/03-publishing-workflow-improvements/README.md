@@ -6,14 +6,14 @@
 
 Separate editorial publication from code development, automate promotion PR creation and merging after required checks, improve deployment recovery and target independence, reuse validated Admin artifacts, and automate Action dependency updates. The maintainer requested this as a new phase before Site UI foundation; Phase 02 remains completed history.
 
-| ID  | Task                                                                             | Dependency    | Status      |
-| --- | -------------------------------------------------------------------------------- | ------------- | ----------- |
-| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE        |
-| 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | IN_PROGRESS |
-| 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | TODO        |
-| 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO        |
-| 04  | [Action pinning and update automation](04-actions-maintenance.md)                | 03            | TODO        |
-| 05  | [Deployed verification and customer handoff](05-deployed-verification.md)        | 00–04 DONE    | TODO        |
+| ID  | Task                                                                             | Dependency    | Status |
+| --- | -------------------------------------------------------------------------------- | ------------- | ------ |
+| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE   |
+| 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | DONE   |
+| 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | TODO   |
+| 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO   |
+| 04  | [Action pinning and update automation](04-actions-maintenance.md)                | 03            | TODO   |
+| 05  | [Deployed verification and customer handoff](05-deployed-verification.md)        | 00–04 DONE    | TODO   |
 
 ## Planning baseline
 
@@ -66,3 +66,5 @@ Task 01 implements the confirmed policy, including main synchronization back to 
 2026-11-13: Correction main CI and both production deployments passed. Promotion was re-enabled; App content PR 16 automatically merged the draft-marker cleanup, main Site deployment succeeded, and both branches synchronized with passing CI and no-diff/no-loop reconciliation. Dev full validation/preview deployments also passed. Task 01 remains IN_PROGRESS while automatic dev documentation publication and remaining remote failure/race acceptance are recorded; Tasks 02–05 remain unstarted.
 
 2026-11-13: Operating guidance commit `a77988b` automatically opened/merged dev PR 17 as `db4c1a8`; PR/main/content-sync CI passed, with intentional docs-only app/deployment skips. Both automatic publication paths and corrected full merge messages are verified. The requested operational restoration is complete; Task 01 remains IN_PROGRESS for the explicitly documented unperformed remote negative/race acceptance matrix. Task 02 must wait.
+
+2026-11-13: **Task 01 DONE.** Completed actual failed/cancelled/missing-gate, closed/draft/resume, read-only-token HTTP 403, rapid-save/stale-upload, live source/base race, conflict/independent-sync, unsupported-schema and forbidden/reverted/fake-sync history acceptance. Protected automatic recovery PR 22 and original-draft cleanup PR 23 passed current PR/main/synchronization CI and affected Site deployments. Temporary fixtures are gone, original draft is restored, promotion is enabled and protections/credentials/callbacks are preserved. The task records exact SHAs/runs and distinguishes local orchestration against real remote state from hosted runs. Task 02 is now eligible and remains TODO; Tasks 03–05 and Phase 04 remain unstarted.
