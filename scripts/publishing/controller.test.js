@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { generateKeyPairSync, verify } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 import { parse } from 'yaml';
@@ -10,7 +11,7 @@ import {
   installationToken,
 } from './github.mjs';
 
-let controller, api, state, calls, refresh, validateTitle;
+let controller, api, state, calls, refresh, validateMessage;
 const main = 'a'.repeat(40),
   source = 'b'.repeat(40),
   merge = 'c'.repeat(40);
@@ -67,14 +68,14 @@ beforeEach(() => {
     git: () => state.parents,
   };
   refresh = vi.fn();
-  validateTitle = vi.fn();
+  validateMessage = vi.fn();
   controller = new PromotionController({
     api,
     repository: repo,
     graph,
     refresh,
     bot: 'publishing[bot]',
-    validateTitle,
+    validateMessage,
     log: vi.fn(),
   });
 });
@@ -90,11 +91,13 @@ describe('promotion reconciliation', () => {
           sha: source,
           merge_method: 'merge',
           commit_title: 'chore: publish dev changes',
-          commit_message: `Validated PR #7; source ${source}; base ${main}.`,
+          commit_message: `Validated PR #7\nSource: ${source}\nBase: ${main}`,
         },
       },
     ]);
-    expect(validateTitle).toHaveBeenCalledWith('chore: publish dev changes');
+    expect(validateMessage).toHaveBeenCalledWith(
+      `chore: publish dev changes\n\nValidated PR #7\nSource: ${source}\nBase: ${main}`,
+    );
     expect(refresh).toHaveBeenCalledWith(merge);
     expect(state.current).not.toHaveProperty('merge_commit_sha');
     expect(
@@ -102,6 +105,43 @@ describe('promotion reconciliation', () => {
     ).toBeLessThan(
       calls.findIndex((call) => call.path.endsWith('/git/ref/pull/7/merge')),
     );
+  });
+  it.each(['dev', 'content'])(
+    'validates the complete %s merge message with the real Commitlint configuration',
+    async (branch) => {
+      if (branch === 'content') {
+        state.open[0].head.ref = branch;
+        state.current.head.ref = branch;
+        controller.graph.paths = () => ['content/settings/site.yaml'];
+        controller.graph.git = (command) =>
+          command === 'show' ? state.parents : '';
+      }
+      await controller.branch(branch);
+      const { commit_title, commit_message } = writes()[0].body;
+      const result = spawnSync('pnpm', ['exec', 'commitlint'], {
+        input: `${commit_title}\n\n${commit_message}`,
+        encoding: 'utf8',
+      });
+      expect(result.status, result.stdout + result.stderr).toBe(0);
+      expect(validateMessage).toHaveBeenCalledWith(
+        `${commit_title}\n\n${commit_message}`,
+      );
+      const previous = spawnSync('pnpm', ['exec', 'commitlint'], {
+        input: `${commit_title}\n\nValidated PR #7; source ${source}; base ${main}.`,
+        encoding: 'utf8',
+      });
+      expect(previous.status).toBe(1);
+      expect(previous.stdout).toContain('body-max-line-length');
+    },
+  );
+  it('does not merge when full message validation fails', async () => {
+    validateMessage.mockImplementation(() => {
+      throw new Error('Invalid commit message');
+    });
+    await expect(controller.branch('dev')).rejects.toThrow(
+      'Invalid commit message',
+    );
+    expect(writes()).toEqual([]);
   });
   it('creates one PR and reuses it on later events', async () => {
     state.open = [];
