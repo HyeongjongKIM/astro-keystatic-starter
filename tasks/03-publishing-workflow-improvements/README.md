@@ -6,14 +6,14 @@
 
 Separate editorial publication from code development, automate promotion PR creation and merging after required checks, improve deployment recovery and target independence, reuse validated Admin artifacts, and automate Action dependency updates. The maintainer requested this as a new phase before Site UI foundation; Phase 02 remains completed history.
 
-| ID  | Task                                                                             | Dependency    | Status |
-| --- | -------------------------------------------------------------------------------- | ------------- | ------ |
-| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE   |
-| 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | DONE   |
-| 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | TODO   |
-| 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO   |
-| 04  | [Action pinning and update automation](04-actions-maintenance.md)                | 03            | TODO   |
-| 05  | [Deployed verification and customer handoff](05-deployed-verification.md)        | 00–04 DONE    | TODO   |
+| ID  | Task                                                                             | Dependency    | Status      |
+| --- | -------------------------------------------------------------------------------- | ------------- | ----------- |
+| 00  | [Publishing and synchronization policy](00-publishing-policy.md)                 | Phase 02 DONE | DONE        |
+| 01  | [Content branch, previews and automated promotion](01-content-branch-preview.md) | 00            | DONE        |
+| 02  | [Deployment recovery and target isolation](02-deployment-recovery.md)            | 01            | IN_PROGRESS |
+| 03  | [Validated Admin deployment artifacts](03-admin-artifacts.md)                    | 02            | TODO        |
+| 04  | [Action pinning and update automation](04-actions-maintenance.md)                | 03            | TODO        |
+| 05  | [Deployed verification and customer handoff](05-deployed-verification.md)        | 00–04 DONE    | TODO        |
 
 ## Planning baseline
 
