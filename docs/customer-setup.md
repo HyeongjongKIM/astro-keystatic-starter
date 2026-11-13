@@ -1,8 +1,8 @@
 # Customer setup and operations
 
-Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+Independent publishing uses `dev` for ready code, `content` for editorial saves, and protected PRs to `main`. See [activation and operator guidance](publishing-setup.md) for provisioning, pause/resume and verification limits. A customer copy must complete provisioning before enabling automatic promotion.
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
+The confirmed [repository workflow](repository-workflow.md) defines `content` editorial saves, automatic protected PR promotion from dev/content to `main`, and CI-gated deployment of both apps. See [Task 03-01](../tasks/03-publishing-workflow-improvements/01-content-branch-preview.md) for activation evidence and remaining verification limits.
 
 ## Create an independent customer repository
 
@@ -12,13 +12,13 @@ Use Node 22.23.5 and pnpm 12.18.0, then run `pnpm install --frozen-lockfile` and
 
 ## Configure branches and static Site hosting
 
-Generate only the template default branch, then create `dev` from the customer's `main`. Use [the workflow policy](repository-workflow.md) for branch protection and PR publication. Editors save on `dev`; merging the PR publishes accumulated code and content together.
+Generate only the template default branch, then create `dev` from the customer's `main`. Use [the workflow policy](repository-workflow.md) for branch protection and PR publication. Provision the [dedicated publishing App, content branch/environment and automation](publishing-setup.md) in the documented migration order. Editors then save on content; ready code enters dev. Both paths automatically create protected PRs and publish after checks.
 
-Authorize Cloudflare's official GitHub integration for the customer repository. Create a Pages project with production branch `main`, repository root, build command `pnpm install --frozen-lockfile && pnpm --filter @starter/site build`, and output `apps/site/dist`. Preserve existing domains when adopting this workflow. The [Pages REST template](examples/pages-project.json) retains these recovery build settings, but disables automatic production and preview Git builds. Actions uploads validated static output with explicit `main` or `dev` branch and SHA; independent Pages Git builds would bypass the CI gate.
+Authorize Cloudflare's official GitHub integration for the customer repository. Create a Pages project with production branch `main`, repository root, build command `pnpm install --frozen-lockfile && pnpm --filter @starter/site build`, and output `apps/site/dist`. Preserve existing domains when adopting this workflow. The [Pages REST template](examples/pages-project.json) retains these recovery build settings, but disables automatic production and preview Git builds. Actions uploads validated static output with explicit `main`, `dev` or `content` branch and SHA; independent Pages Git builds would bypass the CI gate.
 
 Set Node `22.23.5`, pnpm `12.18.0`, `HUSKY=0`, and `SKIP_DEPENDENCY_INSTALL=true` in Pages for manual Git-build recovery. Configure production `PUBLIC_SITE_URL` to the customer origin and preview to `https://dev.CUSTOMER-SITE.pages.dev`. Pages environment variables do not automatically reach Actions. The Actions configuration below is authoritative for automatic deployment.
 
-Create GitHub environments `preview` and `production`, allowing only branches `dev` and `main` respectively, without required reviewers. Populate each environment:
+Create GitHub environments `preview` and `production`, allowing only branches `dev` and `main` respectively, without required reviewers. Add the Site-only `content` environment restricted to content and the App-key-only `automation` environment restricted to main using the [provisioning contract](publishing-setup.md#provisioning-contract). Populate preview/production as follows:
 
 | Name                               | Kind     | Value                                                    |
 | ---------------------------------- | -------- | -------------------------------------------------------- |
@@ -33,9 +33,9 @@ Create GitHub environments `preview` and `production`, allowing only branches `d
 
 Use the official Cloudflare token UI, limiting resources to the customer account. Grant Pages Edit, Workers Scripts Edit and Account Settings Read required for account lookup; add no unrelated zones or products. Retain the existing Worker runtime authentication secrets. Never use an expiring local Wrangler OAuth token as the CI credential.
 
-For validation jobs without deployment secrets, set repository variables `KEYSTATIC_GITHUB_REPO`, optional `ADMIN_BRAND_NAME`, `PREVIEW_KEYSTATIC_GITHUB_APP_SLUG`, `PRODUCTION_KEYSTATIC_GITHUB_APP_SLUG`, `PREVIEW_PUBLIC_SITE_URL` and `PRODUCTION_PUBLIC_SITE_URL`. Keep these public values aligned with environment variables: Site deployment rejects an origin different from its validated artifact. Unprovisioned copies can run checks against placeholders but cannot deploy until configured.
+For validation jobs without deployment secrets, set repository variables `KEYSTATIC_GITHUB_REPO`, optional `ADMIN_BRAND_NAME`, `PREVIEW_KEYSTATIC_GITHUB_APP_SLUG`, `PRODUCTION_KEYSTATIC_GITHUB_APP_SLUG`, `PREVIEW_PUBLIC_SITE_URL` and `PRODUCTION_PUBLIC_SITE_URL`. Set `CONTENT_PUBLIC_SITE_URL` to the content preview origin and keep it aligned with the content environment. Keep these public values aligned with environment variables: Site deployment rejects an origin different from its validated artifact. Unprovisioned copies can run checks against placeholders but cannot deploy until configured.
 
-Before activating the workflow, inspect and disable automatic Pages Git builds and any competing Workers Git build triggers, while preserving the old `preview` branch/alias until `dev` deployment succeeds. Run remote checks before making `Required checks` mandatory. Protect `main` against direct saves, deletion and force pushes, including administrators, with PRs, zero approvals, merge commits and required checks; protect `dev` against deletion/force pushes without blocking direct editorial commits. Verify the effective rules and real editor saves after activation. No App bypass is used.
+Before activating the workflow, inspect and disable automatic Pages Git builds and any competing Workers Git build triggers, while preserving the old `preview` branch/alias until `dev` deployment succeeds. Run remote checks before making `Required checks` mandatory. Protect `main` against direct saves, deletion and force pushes, including administrators, with PRs, zero approvals, merge commits and required checks; protect dev/content against deletion/force pushes without blocking ordinary direct writes. Verify the effective rules and real editor saves after activation. No App bypass is used.
 
 ## Provision the Admin Apps and Workers
 

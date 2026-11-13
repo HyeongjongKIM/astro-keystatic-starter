@@ -1,8 +1,8 @@
 # Cloudflare Deployment and Configuration
 
-Phase 03 independent publishing is prepared but not activated. See [activation and operator guidance](publishing-setup.md) before switching editors to content or enabling automatic promotion. The existing dev/manual publication procedure below remains effective until migration and remote verification finish.
+Independent publishing uses `dev` for ready code, `content` for editorial saves, and protected PRs to `main`. See [activation and operator guidance](publishing-setup.md) for provisioning, pause/resume and verification limits. A customer copy must complete provisioning before enabling automatic promotion.
 
-The confirmed [repository workflow](repository-workflow.md) defines `dev` editorial saves, PR promotion to `main`, and CI-gated deployment of both apps. See Phase 02 task evidence for verified deployment behavior and remaining limitations.
+The confirmed [repository workflow](repository-workflow.md) defines `content` editorial saves, automatic protected PR promotion from dev/content to `main`, and CI-gated deployment of both apps. See [Task 03-01](../tasks/03-publishing-workflow-improvements/01-content-branch-preview.md) for activation evidence and remaining verification limits.
 
 ## Targets
 
@@ -39,7 +39,7 @@ Starter-defined variables must actually be consumed in application code. Never p
 
 ## Build triggers
 
-GitHub Actions owns automatic deployments: affected `dev` pushes deploy preview; affected `main` pushes deploy production after `Required checks`. PRs only validate. Docs-only changes deploy neither app, editorial content/images and Site-only changes skip Admin, and Admin-only changes skip Site. Dependencies, shared configuration and unknown paths conservatively affect both. See the [path matrix](repository-workflow.md#validation-and-deployment-matrix).
+GitHub Actions owns automatic deployments: affected `dev` pushes deploy code preview and `content` pushes deploy the separate editorial Site preview; affected `main` pushes deploy production after `Required checks`. Content never deploys Admin. PRs only validate. Docs-only changes deploy neither app, editorial content/images and Site-only changes skip Admin, and Admin-only changes skip Site. Dependencies, shared configuration and unknown paths conservatively affect both. See the [path matrix](repository-workflow.md#validation-and-deployment-matrix).
 
 Disable Pages automatic production/preview Git builds and competing Workers Git build triggers. Site uploads a validated artifact using official Wrangler Pages commands, with branch and SHA supplied explicitly. Admin uses the existing environment-specific build/deploy commands. The local full `pnpm check` remains independent of change classification.
 
