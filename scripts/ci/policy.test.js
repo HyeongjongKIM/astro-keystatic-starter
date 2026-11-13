@@ -152,6 +152,22 @@ describe('stable required check', () => {
 });
 
 describe('target isolation', () => {
+  it('does not echo invalid public setting values in errors', () => {
+    const invalid = 'invalid-private-setting-sentinel';
+    try {
+      deploymentSettings({
+        DEPLOY_APP: 'site',
+        CLOUDFLARE_ACCOUNT_ID: 'account',
+        CLOUDFLARE_PAGES_PROJECT: 'project',
+        PUBLIC_SITE_URL: invalid,
+      });
+      throw new Error('Expected validation failure');
+    } catch (error) {
+      expect(error.message).toBe('Site URL must be a valid HTTPS origin');
+      expect(String(error)).not.toContain(invalid);
+    }
+  });
+
   it.each(['dev', 'main'])(
     'selects entire app independently on %s',
     (branch) => {

@@ -247,7 +247,11 @@ describe('current-head recovery and failure visibility', () => {
     (branch) => {
       if (branch !== 'dev') git('checkout', '-b', branch);
       git('remote', 'add', 'origin', cwd);
-      const a = commit('apps/site/src/recovery.astro');
+      const a = commit(
+        branch === 'content'
+          ? 'content/posts/recovery/index.yaml'
+          : 'apps/site/src/recovery.astro',
+      );
       const b = commit('docs/recovery.md', 'docs: unrelated update');
       expect(JSON.parse(run('plan', { before: a }).stdout)).toMatchObject({
         site: false,
