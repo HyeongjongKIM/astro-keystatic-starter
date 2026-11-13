@@ -40,6 +40,20 @@ Official references: [Pages rollbacks](https://developers.cloudflare.com/pages/c
 
 ## Failed deployment and recovery
 
-For a failed deployment whose SHA is still the branch head, rerun failed jobs in its Actions run. Deployment concurrency serializes each app/branch without cancelling an active upload; a head check rejects stale queued runs. If the branch advanced, run the `CI` workflow manually on the current `dev` or `main` head. Manual dispatch performs full validation and deploys both targets, including changes missed by later docs-only pushes. Do not rerun an old SHA or rely on an unrelated push to repair a failed/stale deployment. A new commit during an upload can leave the prior validated version live until the next successful run.
+Recovery is operator-triggered, with no automatic retry. Inspect the **Deployment outcome and recovery** job summary and each failed/cancelled run, even when a later docs-only run is green. The summary identifies requested targets that did not deploy and gives a current-head command. An entirely cancelled workflow may not execute its summary job; its native cancelled status requires the same inspection. A successful promotion PR merge is not deployment success.
+
+If a failed deployment SHA remains current and its validation succeeded, rerun only failed jobs. Otherwise dispatch CI at the current branch head, selecting `site`, `admin` or `both` (default):
+
+```sh
+gh workflow run ci.yml --ref main -f targets=site
+gh workflow run ci.yml --ref dev -f targets=admin
+gh workflow run ci.yml --ref content -f targets=site
+```
+
+`both` means all available apps; content has Site only and rejects `admin`. Other branches/invalid inputs fail. Recovery runs formatting, commit validation, documentation links, lint and all unit tests, then full type/build validation for each selected app, regardless of the last commit's paths. Site also verifies static output and the artifact origin. Admin validates both modes and deploys the branch's matching mode. An Admin-only recovery skips Site validation/build/upload. Choose `both` if earlier undeployed targets are uncertain. Failed/cancelled validation blocks every upload. Recovery uses no new promotion PR and does not merge again.
+
+Per-app/branch concurrency does not cancel running uploads; GitHub's default single pending slot can replace an older pending job. Ordering is not guaranteed. The upload guard rejects stale SHAs, disabled environments and missing target settings. A newer unrelated push does not repair an earlier failed/stale/cancelled target: dispatch the selected target at current head. A branch advance during upload can leave the prior validated version live until recovery; there is no atomic Git/Cloudflare transaction or persistent deployment ledger.
+
+To stabilize production recovery, set `PROMOTION_ENABLED=false`, inspect/wait for any in-flight controller, pause editorial saves and ready-code pushes, wait for main synchronization, then fetch the current main head and dispatch recovery there. Check `Required checks`, the selected deployment, its URL and Cloudflare version before resuming. Set `PROMOTION_ENABLED=true` and reconcile using the [controller procedure](publishing-setup.md#operating-the-controller-after-activation). Keep protections and OAuth secrets intact. Synchronization continues to be independent of deployment success; do not reopen an already merged PR.
 
 Local Admin recovery commands remain `pnpm deploy:admin:preview` and `pnpm deploy:admin:production`; verify the correct repository/App public settings, branch head and full checks first, and run the commands sequentially. An emergency local deployment is an operator action, not proof the automatic workflow succeeded. Keep dev/content after promotion and verify the App synchronizes main back into both; never force-push publication history.

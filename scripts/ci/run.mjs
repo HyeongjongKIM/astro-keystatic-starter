@@ -2,7 +2,13 @@ import { execFileSync } from 'node:child_process';
 import { appendFileSync, readFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { classify, isEditorialCommit, checkResults } from './policy.mjs';
+import {
+  classify,
+  isEditorialCommit,
+  checkResults,
+  recoveryPlan,
+  deploymentSettings,
+} from './policy.mjs';
 
 const git = (...args) =>
   execFileSync('git', args, { encoding: 'utf8' }).trimEnd();
@@ -38,7 +44,13 @@ if (command === 'plan') {
   const paths = base
     ? splitNull(git('diff', '--name-only', '--no-renames', '-z', base, head))
     : [];
-  const plan = classify(paths, !base);
+  const plan =
+    process.env.GITHUB_EVENT_NAME === 'workflow_dispatch'
+      ? recoveryPlan(
+          event.inputs?.targets ?? 'both',
+          process.env.GITHUB_REF_NAME,
+        )
+      : classify(paths, !base);
   console.log(
     JSON.stringify({ ...plan, comparisonBase: base ?? 'full validation' }),
   );
@@ -116,17 +128,7 @@ if (command === 'plan') {
     throw new Error(
       'Configure deployment environment before enabling deployment',
     );
-  const required = [
-    'CLOUDFLARE_ACCOUNT_ID',
-    'CLOUDFLARE_PAGES_PROJECT',
-    'PUBLIC_SITE_URL',
-    ...(process.env.GITHUB_REF_NAME === 'content'
-      ? []
-      : ['KEYSTATIC_GITHUB_REPO', 'PUBLIC_KEYSTATIC_GITHUB_APP_SLUG']),
-  ];
-  for (const key of required)
-    if (!process.env[key]?.trim())
-      throw new Error(`Missing public deployment setting: ${key}`);
+  deploymentSettings(process.env);
   const latest = process.env.GITHUB_REPOSITORY
     ? execFileSync(
         'gh',
@@ -147,6 +149,52 @@ if (command === 'plan') {
     throw new Error(
       'Stale deployment: run full recovery on the current branch head',
     );
+} else if (command === 'deployment-summary') {
+  const needs = JSON.parse(process.env.NEEDS_JSON);
+  if (
+    !['dev', 'content', 'main'].includes(process.env.GITHUB_REF_NAME) ||
+    !['push', 'workflow_dispatch'].includes(process.env.GITHUB_EVENT_NAME)
+  )
+    process.exit(0);
+  const lines = [
+    `Deployment results for ${process.env.GITHUB_REF_NAME} at ${process.env.GITHUB_SHA}.`,
+    'A successful promotion merge does not establish successful deployment.',
+  ];
+  const pending = [];
+  for (const app of ['site', 'admin']) {
+    if (app === 'admin' && process.env.GITHUB_REF_NAME === 'content') continue;
+    const selected = needs.prepare?.outputs?.[app] === 'true';
+    const result = needs[`deploy-${app}`]?.result ?? 'missing';
+    lines.push(
+      `${app}: ${result}${selected ? ' (requested)' : ' (not selected by this run)'}`,
+    );
+    if (selected && result !== 'success') pending.push(app);
+  }
+  if (needs.prepare?.result !== 'success') {
+    lines.push(
+      'Planning/validation failed; deployment selection is untrusted. Inspect the failed job.',
+    );
+    pending.splice(
+      0,
+      pending.length,
+      'site',
+      ...(process.env.GITHUB_REF_NAME === 'content' ? [] : ['admin']),
+    );
+  }
+  if (pending.length) {
+    const targets = pending.length === 2 ? 'both' : pending[0];
+    lines.push(
+      `Operator action required: recover ${targets} at the CURRENT branch head after fixing validation/configuration.`,
+      `gh workflow run ci.yml --ref ${process.env.GITHUB_REF_NAME} -f targets=${targets}`,
+    );
+  }
+  lines.push(
+    'Recovery is manual. A later docs-only or other-target run does not repair earlier failures. Inspect prior failed/cancelled deployment runs; use targets=both when uncertain.',
+  );
+  const summary = lines.join('\n\n') + '\n';
+  console.log(summary);
+  if (process.env.GITHUB_STEP_SUMMARY)
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
 } else if (command === 'upload-site') {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
   execFileSync(

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { classify, isEditorialCommit, checkResults } from './policy.mjs';
+import {
+  classify,
+  isEditorialCommit,
+  checkResults,
+  recoveryPlan,
+  deploymentSettings,
+} from './policy.mjs';
 
 const none = { site: false, admin: false, lint: false, test: false };
 describe('deployment and validation impact', () => {
@@ -142,5 +148,71 @@ describe('stable required check', () => {
     expect(checkResults(none, { ...needs, admin: { result: 'success' } })).toBe(
       false,
     );
+  });
+});
+
+describe('target isolation', () => {
+  it.each(['dev', 'main'])(
+    'selects entire app independently on %s',
+    (branch) => {
+      expect(recoveryPlan('admin', branch)).toEqual({
+        site: false,
+        admin: true,
+        lint: true,
+        test: true,
+      });
+      expect(recoveryPlan('site', branch)).toEqual({
+        site: true,
+        admin: false,
+        lint: true,
+        test: true,
+      });
+      expect(recoveryPlan('both', branch)).toEqual({
+        site: true,
+        admin: true,
+        lint: true,
+        test: true,
+      });
+    },
+  );
+  it('rejects invalid targets, branches and content Admin; maps content both to Site', () => {
+    expect(recoveryPlan('both', 'content').admin).toBe(false);
+    expect(() => recoveryPlan('admin', 'content')).toThrow();
+    expect(() => recoveryPlan('unknown', 'dev')).toThrow();
+    expect(() => recoveryPlan('site', 'feature')).toThrow();
+  });
+  it('requires only each app settings and verifies Admin mode', () => {
+    const common = { CLOUDFLARE_ACCOUNT_ID: 'account', GITHUB_REF_NAME: 'dev' };
+    const site = {
+      ...common,
+      DEPLOY_APP: 'site',
+      CLOUDFLARE_PAGES_PROJECT: 'project',
+      PUBLIC_SITE_URL: 'https://example.com',
+    };
+    const admin = {
+      ...common,
+      DEPLOY_APP: 'admin',
+      KEYSTATIC_GITHUB_REPO: 'owner/repo',
+      PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: 'app',
+      DEPLOY_TARGET: 'preview',
+    };
+    expect(() => deploymentSettings(site)).not.toThrow();
+    expect(() => deploymentSettings(admin)).not.toThrow();
+    for (const env of [site, admin])
+      expect(() =>
+        deploymentSettings({ ...env, CLOUDFLARE_ACCOUNT_ID: '' }),
+      ).toThrow();
+    expect(() =>
+      deploymentSettings({ ...admin, DEPLOY_TARGET: 'production' }),
+    ).toThrow();
+    expect(() =>
+      deploymentSettings({ ...admin, GITHUB_REF_NAME: 'content' }),
+    ).toThrow();
+    expect(() =>
+      deploymentSettings({ ...site, PUBLIC_SITE_URL: 'invalid' }),
+    ).toThrow();
+    expect(() =>
+      deploymentSettings({ ...admin, KEYSTATIC_GITHUB_REPO: 'invalid' }),
+    ).toThrow();
   });
 });
