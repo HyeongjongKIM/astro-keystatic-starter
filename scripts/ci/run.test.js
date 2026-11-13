@@ -39,6 +39,7 @@ function run(command, event, env = {}) {
       ...process.env,
       GITHUB_EVENT_PATH: eventPath,
       GITHUB_EVENT_NAME: 'push',
+      GITHUB_REF_NAME: 'dev',
       GITHUB_REPOSITORY: '',
       GITHUB_SHA: git('rev-parse', 'HEAD'),
       ...env,
@@ -127,6 +128,7 @@ describe('deployment guard', () => {
     git('remote', 'add', 'origin', cwd);
     const env = {
       GITHUB_REF_NAME: 'dev',
+      DEPLOY_APP: 'site',
       DEPLOY_ENABLED: 'true',
       CLOUDFLARE_ACCOUNT_ID: 'account',
       CLOUDFLARE_PAGES_PROJECT: 'project',
@@ -155,6 +157,7 @@ describe('editorial Site deployment', () => {
     git('remote', 'add', 'origin', cwd);
     const env = {
       GITHUB_REF_NAME: 'content',
+      DEPLOY_APP: 'site',
       DEPLOY_ENABLED: 'true',
       CLOUDFLARE_ACCOUNT_ID: 'account',
       CLOUDFLARE_PAGES_PROJECT: 'project',
@@ -236,4 +239,107 @@ describe('Site upload command', () => {
       '--commit-dirty=false',
     ]);
   });
+});
+
+describe('current-head recovery and failure visibility', () => {
+  it.each(['dev', 'content', 'main'])(
+    'reproduces affected A then docs B gap on %s and recovers only Site',
+    (branch) => {
+      if (branch !== 'dev') git('checkout', '-b', branch);
+      git('remote', 'add', 'origin', cwd);
+      const a = commit('apps/site/src/recovery.astro');
+      const b = commit('docs/recovery.md', 'docs: unrelated update');
+      expect(JSON.parse(run('plan', { before: a }).stdout)).toMatchObject({
+        site: false,
+        admin: false,
+      });
+      const stale = run(
+        'deploy-guard',
+        {},
+        {
+          GITHUB_SHA: a,
+          GITHUB_REF_NAME: branch,
+          DEPLOY_APP: 'site',
+          DEPLOY_ENABLED: 'true',
+          CLOUDFLARE_ACCOUNT_ID: 'account',
+          CLOUDFLARE_PAGES_PROJECT: 'project',
+          PUBLIC_SITE_URL: 'https://example.com',
+        },
+      );
+      expect(stale.status).not.toBe(0);
+      expect(stale.stderr).toContain('Stale deployment');
+      expect(
+        JSON.parse(
+          run(
+            'plan',
+            { inputs: { targets: 'site' } },
+            {
+              GITHUB_EVENT_NAME: 'workflow_dispatch',
+              GITHUB_REF_NAME: branch,
+              GITHUB_SHA: b,
+            },
+          ).stdout,
+        ),
+      ).toMatchObject({ site: true, admin: false, lint: true, test: true });
+    },
+  );
+  it.each(['failure', 'cancelled', 'skipped'])(
+    'reports selected target %s with actionable current-head recovery',
+    (result) => {
+      const summary = run(
+        'deployment-summary',
+        {},
+        {
+          NEEDS_JSON: JSON.stringify({
+            prepare: {
+              result: 'success',
+              outputs: { site: 'true', admin: 'true' },
+            },
+            'deploy-site': { result },
+            'deploy-admin': { result: 'success' },
+          }),
+        },
+      );
+      expect(summary.status).toBe(0);
+      expect(summary.stdout).toContain(
+        'gh workflow run ci.yml --ref dev -f targets=site',
+      );
+    },
+  );
+});
+
+describe('rapid mixed histories', () => {
+  it.each([
+    ['apps/admin/config.ts', 'docs/update.md', 'admin'],
+    ['apps/site/src/example.astro', 'apps/admin/config.ts', 'both'],
+    ['apps/admin/config.ts', 'apps/site/src/example.astro', 'both'],
+  ])(
+    'recovers earlier %s after %s without using the last diff',
+    (first, second, targets) => {
+      commit(first);
+      const before = git('rev-parse', 'HEAD');
+      commit(
+        second,
+        second.startsWith('docs/') ? 'docs: update' : 'feat: update',
+      );
+      const ordinary = JSON.parse(run('plan', { before }).stdout);
+      expect(ordinary[first.startsWith('apps/admin') ? 'admin' : 'site']).toBe(
+        false,
+      );
+      expect(
+        JSON.parse(
+          run(
+            'plan',
+            { inputs: { targets } },
+            { GITHUB_EVENT_NAME: 'workflow_dispatch' },
+          ).stdout,
+        ),
+      ).toMatchObject({
+        admin: true,
+        site: targets === 'both',
+        lint: true,
+        test: true,
+      });
+    },
+  );
 });

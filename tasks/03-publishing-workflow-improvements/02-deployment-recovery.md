@@ -1,6 +1,6 @@
 # Task 02 — Deployment Recovery and Target Isolation
 
-**Status:** TODO
+**Status:** IN_PROGRESS
 
 **Depends on:** [Task 01](01-content-branch-preview.md) DONE
 
@@ -38,3 +38,7 @@ Run full root checks and workflow validation plus regression tests for rapid Adm
 ## Verification evidence
 
 2026-11-12: Planning only. Work, acceptance checks and deployment/service validation have not been performed. Status remains TODO.
+
+2026-11-13: Started after Task 01 DONE. Clean dev `baf1dfd`, remote main `5a044078`, content `2ea26087`; latest main CI 43379195414 and dev/content synchronization CI passed (docs-only app/deployment skips). PROMOTION_ENABLED=true. Active main ruleset 27089910 requires strict Required checks and merge PRs, with no bypass actors; no protection changes/history rewriting. Read current official Actions concurrency/workflow-dispatch and Wrangler command documentation. Implementing explicit selected-target recovery and independent public-setting guards; remote recovery acceptance pending.
+
+2026-11-13, Darwin x86_64, Node v22.23.5/pnpm 12.18.0: `pnpm check` exited 0 (format/lint, zero type diagnostics, 119 tests at that run, Site/preview Admin builds and static-output verification). Added rapid Admin→docs, Site→Admin and Admin→Site fixtures afterward; `pnpm test` passed 122 tests. `pnpm build:admin:production` exited 0; existing Admin bundle-size warning remains. `node scripts/ci/run.mjs docs` passed 195 links, `git diff --check` and `output/actionlint/actionlint -shellcheck= -pyflakes=` passed (no Shellcheck/Pyflakes). Local fixtures reproduce affected→docs staleness on dev/content/main; settings isolation, selected app recovery, invalid input/mode and failure/cancellation gating are tested. Remote acceptance remains pending, so the task is not DONE.
