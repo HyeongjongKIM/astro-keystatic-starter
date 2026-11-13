@@ -17,11 +17,11 @@ export class PromotionController {
     bot,
     resume,
     log = console.log,
-    validateTitle,
+    validateMessage,
   }) {
     Object.assign(this, { api, repository, graph, refresh, bot, resume, log });
-    this.validateTitle =
-      validateTitle ??
+    this.validateMessage =
+      validateMessage ??
       ((message) =>
         execFileSync('pnpm', ['exec', 'commitlint'], {
           input: message,
@@ -64,7 +64,7 @@ export class PromotionController {
       });
     if (!this.graph.ancestor(tips.main, tips.source)) {
       const message = `chore: sync main into ${branch}`;
-      this.validateTitle(message);
+      this.validateMessage(message);
       await this.api('POST', `${this.root}/merges`, {
         base: branch,
         head: tips.main,
@@ -107,7 +107,7 @@ export class PromotionController {
     if (branch === 'content')
       assertEditorialDiff(this.graph, tips.main, tips.source);
     if (!pr) {
-      this.validateTitle(title(branch));
+      this.validateMessage(title(branch));
       await this.api('POST', `${this.root}/pulls`, {
         base: 'main',
         head: branch,
@@ -191,7 +191,8 @@ export class PromotionController {
     const finalTips = await this.tips(branch);
     if (finalTips.main !== tips.main || finalTips.source !== tips.source)
       throw new Error(`${branch}: head/base advanced before merge`);
-    this.validateTitle(title(branch));
+    const message = `Validated PR #${pr.number}\nSource: ${tips.source}\nBase: ${tips.main}`;
+    this.validateMessage(`${title(branch)}\n\n${message}`);
     const result = await this.api(
       'PUT',
       `${this.root}/pulls/${pr.number}/merge`,
@@ -199,7 +200,7 @@ export class PromotionController {
         sha: tips.source,
         merge_method: 'merge',
         commit_title: title(branch),
-        commit_message: `Validated PR #${pr.number}; source ${tips.source}; base ${tips.main}.`,
+        commit_message: message,
       },
     );
     if (!result.merged)
