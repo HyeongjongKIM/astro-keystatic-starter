@@ -87,7 +87,12 @@ export function deploymentSettings(env) {
     if (!env[key]?.trim())
       throw new Error(`Missing public deployment setting: ${key}`);
   if (app === 'site') {
-    const url = new URL(env.PUBLIC_SITE_URL);
+    let url;
+    try {
+      url = new URL(env.PUBLIC_SITE_URL);
+    } catch {
+      throw new Error('Site URL must be a valid HTTPS origin');
+    }
     if (url.protocol !== 'https:' || url.origin !== env.PUBLIC_SITE_URL)
       throw new Error(
         'Site URL must be an HTTPS origin without a trailing slash',
